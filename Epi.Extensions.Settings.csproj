@@ -7,10 +7,11 @@
     <ProjectGuid>{D999E2CF-F01E-48E6-85ED-98AEEE83B6FB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EpiserverExtensions.Settings</RootNamespace>
-    <AssemblyName>EpiserverExtensions.Settings</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>Epi.Extensions.Settings</RootNamespace>
+    <AssemblyName>Epi.Extensions.Settings</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
