@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<languages>
+  <language name="Nederlands" id="nl">
+    <contentrepositories>
+      <settings>
+        <customselecttitle>Configuratie</customselecttitle>
+        <name>Configuraties</name>
+      </settings>
+      <globalsettings>
+        <customselecttitle>Globale configuratie</customselecttitle>
+        <name>Globale configuraties</name>
+      </globalsettings>
+    </contentrepositories>
+    <contenttypes>
+      <settingsbase>
+        <compare>
+          <onlyoneversion>Er is slechts één versie van deze configuratie. Er is niets om mee te vergelijken.</onlyoneversion>
+        </compare>
+        <copy>
+          <multiple>
+            <title>Configuraties kopiëren</title>
+          </multiple>
+          <single>
+            <title>Configuratie kopiëren</title>
+          </single>
+        </copy>
+        <create>Nieuwe configuratie</create>
+        <createdescription>Selecteer waar u de configuratie wilt aanmaken Mappen kunnen worden beheerd in de configuratiebibliotheek in het bestandenvenster.</createdescription>
+        <deletelanguagebranchdescription>Weet u zeker dat u alle versies van de configuratie &lt;strong&gt;{0}&lt;/strong&gt; permanent wilt verwijderen in &lt;strong&gt;{1}&lt;/strong&gt;?&lt;br/&gt;Deze actie kan niet ongedaan worden gemaakt.</deletelanguagebranchdescription>
+        <forthis>Voor deze {0}</forthis>
+        <languagenotifications>
+          <fallback>Deze configuratie wordt getoond in het {1} op de website omdat het niet is gepubliceerd in het {0} en er een terugvaltaal is geactiveerd.</fallback>
+          <missing>Deze configuratie is in het {1}. Het is niet beschikbaar in het {0}. Het is niet zichtbaar op de website.</missing>
+          <replacement>Voor bezoekers wordt deze configuratie vervangen door een versie in het {1}.</replacement>
+        </languagenotifications>
+        <move>
+          <multiple>
+            <confirmation>Wilt u {0} configuraties verplaatsen?</confirmation>
+            <title>Configuraties verplaatsen</title>
+          </multiple>
+          <single>
+            <confirmation>Wilt u deze configuratie toch verplaatsen?</confirmation>
+            <title>Configuratie verplaatsen</title>
+          </single>
+        </move>
+        <movedescription>Deze verandering wordt onmiddellijk van kracht en eventuele gepubliceerde content die wordt verplaatst, blijft gepubliceerd op de nieuwe locatie.</movedescription>
+        <movetotrash>Configuraties verplaatsen naar de prullenmand</movetotrash>
+        <movetotrashdescription>Wilt u &lt;strong&gt;{0}&lt;/strong&gt; configuraties naar de prullenbak verplaatsen?</movetotrashdescription>
+        <movetotrashsingleitem>Configuratie verplaatsen naar de prullenmand</movetotrashsingleitem>
+        <movetotrashsingleitemdescription>Wilt u de configuratie &lt;strong&gt;{0}&lt;/strong&gt; naar de prullenmand verplaatsen?</movetotrashsingleitemdescription>
+        <name>Configuratie</name>
+        <newitemdefaultname>Nieuwe configuratie</newitemdefaultname>
+        <othertypes>Andere configuratietypes</othertypes>
+        <reference>
+          <multiple>
+            <notused>Deze configuraties worden niet door andere content gebruikt. Ze kunnen veilig naar de prullenbak worden verplaatst.</notused>
+            <used>Deze configuraties worden op de volgende plaatsen gebruikt. Om fouten op de site te vermijden moet u ervoor zorgen dat de configuraties nergens wordt gebruikt.</used>
+          </multiple>
+          <single>
+            <notused>De configuratie wordt niet door andere content gebruikt. Het kan veilig naar de prullenbak worden verplaatst.</notused>
+            <used>De configuratie wordt op de volgende plaatsen gebruikt. Om fouten op de site te vermijden moet u ervoor zorgen dat de configuratie nergens wordt gebruikt.</used>
+          </single>
+        </reference>
+        <referencesdescription>De configuratie &lt;strong&gt;{0}&lt;/strong&gt; wordt op de volgende plaatsen gebruikt.</referencesdescription>
+        <selectparent>Selecteer de map.</selectparent>
+        <suggestedtypes>Voorgestelde configuratietypes</suggestedtypes>
+      </settingsbase>
+    </contenttypes>
+    <episerver>
+      <cms>
+        <components>
+          <settings>
+            <title>Configuraties</title>
+            <description>De configuraties</description>
+          </settings>
+          <globalsettings>
+            <title>Globale configuraties</title>
+            <description>De globale configuraties</description>
+          </globalsettings>
+        </components>
+      </cms>
+    </episerver>
+    <edit>
+      <deletesetting>
+        <deletenotsupported>Globale configuraties kunnen niet verwijderd worden.</deletenotsupported>
+      </deletesetting>
+    </edit>
+  </language>
+</languages>

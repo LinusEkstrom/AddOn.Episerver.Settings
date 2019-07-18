@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<languages>
+  <language name="Svenska" id="sv">
+    <contentrepositories>
+      <settings>
+        <customselecttitle>Inställning</customselecttitle>
+        <name>Inställningar</name>
+      </settings>
+      <globalsettings>
+        <customselecttitle>Global inställning</customselecttitle>
+        <name>Globala inställningar</name>
+      </globalsettings>
+    </contentrepositories>
+    <contenttypes>
+      <settingsbase>
+        <compare>
+          <onlyoneversion>Det finns bara en version av det här inställning. Det finns inget att jämföra med.</onlyoneversion>
+        </compare>
+        <copy>
+          <multiple>
+            <title>Kopiera inställningar</title>
+          </multiple>
+          <single>
+            <title>Kopiera inställning</title>
+          </single>
+        </copy>
+        <create>Nytt block</create>
+        <createdescription>Välj var du vill att blocket ska skapas. Mappar kan hanteras i inställningbiblioteket i resurspanelen.</createdescription>
+        <deletelanguagebranchdescription>Vill du permanent ta bort alla versioner av inställningar &lt;strong&gt;{0}&lt;/strong&gt; i &lt;strong&gt;{1}&lt;/strong&gt;?&lt;br/&gt;Det går inte att ångra den här åtgärden.</deletelanguagebranchdescription>
+        <forthis>För detta {0}</forthis>
+        <languagenotifications>
+          <fallback>Det här inställning visas på {1} på webbplatsen eftersom det inte har publicerats på {0} och ett reservspråk har aktiverats.</fallback>
+          <missing>Det här inställning finns på {1}. Det finns inte på {0}. Det kommer inte att visas på webbplatsen.</missing>
+          <replacement>För besökare ersätts det här inställning med en version på {1}.</replacement>
+        </languagenotifications>
+        <move>
+          <multiple>
+            <confirmation>Vill du flytta {0} inställningar?</confirmation>
+            <title>Flytta inställningar</title>
+          </multiple>
+          <single>
+            <confirmation>Vill du flytta det här inställning?</confirmation>
+            <title>Flytta inställning</title>
+          </single>
+        </move>
+        <movedescription>Denna förändring kommer ske omedelbart och allt material som är publicerat och flyttas kommer att förbli publicerat i sin nya position.</movedescription>
+        <movetotrash>Flytta inställningar till papperskorgen</movetotrash>
+        <movetotrashdescription>Vill du flytta &lt;strong&gt;{0}&lt;/strong&gt; inställningar till papperskorgen?</movetotrashdescription>
+        <movetotrashsingleitem>Vill du flytta inställning till papperskorgen?</movetotrashsingleitem>
+        <movetotrashsingleitemdescription>Vill du flytta inställning &lt;strong&gt;{0}&lt;/strong&gt; till papperskorgen?</movetotrashsingleitemdescription>
+        <name>Block</name>
+        <newitemdefaultname>Nytt inställning</newitemdefaultname>
+        <othertypes>Andra inställningartyper</othertypes>
+        <reference>
+          <multiple>
+            <notused>Inget annat innehåll använder de här inställningar. Det är säkert att flytta dem till papperskorgen.</notused>
+            <used>Inställningar används på följande platser. Kontrollera att inställningar inte används någonstans för att undvika problem på webbplatsen.</used>
+          </multiple>
+          <single>
+            <notused>Inget annat innehåll använder det här inställning. Det är säkert att flytta det till papperskorgen.</notused>
+            <used>Inställning används på följande platser. Kontrollera att det inte används någonstans för att undvika problem på webbplatsen.</used>
+          </single>
+        </reference>
+        <referencesdescription>Inställning &lt;strong&gt;{0}&lt;/strong&gt; används på följande platser.</referencesdescription>
+        <selectparent>Välj mapp</selectparent>
+        <suggestedtypes>Föreslagna inställningtyper</suggestedtypes>
+      </settingsbase>
+    </contenttypes>
+    <episerver>
+      <cms>
+        <components>
+          <settings>
+            <title>Inställningar</title>
+            <description>Inställningar</description>
+          </settings>
+          <globalsettings>
+            <title>Globala inställningar</title>
+            <description>Globala inställningar</description>
+          </globalsettings>
+        </components>
+      </cms>
+    </episerver>
+    <edit>
+      <deletesetting>
+        <deletenotsupported>En global inställning kan inte raderas</deletenotsupported>
+      </deletesetting>
+    </edit>
+  </language>
+</languages>

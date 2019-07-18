@@ -183,3 +183,4 @@ FakesAssemblies/
 .vs
 
 *.pubxml
+src/packages/

@@ -3,7 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Extensions.Settings", "Epi.Extensions.Settings.csproj", "{D999E2CF-F01E-48E6-85ED-98AEEE83B6FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Extensions.Settings", "Epi.Extensions.Settings\Epi.Extensions.Settings.csproj", "{D999E2CF-F01E-48E6-85ED-98AEEE83B6FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{5F200133-B3A3-475F-A1D3-751EE1B0A50C}"
+	ProjectSection(SolutionItems) = preProject
+		Epi.Extensions.Settings\Epi.Extensions.Settings.nuspec = Epi.Extensions.Settings\Epi.Extensions.Settings.nuspec
+		..\README.md = ..\README.md
+		Epi.Extensions.Settings\readme.txt = Epi.Extensions.Settings\readme.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

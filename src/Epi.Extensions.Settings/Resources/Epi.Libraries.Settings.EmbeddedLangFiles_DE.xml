@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<languages>
+  <language name="Deutsch" id="de">
+    <contentrepositories>
+      <settings>
+        <customselecttitle>Einstellung</customselecttitle>
+        <name>Einstellungen</name>
+      </settings>
+      <globalsettings>
+        <customselecttitle>Globale Einstellung</customselecttitle>
+        <name>Globale Einstellungen</name>
+      </globalsettings>
+    </contentrepositories>
+    <contenttypes>
+      <settingsbase>
+        <compare>
+          <onlyoneversion>Es existiert nur eine Version dieses Einstellungs. Es ist kein Vergleichsobjekt vorhanden.</onlyoneversion>
+        </compare>
+        <copy>
+          <multiple>
+            <title>Einstellungen kopieren</title>
+          </multiple>
+          <single>
+            <title>Einstellung kopieren</title>
+          </single>
+        </copy>
+        <create>Neuer Einstellung</create>
+        <createdescription>Legen Sie fest, wo der Einstellung erstellt werden soll. Ordner können in der Einstellungbibliothek im Assetbereich verwaltet werden.</createdescription>
+        <deletelanguagebranchdescription>Wollen Sie wirklich alle Versionen des Einstellungs &lt;strong&gt;{0}&lt;/strong&gt; in &lt;strong&gt;{1}&lt;/strong&gt; dauerhaft löschen?&lt;br/&gt;Dieser Vorgang kann nicht rückgängig gemacht werden.</deletelanguagebranchdescription>
+        <forthis>Für dieses {0}</forthis>
+        <languagenotifications>
+          <fallback>Dieser Einstellung wird auf der Website in der Sprache {1} angezeigt, da er noch nicht auf {0} veröffentlicht wurde und eine alternative Sprache aktiviert wurde.</fallback>
+          <missing>Dieser Einstellung liegt in der Sprache {1} vor. Er ist nicht auf {0} vorhanden. Er wird nicht auf der Website angezeigt.</missing>
+          <replacement>Für Besucher wird dieser Einstellung durch eine Version auf {1} ersetzt.</replacement>
+        </languagenotifications>
+        <move>
+          <multiple>
+            <confirmation>Wollen Sie {0} Einstellungen verschieben?</confirmation>
+            <title>Einstellungen verschieben</title>
+          </multiple>
+          <single>
+            <confirmation>Wollen Sie diesen Einstellung verschieben?</confirmation>
+            <title>Einstellung verschieben</title>
+          </single>
+        </move>
+        <movedescription>Diese Änderung wird sofort wirksam und jeder veröffentlichte Inhalt, der verschoben wird, bleibt an der neuen Position veröffentlicht.</movedescription>
+        <movetotrash>Einstellungen in Papierkorb verschieben</movetotrash>
+        <movetotrashdescription>Sollen &lt;strong&gt;{0}&lt;/strong&gt; Einstellungen in den Papierkorb verschoben werden?</movetotrashdescription>
+        <movetotrashsingleitem>Einstellung in Papierkorb verschieben</movetotrashsingleitem>
+        <movetotrashsingleitemdescription>Soll der Einstellung &lt;strong&gt;{0}&lt;/strong&gt; in den Papierkorb verschoben werden?</movetotrashsingleitemdescription>
+        <name>Einstellung</name>
+        <newitemdefaultname>Neuer Einstellung</newitemdefaultname>
+        <othertypes>Andere Einstellungtypen</othertypes>
+        <reference>
+          <multiple>
+            <notused>Diese Einstellungen werden von keinem weiteren Inhalt verwendet. Sie können ohne Probleme in den Papierkorb verschoben werden.</notused>
+            <used>Diese Einstellungen werden an folgenden Positionen verwendet. Um Fehler auf der Site zu vermeiden, stellen Sie sicher, dass die Einstellungen nirgends verwendet werden.</used>
+          </multiple>
+          <single>
+            <notused>Dieser Einstellung wird von keinem weiteren Inhalt verwendet. Er kann ohne Probleme in den Papierkorb verschoben werden.</notused>
+            <used>Der Einstellung wird an folgenden Positionen verwendet. Um Fehler auf der Site zu vermeiden, stellen Sie sicher, dass der Einstellung nirgends verwendet wird.</used>
+          </single>
+        </reference>
+        <referencesdescription>Der Einstellung &lt;strong&gt;{0}&lt;/strong&gt; wird an den folgenden Positionen verwendet.</referencesdescription>
+        <selectparent>Ordner auswählen</selectparent>
+        <suggestedtypes>Vorgeschlagene Einstellungtypen</suggestedtypes>
+      </settingsbase>
+    </contenttypes>
+    <episerver>
+        <cms>
+          <components>
+            <settings>
+              <title>Einstellungen</title>
+              <description>Einstellungen</description>
+            </settings>
+            <globalsettings>
+              <title>Globale Einstellungen</title>
+              <description>Globale Einstellungen</description>
+            </globalsettings>
+          </components>
+        </cms>
+    </episerver>
+    <edit>
+      <deletesetting>
+        <deletenotsupported>Eine globale Einstellung kann nicht gelöscht werden</deletenotsupported>
+      </deletesetting>
+    </edit>
+  </language>
+</languages>
