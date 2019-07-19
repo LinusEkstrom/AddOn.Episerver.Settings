@@ -23,6 +23,8 @@
 
 namespace Epi.Extensions.Settings.UI
 {
+    using System.Collections.Generic;
+
     using EPiServer.Shell;
     using EPiServer.Shell.ViewComposition;
 
@@ -43,6 +45,10 @@ namespace Epi.Extensions.Settings.UI
             this.LanguagePath = "/episerver/cms/components/settings";
             this.Title = "Settings";
             this.SortOrder = 200;
+            this.Categories = new string[]
+                                  {
+                                      "cms"
+                                  };
             this.PlugInAreas = new[] { PlugInArea.AssetsDefaultGroup };
             this.Settings.Add(new Setting("repositoryKey", value: SettingsRepositoryDescriptor.RepositoryKey));
         }

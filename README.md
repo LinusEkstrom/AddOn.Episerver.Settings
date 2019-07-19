@@ -10,17 +10,7 @@ A typed replacement of custom built settings systems built on PageData/BlockData
 
 ### Instructions
 
-1. Add the following to the root node of the module.config file:
-
-```xml
-<clientModule>
-<moduleDependencies>
-<add dependency="CMS" type="Require RunAfter" />
-</moduleDependencies>
-</clientModule>
-```
-
-2. Add a settings item
+1. Add a settings item
 > You can use a [Resharper template](templates/SettingsTemplates.DotSettings)
 ```csharp
 [ContentType(GUID = "a5506171-c6b2-4a7a-9c44-bb870f695956")]

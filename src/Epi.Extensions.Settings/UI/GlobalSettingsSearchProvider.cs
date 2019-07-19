@@ -188,7 +188,7 @@ namespace Epi.Extensions.Settings.UI
             }
 
             return
-                $"/modules/app/settings#context=epi.cms.contentdata:///{contentLink.ID}&viewsetting=viewlanguage:///{language}";
+                $"/episerver/Epi.Extensions.Settings/settings#context=epi.cms.contentdata:///{contentLink.ID}&viewsetting=viewlanguage:///{language}";
         }
     }
 }

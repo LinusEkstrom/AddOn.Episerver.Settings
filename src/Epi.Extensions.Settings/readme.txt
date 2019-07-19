@@ -1,14 +1,4 @@
-1. Add the following to the root node of the module.config file:
-
-
-<clientModule>
-<moduleDependencies>
-<add dependency="CMS" type="Require RunAfter" />
-</moduleDependencies>
-</clientModule>
-
-
-2. Add a settings item
+1. Add a settings item
 
 [ContentType(GUID = "a5506171-c6b2-4a7a-9c44-bb870f695956")]
 public class MenuSettings : SettingsBase

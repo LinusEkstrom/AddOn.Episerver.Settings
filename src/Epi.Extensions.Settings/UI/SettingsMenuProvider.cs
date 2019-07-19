@@ -45,7 +45,7 @@ namespace Epi.Extensions.Settings.UI
             UrlMenuItem cmsGlobalSettings = new UrlMenuItem(
                                                 "Global settings",
                                                 "/global/cms/settings",
-                                                "/modules/app/settings")
+                                                "/episerver/Epi.Extensions.Settings/settings")
                                                 {
                                                     IsAvailable = request => PrincipalInfo.HasAdminAccess
                                                 };

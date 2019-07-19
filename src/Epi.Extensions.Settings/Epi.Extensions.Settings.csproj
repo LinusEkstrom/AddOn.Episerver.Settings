@@ -182,6 +182,8 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="web.config.install.xdt" />
+    <None Include="web.config.uninstall.xdt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Epi.Libraries.Settings.EmbeddedLangFiles_DA.xml" />
@@ -207,9 +209,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="AfterBuild" DependsOnTargets="CreateAddOnPackage; "></Target>
+  <Target Name="AfterBuild" DependsOnTargets="CreateAddOnPackage; ">
+  </Target>
   <Target Name="CreateAddOnPackage" Condition=" '$(Configuration)' == 'Release' ">
-   <PropertyGroup>
+    <PropertyGroup>
       <PackageOutputDir>..\..\NuGet</PackageOutputDir>
     </PropertyGroup>
     <Exec Command="nuget pack $(MSBuildProjectFile) -OutputDirectory $(PackageOutputDir) -properties Configuration=Release" />
