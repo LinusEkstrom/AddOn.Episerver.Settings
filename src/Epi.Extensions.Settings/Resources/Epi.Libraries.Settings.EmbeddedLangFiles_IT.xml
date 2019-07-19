@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<languages>
+  <language name="Italiano" id="it">
+    <contentrepositories>
+      <settings>
+        <customselecttitle>Impostazione</customselecttitle>
+        <name>Impostazioni</name>
+      </settings>
+      <globalsettings>
+        <customselecttitle>Impostazione globale</customselecttitle>
+        <name>Impostazioni globali</name>
+      </globalsettings>
+    </contentrepositories>
+    <contenttypes>
+      <settingsbase>
+        <compare>
+          <onlyoneversion>C'è solo una versione di questo blocco. Non c'è niente con cui confrontare.</onlyoneversion>
+        </compare>
+        <copy>
+          <multiple>
+            <title>Copia blocchi</title>
+          </multiple>
+          <single>
+            <title>Copia blocco</title>
+          </single>
+        </copy>
+        <create>Nuovo blocco</create>
+        <createdescription>Selezionare dove si desidera creare il blocco. Le cartelle possono essere gestite nella biblioteca dei blocchi nel pannello delle risorse.</createdescription>
+        <deletelanguagebranchdescription>Si è sicuri di voler eliminare permanentemente tutte le versioni del blocco &lt;strong&gt;{0}&lt;/strong&gt; in &lt;strong&gt;{1}&lt;/strong&gt;? &lt;br/&gt;Questa azione non può essere annullata.</deletelanguagebranchdescription>
+        <forthis>Per questo {0}</forthis>
+        <languagenotifications>
+          <fallback>Questo blocco è mostrato in {1} sul sito perché non è stato pubblicato in {0} e non è stata attivata una lingua di riserva.</fallback>
+          <missing>Questo blocco è in {1}. Non esiste in {0}. Non sarà visibile sul sito.</missing>
+          <replacement>Per i visitatori, questo blocco viene sostituito da una versione in {1}.</replacement>
+        </languagenotifications>
+        <move>
+          <multiple>
+            <confirmation>Vuoi spostare i {0} blocchi?</confirmation>
+            <title>Sposta i blocchi</title>
+          </multiple>
+          <single>
+            <confirmation>Si vuole spostare questo blocco?</confirmation>
+            <title>Sposta il blocco</title>
+          </single>
+        </move>
+        <movedescription>Questa modifica avrà effetto immediato e qualsiasi contenuto pubblicato che è spostato rimarrà pubblicato nella nuova posizione.</movedescription>
+        <movetotrash>Sposta i blocchi nel cestino</movetotrash>
+        <movetotrashdescription>Vuoi spostare &lt;strong&gt;{0}&lt;/strong&gt; i blocchi nel cestino?</movetotrashdescription>
+        <movetotrashsingleitem>Sposta il blocco nel cestino</movetotrashsingleitem>
+        <movetotrashsingleitemdescription>Vuoi spostare il blocco &lt;strong&gt;{0}&lt;/strong&gt; nel cestino?</movetotrashsingleitemdescription>
+        <name>Blocco</name>
+        <newitemdefaultname>Nuovo blocco</newitemdefaultname>
+        <othertypes>Altri tipi di blocco</othertypes>
+        <reference>
+          <multiple>
+            <notused>Nessun altro contenuto usa questi blocchi. Possono essere tranquillamente essere spostati nel cestino.</notused>
+            <used>Questi blocchi sono utilizzati nei seguenti posti. Per evitare errori sul sito, assicurarsi che i blocchi non siano utilizzati da nessuna parte.</used>
+          </multiple>
+          <single>
+            <notused>Nessun altro contenuto usa questo blocco. Può essere tranquillamente spostato nel cestino.</notused>
+            <used>Il blocco è utilizzato nei seguenti posti. Per evitare errori sul sito, assicurarsi che il blocco non sia utilizzato da nessuna parte.</used>
+          </single>
+        </reference>
+        <referencesdescription>Il blocco &lt;strong&gt;{0}&lt;/strong&gt; è utilizzato nei seguenti posti.</referencesdescription>
+        <selectparent>Seleziona cartella</selectparent>
+        <suggestedtypes>Tipi di blocco consigliati</suggestedtypes>
+      </settingsbase>
+    </contenttypes>
+    <episerver>
+      <cms>
+        <components>
+          <settings>
+            <title>Impostazioni</title>
+            <description>Impostazioni</description>
+          </settings>
+          <globalsettings>
+            <title>Impostazioni globali</title>
+            <description>Impostazioni globali</description>
+          </globalsettings>
+        </components>
+      </cms>
+    </episerver>
+    <edit>
+      <deletesetting>
+        <deletenotsupported>Un'impostazione globale non può essere cancellata</deletenotsupported>
+      </deletesetting>
+    </edit>
+  </language>
+</languages>

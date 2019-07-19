@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<languages>
+  <language name="suomi" id="fi">
+    <contentrepositories>
+      <settings>
+        <customselecttitle>Asetukset</customselecttitle>
+        <name>Asetukset</name>
+      </settings>
+      <globalsettings>
+        <customselecttitle>Yleiset asetukset</customselecttitle>
+        <name>Yleiset asetukset</name>
+      </globalsettings>
+    </contentrepositories>
+    <contenttypes>
+      <settingsbase>
+        <compare>
+          <onlyoneversion>Tästä asetuksetsta on vain yksi versio. Sitä ei voi verrata mihinkään.</onlyoneversion>
+        </compare>
+        <copy>
+          <multiple>
+            <title>Kopioi asetukset</title>
+          </multiple>
+          <single>
+            <title>Kopioi asetukset</title>
+          </single>
+        </copy>
+        <create>Uusi asetukset</create>
+        <createdescription>Valitse, mihin haluat luoda asetuksetn. Kansioita voidaan hallinnoida resurssiruudun asetuksetkirjastossa.</createdescription>
+        <deletelanguagebranchdescription>Haluatko varmasti poistaa pysyvästi asetuksetn &lt;strong&gt;{0}&lt;/strong&gt; kaikki versiot kohteesta &lt;strong&gt;{1}&lt;/strong&gt;?&lt;br/&gt;Tätä toimenpidettä ei voi peruuttaa.</deletelanguagebranchdescription>
+        <forthis>Tälle kohteelle {0}</forthis>
+        <languagenotifications>
+          <fallback>asetuksetn sivustossa näkyvä kieli on {1}, koska sitä ei ole julkaistu kielellä {0} ja varakieli on otettu käyttöön.</fallback>
+          <missing>asetuksetn kieli on {1}. Sitä ei ole olemassa kielellä {0}. Sitä ei näytetä sivustolla.</missing>
+          <replacement>Vierailijat näkevät tämän asetuksetn sijaan version, jonka kieli on {1}.</replacement>
+        </languagenotifications>
+        <move>
+          <multiple>
+            <confirmation>Haluatko siirtää {0} asetukseta?</confirmation>
+            <title>Siirrä asetukset</title>
+          </multiple>
+          <single>
+            <confirmation>Haluatko siirtää tämän asetuksetn?</confirmation>
+            <title>Siirrä asetukset</title>
+          </single>
+        </move>
+        <movedescription>Tämä muutos tulee voimaan heti, ja mahdollinen siirretty julkaistu sisältö pysyy julkaistuna uudessa paikassa.</movedescription>
+        <movetotrash>Siirrä asetukset roskakoriin</movetotrash>
+        <movetotrashdescription>Haluatko siirtää &lt;strong&gt;{0}&lt;/strong&gt; asetukseta roskakoriin?</movetotrashdescription>
+        <movetotrashsingleitem>Siirrä asetukset roskakoriin</movetotrashsingleitem>
+        <movetotrashsingleitemdescription>Haluatko siirtää asetuksetn &lt;strong&gt;{0}&lt;/strong&gt; roskakoriin?</movetotrashsingleitemdescription>
+        <name>asetukset</name>
+        <newitemdefaultname>Uusi asetukset</newitemdefaultname>
+        <othertypes>Muut asetuksetyypit</othertypes>
+        <reference>
+          <multiple>
+            <notused>Mikään muu sisältö ei käytä näitä asetuksetja. Ne voidaan siirtää turvallisesti roskakoriin.</notused>
+            <used>Näitä asetuksetja käytetään seuraavissa paikoissa. Vältä sivuston virheet varmistamalla, että asetuksetja ei käytetä missään.</used>
+          </multiple>
+          <single>
+            <notused>Mikään muu sisältö ei käytä tätä asetukseta. Se voidaan siirtää turvallisesti roskakoriin.</notused>
+            <used>asetukseta käytetään seuraavissa paikoissa. Vältä sivuston virheet varmistamalla, että asetukseta ei käytetä missään.</used>
+          </single>
+        </reference>
+        <referencesdescription>asetukseta &lt;strong&gt;{0}&lt;/strong&gt; käytetään seuraavissa paikoissa.</referencesdescription>
+        <selectparent>Valitse kansio</selectparent>
+        <suggestedtypes>Suositellut asetuksetyypit</suggestedtypes>
+      </settingsbase>
+    </contenttypes>
+    <episerver>
+      <cms>
+        <components>
+          <settings>
+            <title>Asetukset</title>
+            <description>Asetukset</description>
+          </settings>
+          <globalsettings>
+            <title>Yleiset asetukset</title>
+            <description>Yleiset asetukset</description>
+          </globalsettings>
+        </components>
+      </cms>
+    </episerver>
+    <edit>
+      <deletesetting>
+        <deletenotsupported>Yleistä asetusta ei voi poistaa</deletenotsupported>
+      </deletesetting>
+    </edit>
+  </language>
+</languages>

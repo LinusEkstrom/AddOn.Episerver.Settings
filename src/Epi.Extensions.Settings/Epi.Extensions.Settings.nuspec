@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Linus Ekström, Jeroen Stemerdink</authors>
+    <owners>Linus Ekström</owners>
+    <projectUrl>https://github.com/LinusEkstrom/EpiserverExtensions.Settings</projectUrl>
+    <iconUrl>https://www.episerver.com/Framework/Styles/Images/Products/Integration.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A typed replacement of custom built settings systems built on PageData/BlockData.</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright Linus Ekström, Jeroen Stemerdink 2019</copyright>
+    <tags>EpiServer,UI,EPiServerModulePackage,EPiServerAddon</tags>
+    <dependencies>
+      <dependency id="EPiServer.CMS.Core" version="11.1.0" />
+      <dependency id="EPiServer.CMS.AspNet" version="11.1.0" />
+      <dependency id="EPiServer.CMS.UI.Core" version="11.1.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="readme.txt" target="" />
+    <file src="..\..\templates\SettingsTemplates.DotSettings" target="Tools" />
+    <file src="web.config" target="content\modules\_protected\Epi.Extensions.Settings" />
+    <file src="module.config" target="content\modules\_protected\Epi.Extensions.Settings" />
+    <file src="web.config.install.xdt" target="content" />
+    <file src="web.config.uninstall.xdt" target="content" />
+  </files>
+</package>
