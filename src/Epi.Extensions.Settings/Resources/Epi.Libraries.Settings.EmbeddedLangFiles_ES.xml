@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<languages>
+  <language name="español" id="es">
+    <contentrepositories>
+      <settings>
+        <customselecttitle>Configuración</customselecttitle>
+        <name>Ajustes</name>
+      </settings>
+      <globalsettings>
+        <customselecttitle>Configuración global</customselecttitle>
+        <name>Ajustes globales</name>
+      </globalsettings>
+    </contentrepositories>
+    <contenttypes>
+      <settingsbase>
+        <compare>
+          <onlyoneversion>Sólo existe una versión de este configuración. No hay nada con lo que comparar.</onlyoneversion>
+        </compare>
+        <copy>
+          <multiple>
+            <title>Copiar ajustes</title>
+          </multiple>
+          <single>
+            <title>Copiar configuración</title>
+          </single>
+        </copy>
+        <create>Nuevo configuración</create>
+        <createdescription>Seleccione el lugar donde desea crear el configuración. Las carpetas se pueden gestionar en la biblioteca de ajustes, en el panel de activos.</createdescription>
+        <deletelanguagebranchdescription>¿Está seguro de que desea eliminar permanentemente todas las versiones del configuración &lt;strong&gt;{0}&lt;/strong&gt; en &lt;strong&gt;{1}&lt;/strong&gt;?&lt;br/&gt;Esta acción no se puede deshacer.</deletelanguagebranchdescription>
+        <forthis>Para este {0}</forthis>
+        <languagenotifications>
+          <fallback>Este configuración aparece en {1} en el sitio Web porque no se ha publicado en {0} y se ha activado un idioma de reserva.</fallback>
+          <missing>Este configuración está en {1}. No existe en {0}. No estará visible en el sitio Web.</missing>
+          <replacement>Para los visitantes, este configuración se ha reemplazado con una versión en {1}.</replacement>
+        </languagenotifications>
+        <move>
+          <multiple>
+            <confirmation>¿Desea mover los ajustes {0}?</confirmation>
+            <title>Mover los ajustes</title>
+          </multiple>
+          <single>
+            <confirmation>¿Desea mover este configuración?</confirmation>
+            <title>Mover configuración</title>
+          </single>
+        </move>
+        <movedescription>Este cambio se aplicará inmediatamente y cualquier contenido publicado que se mueva permanecerá publicado en la nueva ubicación.</movedescription>
+        <movetotrash>Mover los ajustes a la papelera</movetotrash>
+        <movetotrashdescription>¿Desea mover los ajustes &lt;strong&gt;{0}&lt;/strong&gt; a la papelera?</movetotrashdescription>
+        <movetotrashsingleitem>Mover el configuración a la papelera</movetotrashsingleitem>
+        <movetotrashsingleitemdescription>¿Desea mover el configuración &lt;strong&gt;{0}&lt;/strong&gt; a la papelera?</movetotrashsingleitemdescription>
+        <name>configuración</name>
+        <newitemdefaultname>Nuevo configuración</newitemdefaultname>
+        <othertypes>Otros tipos de ajustes</othertypes>
+        <reference>
+          <multiple>
+            <notused>Ningún otro contenido utiliza estos ajustes. Se pueden mover a la papelera de forma segura.</notused>
+            <used>Estos ajustes se utilizan en los lugares siguientes. Para evitar errores en el sitio, asegúrese de que los ajustes no se utilizan en ningún lugar.</used>
+          </multiple>
+          <single>
+            <notused>Ningún otro contenido utiliza este configuración. Se puede mover a la papelera de forma segura.</notused>
+            <used>El configuración se utiliza en los lugares siguientes. Para evitar errores en el sitio, asegúrese de que el configuración no se utiliza en ningún lugar.</used>
+          </single>
+        </reference>
+        <referencesdescription>El configuración &lt;strong&gt;{0}&lt;/strong&gt; se utiliza en los lugares siguientes.</referencesdescription>
+        <selectparent>Seleccionar carpeta</selectparent>
+        <suggestedtypes>Tipos de ajustes sugeridos</suggestedtypes>
+      </settingsbase>
+    </contenttypes>
+    <episerver>
+      <cms>
+        <components>
+          <settings>
+            <title>Ajustes</title>
+            <description>Ajustes</description>
+          </settings>
+          <globalsettings>
+            <title>Ajustes globales</title>
+            <description>Ajustes globales</description>
+          </globalsettings>
+        </components>
+      </cms>
+    </episerver>
+    <edit>
+      <deletesetting>
+        <deletenotsupported>No se puede eliminar una configuración global</deletenotsupported>
+      </deletesetting>
+    </edit>
+  </language>
+</languages>

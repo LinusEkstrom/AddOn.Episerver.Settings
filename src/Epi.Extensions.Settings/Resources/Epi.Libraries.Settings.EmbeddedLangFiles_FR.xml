@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<languages>
+  <language name="français" id="fr">
+    <contentrepositories>
+      <settings>
+        <customselecttitle>Paramètre</customselecttitle>
+        <name>Paramètres</name>
+      </settings>
+      <globalsettings>
+        <customselecttitle>Paramètre général</customselecttitle>
+        <name>Paramètres général</name>
+      </globalsettings>
+    </contentrepositories>
+    <contenttypes>
+      <settingsbase>
+        <compare>
+          <onlyoneversion>Il n'y a qu'une version de ce Paramètre. Il n'y rien à comparer.</onlyoneversion>
+        </compare>
+        <copy>
+          <multiple>
+            <title>Copier des Paramètres</title>
+          </multiple>
+          <single>
+            <title>Copier un Paramètre</title>
+          </single>
+        </copy>
+        <create>Nouveau Paramètre</create>
+        <createdescription>Sélectionnez l'emplacement de création du Paramètre. Les dossiers peuvent être gérés dans la bibliothèque de Paramètres dans le volet des actifs.</createdescription>
+        <deletelanguagebranchdescription>Voulez-vous vraiment supprimer définitivement toutes les versions du Paramètre &lt;strong&gt;{0}&lt;/strong&gt; dans &lt;strong&gt;{1}&lt;/strong&gt; ?&lt;br/&gt;Cette action ne peut pas être annulée.</deletelanguagebranchdescription>
+        <forthis>Pour ce {0}</forthis>
+        <languagenotifications>
+          <fallback>Ce Paramètre s'affiche en {1} sur le site, car il n'a pas été publié en {0} et une langue de secours a été activée.</fallback>
+          <missing>Ce Paramètre est en {1}. Il n'existe pas en {0}. Il ne sera pas visible sur le site.</missing>
+          <replacement>Pour les visiteurs, ce Paramètre est remplacé par une version en {1}.</replacement>
+        </languagenotifications>
+        <move>
+          <multiple>
+            <confirmation>Voulez-vous déplacer {0} Paramètres ?</confirmation>
+            <title>Déplacer les Paramètres</title>
+          </multiple>
+          <single>
+            <confirmation>Voulez-vous déplacer ce Paramètre ?</confirmation>
+            <title>Déplacer le Paramètre</title>
+          </single>
+        </move>
+        <movedescription>Cette modification prendra effet immédiatement et tout contenu publié déplacé restera publié au nouvel emplacement.</movedescription>
+        <movetotrash>Déplacer des Paramètres vers la corbeille</movetotrash>
+        <movetotrashdescription>Voulez-vous déplacer &lt;strong&gt;{0}&lt;/strong&gt; Paramètres vers la corbeille ?</movetotrashdescription>
+        <movetotrashsingleitem>Déplacer le Paramètre vers la corbeille</movetotrashsingleitem>
+        <movetotrashsingleitemdescription>Voulez-vous déplacer le Paramètre &lt;strong&gt;{0}&lt;/strong&gt; vers la corbeille ?</movetotrashsingleitemdescription>
+        <name>Paramètre</name>
+        <newitemdefaultname>Nouveau Paramètre</newitemdefaultname>
+        <othertypes>Autres types de Paramètres</othertypes>
+        <reference>
+          <multiple>
+            <notused>Aucun autre contenu n'utilise ces Paramètres. Ils peuvent être placés dans la corbeille en toute sécurité.</notused>
+            <used>Ces Paramètres sont utilisés aux emplacements suivants. Pour éviter des erreurs sur le site, vérifiez que les Paramètres ne sont pas utilisés ailleurs.</used>
+          </multiple>
+          <single>
+            <notused>Aucun autre contenu n'utilise ce Paramètre. Il peut être placé dans la corbeille en toute sécurité.</notused>
+            <used>Le Paramètre est utilisé dans les emplacements suivants. Pour éviter des erreurs sur le site, vérifiez que le Paramètre n'est pas utilisé ailleurs.</used>
+          </single>
+        </reference>
+        <referencesdescription>Le Paramètre &lt;strong&gt;{0}&lt;/strong&gt; est utilisé aux emplacements suivants.</referencesdescription>
+        <selectparent>Sélectionner un dossier</selectparent>
+        <suggestedtypes>Types de Paramètres suggérés</suggestedtypes>
+      </settingsbase>
+    </contenttypes>
+    <episerver>
+      <cms>
+        <components>
+          <settings>
+            <title>Paramètres</title>
+            <description>Paramètres</description>
+          </settings>
+          <globalsettings>
+            <title>Paramètres général</title>
+            <description>Paramètres général</description>
+          </globalsettings>
+        </components>
+      </cms>
+    </episerver>
+    <edit>
+      <deletesetting>
+        <deletenotsupported>Un paramètre global ne peut pas être supprimé</deletenotsupported>
+      </deletesetting>
+    </edit>
+  </language>
+</languages>

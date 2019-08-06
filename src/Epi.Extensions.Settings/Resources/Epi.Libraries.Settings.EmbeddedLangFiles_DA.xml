@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<languages>
+  <language name="dansk" id="da">
+    <contentrepositories>
+      <settings>
+        <customselecttitle>Indstilling</customselecttitle>
+        <name>Indstillinger</name>
+      </settings>
+      <globalsettings>
+        <customselecttitle>Globale indstilling</customselecttitle>
+        <name>Globale indstillinger</name>
+      </globalsettings>
+    </contentrepositories>
+    <contenttypes>
+      <settingsbase>
+        <compare>
+          <onlyoneversion>Der er kun én version af denne indstilling. Der er intet at sammenligne med.</onlyoneversion>
+        </compare>
+        <copy>
+          <multiple>
+            <title>Kopiér indstillinger</title>
+          </multiple>
+          <single>
+            <title>Kopiér en indstilling</title>
+          </single>
+        </copy>
+        <create>Ny indstilling</create>
+        <createdescription>Vælg, hvor indstillingern skal oprettes. Mapper kan administreres i indstillingbiblioteket i aktivruden.</createdescription>
+        <deletelanguagebranchdescription>Er du sikker på, at du vil slette alle versioner af indstillinger &lt;strong&gt;{0}&lt;/strong&gt; på &lt;strong&gt;{1}&lt;/strong&gt; permanent?&lt;br/&gt;Handlingen kan ikke fortrydes.</deletelanguagebranchdescription>
+        <forthis>For denne/dette {0}</forthis>
+        <languagenotifications>
+          <fallback>Denne indstilling vises på {1} på webstedet, fordi den ikke er blevet publiceret på {0}, og et reservesprog er aktiveret.</fallback>
+          <missing>Denne indstilling er på {1}. Den findes ikke på {0}. Den vil ikke være synlig på webstedet.</missing>
+          <replacement>For besøgende erstattes denne indstilling med en indstilling på {1}.</replacement>
+        </languagenotifications>
+        <move>
+          <multiple>
+            <confirmation>Vil du flytte {0} indstillinger?</confirmation>
+            <title>Flyt indstillinger</title>
+          </multiple>
+          <single>
+            <confirmation>Vil du flytte denne indstilling?</confirmation>
+            <title>Flyt indstilling</title>
+          </single>
+        </move>
+        <movedescription>Denne ændring træder i kraft straks, og eventuelt publiceret indhold, som flyttes, forbliver publiceret på den nye placering.</movedescription>
+        <movetotrash>Flyt indstillinger til papirkurv</movetotrash>
+        <movetotrashdescription>Vil du flytte &lt;strong&gt;{0}&lt;/strong&gt; indstillinger til papirkurven?</movetotrashdescription>
+        <movetotrashsingleitem>Flyt indstilling til papirkurv</movetotrashsingleitem>
+        <movetotrashsingleitemdescription>Vil du flytte indstillingern &lt;strong&gt;{0}&lt;/strong&gt; til papirkurven?</movetotrashsingleitemdescription>
+        <name>indstilling</name>
+        <newitemdefaultname>Ny indstilling</newitemdefaultname>
+        <othertypes>Andre indstillingtyper</othertypes>
+        <reference>
+          <multiple>
+            <notused>Der er intet andet indhold, som anvender disse indstillinger. Du kan flytte dem til papirkurven, uden at det giver problemer.</notused>
+            <used>indstillingerne anvendes på følgende steder. Hvis du vil undgå fejl på webstedet, skal du sørge for, at indstillingerne ikke anvendes nogen steder.</used>
+          </multiple>
+          <single>
+            <notused>Der er intet andet indhold, som anvender denne indstilling. Du kan flytte den til papirkurven, uden at det giver problemer.</notused>
+            <used>indstillingern anvendes på følgende steder. Hvis du vil undgå fejl på webstedet, skal du sørge for, at indstillingern ikke anvendes nogen steder.</used>
+          </single>
+        </reference>
+        <referencesdescription>indstillingern &lt;strong&gt;{0}&lt;/strong&gt; anvendes på følgende steder.</referencesdescription>
+        <selectparent>Vælg mappe</selectparent>
+        <suggestedtypes>Anbefalede indstillingtyper</suggestedtypes>
+      </settingsbase>
+    </contenttypes>
+    <episerver>
+      <cms>
+        <components>
+          <settings>
+            <title>Indstillinger</title>
+            <description>The indstillinger</description>
+          </settings>
+          <globalsettings>
+            <title>Globale indstillinger</title>
+            <description>Globale indstillinger</description>
+          </globalsettings>
+        </components>
+      </cms>
+    </episerver>
+    <edit>
+      <deletesetting>
+        <deletenotsupported>En global indstilling kan ikke slettes</deletenotsupported>
+      </deletesetting>
+    </edit>
+  </language>
+</languages>
