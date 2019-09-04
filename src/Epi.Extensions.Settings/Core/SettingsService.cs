@@ -33,6 +33,7 @@ namespace Epi.Extensions.Settings.Core
     using EPiServer.DataAbstraction;
     using EPiServer.Framework.TypeScanner;
     using EPiServer.Logging;
+    using EPiServer.Web;
     using EPiServer.Web.Routing;
 
     /// <summary>
@@ -246,7 +247,7 @@ namespace Epi.Extensions.Settings.Core
                 this.contentRootService.Register<ContentFolder>(
                     rootName: GlobalSettingsRootName,
                     contentRootId: this.GlobalSettingsRootGuid,
-                    parent: ContentReference.RootPage);
+                    parent: SiteDefinition.Current.GlobalAssetsRoot);
                 this.GlobalSettingsRoot = this.contentRootService.Get(rootName: GlobalSettingsRootName);
             }
             catch (NotSupportedException notSupportedException)
@@ -260,7 +261,7 @@ namespace Epi.Extensions.Settings.Core
                 this.contentRootService.Register<ContentFolder>(
                     rootName: SettingsRootName,
                     contentRootId: this.SettingsRootGuid,
-                    parent: ContentReference.RootPage);
+                    parent: SiteDefinition.Current.SiteAssetsRoot);
                 this.SettingsRoot = this.contentRootService.Get(rootName: SettingsRootName);
             }
             catch (NotSupportedException notSupportedException)
