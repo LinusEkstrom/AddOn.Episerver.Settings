@@ -2,7 +2,7 @@
 <configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
   <episerver.shell xdt:Transform="InsertIfMissing">
     <protectedModules xdt:Transform="InsertIfMissing">
-      <add name="Epi.Extensions.Settings" xdt:Transform="InsertIfMissing" xdt:Locator="Match(name)" />
+      <add name="AddOn.Episerver.Settings" xdt:Transform="InsertIfMissing" xdt:Locator="Match(name)" />
     </protectedModules>
   </episerver.shell>
 </configuration>

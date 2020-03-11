@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SettingsContentTypeAttribute.cs" company="none">
+// <copyright file="SettingsBase.cs" company="none">
 //      Copyright © 2019 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
 //      of this software and associated documentation files (the "Software"), to deal
@@ -21,30 +21,43 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Epi.Extensions.Settings.Core
+namespace AddOn.Episerver.Settings.Core
 {
     using System;
 
-    using EPiServer.DataAnnotations;
+    using EPiServer.Core;
 
     /// <summary>
-    /// Class SettingsContentTypeAttribute. This class cannot be inherited.
-    /// Implements the <see cref="EPiServer.DataAnnotations.ContentTypeAttribute" />
+    /// Class SettingsBase.
+    /// Implements the <see cref="EPiServer.Core.BasicContent" />
+    /// Implements the <see cref="EPiServer.Core.IVersionable" />
     /// </summary>
-    /// <seealso cref="EPiServer.DataAnnotations.ContentTypeAttribute" />
-    [AttributeUsage(validOn: AttributeTargets.Class)]
-    public sealed class SettingsContentTypeAttribute : ContentTypeAttribute
+    /// <seealso cref="EPiServer.Core.BasicContent" />
+    /// <seealso cref="EPiServer.Core.IVersionable" />
+    public class SettingsBase : BasicContent, IVersionable
     {
         /// <summary>
-        /// Gets or sets the settings instance unique identifier.
+        /// Gets or sets a value indicating whether this item is in pending publish state.
         /// </summary>
-        /// <value>The settings instance unique identifier.</value>
-        public string SettingsInstanceGuid { get; set; }
+        /// <value><c>true</c> if this instance is in pending publish state; otherwise, <c>false</c>.</value>
+        public bool IsPendingPublish { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the settings.
+        /// Gets or sets the start publish date for this item.
         /// </summary>
-        /// <value>The name of the settings.</value>
-        public string SettingsName { get; set; }
+        /// <value>The start publish.</value>
+        public DateTime? StartPublish { get; set; }
+
+        /// <summary>
+        /// Gets or sets the version status of this item.
+        /// </summary>
+        /// <value>The status.</value>
+        public VersionStatus Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets the stop publish date for this item.
+        /// </summary>
+        /// <value>The stop publish.</value>
+        public DateTime? StopPublish { get; set; }
     }
 }

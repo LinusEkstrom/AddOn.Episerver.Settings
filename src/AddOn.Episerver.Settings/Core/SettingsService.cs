@@ -21,7 +21,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Epi.Extensions.Settings.Core
+namespace AddOn.Episerver.Settings.Core
 {
     using System;
     using System.Collections.Generic;

@@ -21,13 +21,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Epi.Extensions.Settings.UI
+namespace AddOn.Episerver.Settings.UI
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Epi.Extensions.Settings.Core;
+    using AddOn.Episerver.Settings.Core;
 
     using EPiServer.Core;
     using EPiServer.Framework.Localization;

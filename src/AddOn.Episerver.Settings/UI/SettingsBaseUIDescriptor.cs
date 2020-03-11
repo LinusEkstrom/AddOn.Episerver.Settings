@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SettingsBase.cs" company="none">
+// <copyright file="SettingsBaseUIDescriptor.cs" company="none">
 //      Copyright © 2019 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
 //      of this software and associated documentation files (the "Software"), to deal
@@ -21,43 +21,32 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Epi.Extensions.Settings.Core
+namespace AddOn.Episerver.Settings.UI
 {
-    using System;
+    using AddOn.Episerver.Settings.Core;
 
     using EPiServer.Core;
+    using EPiServer.Shell;
 
     /// <summary>
-    /// Class SettingsBase.
-    /// Implements the <see cref="EPiServer.Core.BasicContent" />
-    /// Implements the <see cref="EPiServer.Core.IVersionable" />
+    /// Class SettingsBaseUIDescriptor.
+    /// Implements the <see cref="EPiServer.Shell.UIDescriptor{SettingsBase}" />
     /// </summary>
-    /// <seealso cref="EPiServer.Core.BasicContent" />
-    /// <seealso cref="EPiServer.Core.IVersionable" />
-    public class SettingsBase : BasicContent, IVersionable
+    /// <seealso cref="EPiServer.Shell.UIDescriptor{SettingsBase}" />
+    [UIDescriptorRegistration]
+    public class SettingsBaseUIDescriptor : UIDescriptor<SettingsBase>
     {
         /// <summary>
-        /// Gets or sets a value indicating whether this item is in pending publish state.
+        /// Initializes a new instance of the <see cref="SettingsBaseUIDescriptor" /> class.
         /// </summary>
-        /// <value><c>true</c> if this instance is in pending publish state; otherwise, <c>false</c>.</value>
-        public bool IsPendingPublish { get; set; }
-
-        /// <summary>
-        /// Gets or sets the start publish date for this item.
-        /// </summary>
-        /// <value>The start publish.</value>
-        public DateTime? StartPublish { get; set; }
-
-        /// <summary>
-        /// Gets or sets the version status of this item.
-        /// </summary>
-        /// <value>The status.</value>
-        public VersionStatus Status { get; set; }
-
-        /// <summary>
-        /// Gets or sets the stop publish date for this item.
-        /// </summary>
-        /// <value>The stop publish.</value>
-        public DateTime? StopPublish { get; set; }
+        public SettingsBaseUIDescriptor()
+            : base("dijitIcon")
+        {
+            this.IsPrimaryType = true;
+            this.ContainerTypes = new[] { typeof(ContentFolder) };
+            this.CommandIconClass = "epi-iconSettings";
+            this.IconClass = "epi-iconSettings";
+            this.LanguageKey = "settingsbase";
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ISettingsService.cs" company="none">
+// <copyright file="LocalizableSettingsBase.cs" company="none">
 //      Copyright © 2019 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
 //      of this software and associated documentation files (the "Software"), to deal
@@ -21,62 +21,38 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Epi.Extensions.Settings.Core
+namespace AddOn.Episerver.Settings.Core
 {
-    using System;
     using System.Collections.Generic;
+    using System.Globalization;
 
     using EPiServer.Core;
 
     /// <summary>
-    /// Interface ISettingsService
+    /// Class LocalizableSettingsBase.
+    /// Implements the <see cref="SettingsBase" />
+    /// Implements the <see cref="EPiServer.Core.ILocalizable" />
     /// </summary>
-    public interface ISettingsService
+    /// <seealso cref="SettingsBase" />
+    /// <seealso cref="EPiServer.Core.ILocalizable" />
+    public class LocalizableSettingsBase : SettingsBase, ILocalizable
     {
         /// <summary>
-        /// Gets the global settings.
+        /// Gets or sets the existing languages for the <see cref="T:EPiServer.Core.ContentData" />
         /// </summary>
-        /// <value>The global settings.</value>
-        Dictionary<Type, object> GlobalSettings { get; }
+        /// <value>The existing languages.</value>
+        public IEnumerable<CultureInfo> ExistingLanguages { get; set; }
 
         /// <summary>
-        /// Gets or sets the global settings root.
+        /// Gets or sets the language for this instance (typically a <see cref="T:EPiServer.Core.ContentData" /> instance).
         /// </summary>
-        /// <value>The global settings root.</value>
-        ContentReference GlobalSettingsRoot { get; set; }
+        /// <value>The language.</value>
+        public CultureInfo Language { get; set; }
 
         /// <summary>
-        /// Gets or sets the settings root.
+        /// Gets or sets the master language for this <see cref="T:EPiServer.Core.ContentData" /> instance.
         /// </summary>
-        /// <value>The settings root.</value>
-        ContentReference SettingsRoot { get; set; }
-
-        /// <summary>
-        /// Gets the settings.
-        /// </summary>
-        /// <typeparam name="T">The settings type</typeparam>
-        /// <returns>An instance of <typeparamref name="T" /></returns>
-        T GetSettings<T>();
-
-        /// <summary>
-        /// Gets the settings.
-        /// </summary>
-        /// <typeparam name="T">The settings type</typeparam>
-        /// <param name="content">The content.</param>
-        /// <returns>An instance of <typeparamref name="T" /></returns>
-        T GetSettings<T>(IContent content)
-            where T : IContent;
-
-        /// <summary>
-        /// Initializes the settings.
-        /// </summary>
-        /// <exception cref="T:System.NotSupportedException">If the rootname is already registered with another contentRootId.</exception>
-        void InitSettings();
-
-        /// <summary>
-        /// Updates the settings.
-        /// </summary>
-        /// <param name="content">The content.</param>
-        void UpdateSettings(IContent content);
+        /// <value>The master language.</value>
+        public CultureInfo MasterLanguage { get; set; }
     }
 }
