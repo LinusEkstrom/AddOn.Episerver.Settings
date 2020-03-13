@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="LocalizableSettingsBase.cs" company="none">
+// <copyright file="SettingsComponent.cs" company="none">
 //      Copyright © 2019 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
 //      of this software and associated documentation files (the "Software"), to deal
@@ -21,38 +21,34 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Epi.Extensions.Settings.Core
+namespace AddOn.Episerver.Settings.UI
 {
-    using System.Collections.Generic;
-    using System.Globalization;
-
-    using EPiServer.Core;
+    using EPiServer.Shell;
+    using EPiServer.Shell.ViewComposition;
 
     /// <summary>
-    /// Class LocalizableSettingsBase.
-    /// Implements the <see cref="SettingsBase" />
-    /// Implements the <see cref="EPiServer.Core.ILocalizable" />
+    /// Component that provides a tree based navigation for CMS pages.
+    /// Implements the <see cref="EPiServer.Shell.ViewComposition.ComponentDefinitionBase" />
     /// </summary>
-    /// <seealso cref="SettingsBase" />
-    /// <seealso cref="EPiServer.Core.ILocalizable" />
-    public class LocalizableSettingsBase : SettingsBase, ILocalizable
+    /// <seealso cref="EPiServer.Shell.ViewComposition.ComponentDefinitionBase" />
+    [Component]
+    public sealed class SettingsComponent : ComponentDefinitionBase
     {
         /// <summary>
-        /// Gets or sets the existing languages for the <see cref="T:EPiServer.Core.ContentData" />
+        /// Initializes a new instance of the <see cref="SettingsComponent"/> class.
         /// </summary>
-        /// <value>The existing languages.</value>
-        public IEnumerable<CultureInfo> ExistingLanguages { get; set; }
-
-        /// <summary>
-        /// Gets or sets the language for this instance (typically a <see cref="T:EPiServer.Core.ContentData" /> instance).
-        /// </summary>
-        /// <value>The language.</value>
-        public CultureInfo Language { get; set; }
-
-        /// <summary>
-        /// Gets or sets the master language for this <see cref="T:EPiServer.Core.ContentData" /> instance.
-        /// </summary>
-        /// <value>The master language.</value>
-        public CultureInfo MasterLanguage { get; set; }
+        public SettingsComponent()
+            : base("epi-cms/component/SharedBlocks")
+        {
+            this.LanguagePath = "/episerver/cms/components/settings";
+            this.Title = "Settings";
+            this.SortOrder = 200;
+            this.Categories = new string[]
+                                  {
+                                      "cms"
+                                  };
+            this.PlugInAreas = new[] { PlugInArea.AssetsDefaultGroup };
+            this.Settings.Add(new Setting("repositoryKey", value: SettingsRepositoryDescriptor.RepositoryKey));
+        }
     }
 }

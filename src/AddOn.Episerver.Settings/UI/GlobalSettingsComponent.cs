@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SettingsReferenceEditorDescriptor.cs" company="none">
+// <copyright file="GlobalSettingsComponent.cs" company="none">
 //      Copyright © 2019 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
 //      of this software and associated documentation files (the "Software"), to deal
@@ -21,31 +21,28 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Epi.Extensions.Settings.UI
+namespace AddOn.Episerver.Settings.UI
 {
-    using Epi.Extensions.Settings.Core;
-
-    using EPiServer.Core;
-    using EPiServer.Shell.ObjectEditing.EditorDescriptors;
+    using EPiServer.Shell.ViewComposition;
 
     /// <summary>
-    /// Editor descriptor that will create a block selector.
-    /// Implements the <see cref="EPiServer.Shell.ObjectEditing.EditorDescriptors.ContentReferenceEditorDescriptor{SettingsBase}" />
+    /// Component that provides a tree based navigation for global settings.
+    /// Implements the <see cref="EPiServer.Shell.ViewComposition.ComponentDefinitionBase" />
     /// </summary>
-    /// <seealso cref="EPiServer.Shell.ObjectEditing.EditorDescriptors.ContentReferenceEditorDescriptor{SettingsBase}" />
-    [EditorDescriptorRegistration(TargetType = typeof(ContentReference), UIHint = "dynamicsettings")]
-    public class SettingsReferenceEditorDescriptor : ContentReferenceEditorDescriptor<SettingsBase>
+    /// <seealso cref="EPiServer.Shell.ViewComposition.ComponentDefinitionBase" />
+    [Component]
+    public sealed class GlobalSettingsComponent : ComponentDefinitionBase
     {
         /// <summary>
-        /// Gets the repository key.
+        /// Initializes a new instance of the <see cref="GlobalSettingsComponent"/> class.
         /// </summary>
-        /// <value>The repository key.</value>
-        public override string RepositoryKey
+        public GlobalSettingsComponent()
+            : base("epi-cms/component/MainNavigationComponent")
         {
-            get
-            {
-                return SettingsRepositoryDescriptor.RepositoryKey;
-            }
+            this.LanguagePath = "/episerver/cms/components/globalsettings";
+            this.Title = "Global settings";
+            this.SortOrder = 100;
+            this.Settings.Add(new Setting("repositoryKey", value: GlobalSettingsRepositoryDescriptor.RepositoryKey));
         }
     }
 }

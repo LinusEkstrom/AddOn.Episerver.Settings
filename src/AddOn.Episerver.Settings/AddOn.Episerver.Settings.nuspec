@@ -22,8 +22,8 @@
   <files>
     <file src="readme.txt" target="" />
     <file src="..\..\templates\SettingsTemplates.DotSettings" target="Tools" />
-    <file src="web.config" target="content\modules\_protected\Epi.Extensions.Settings" />
-    <file src="module.config" target="content\modules\_protected\Epi.Extensions.Settings" />
+    <file src="web.config" target="content\modules\_protected\AddOn.Episerver.Settings" />
+    <file src="module.config" target="content\modules\_protected\AddOn.Episerver.Settings" />
     <file src="web.config.install.xdt" target="content" />
     <file src="web.config.uninstall.xdt" target="content" />
   </files>

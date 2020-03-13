@@ -21,7 +21,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Epi.Extensions.Settings.Core
+namespace AddOn.Episerver.Settings.Core
 {
     using System;
     using System.Collections.Generic;
@@ -335,16 +335,24 @@ namespace Epi.Extensions.Settings.Core
         /// <summary>
         /// Initializes the content instances.
         /// </summary>
+        /// <exception cref="T:EPiServer.Core.EPiServerException">Could not create instance of a content type since it has an invalid .NET class associated. This happens if a class have been deleted, try remove the content type in Admin or from database."</exception>
         private void InitializeContentInstances()
         {
+            List<IContent> existingItems = new List<IContent>();
             Type type = typeof(SettingsContentTypeAttribute);
-
             IEnumerable<Type> settingsModelTypes = this.typeScannerLookup.AllTypes.Where(
-                t => t.GetCustomAttributes(typeof(SettingsContentTypeAttribute), false).Length > 0);
+                t => t.GetCustomAttributes(type, false).Length > 0);
 
-            List<IContent> existingItems = this.contentRepository
-                .GetChildren<IContent>(contentLink: this.GlobalSettingsRoot).ToList();
-
+            try
+            {
+                existingItems = this.contentRepository
+                    .GetChildren<IContent>(contentLink: this.GlobalSettingsRoot).ToList();
+            }
+            catch (EPiServerException ePiServerException)
+            {
+                this.log.Error($"[Settings] {ePiServerException.Message}", exception: ePiServerException);
+            }
+            
             foreach (Type settingsType in settingsModelTypes)
             {
                 SettingsContentTypeAttribute attribute =
@@ -356,8 +364,10 @@ namespace Epi.Extensions.Settings.Core
                     continue;
                 }
 
-                IContent existingItem = existingItems.FirstOrDefault(
-                    i => i.ContentGuid == new Guid(g: attribute.SettingsInstanceGuid));
+                Guid attributeGuid = new Guid(g: attribute.SettingsInstanceGuid);
+                IContent existingItem = existingItems.Any()
+                    ? existingItems.FirstOrDefault(i => i.ContentGuid == attributeGuid)
+                    : this.contentRepository.Get<IContent>(attributeGuid);
 
                 if (existingItem == null)
                 {

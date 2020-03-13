@@ -21,13 +21,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Epi.Extensions.Settings.UI
+namespace AddOn.Episerver.Settings.UI
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Epi.Extensions.Settings.Core;
+    using AddOn.Episerver.Settings.Core;
 
     using EPiServer;
     using EPiServer.Cms.Shell.Search;
@@ -188,7 +188,7 @@ namespace Epi.Extensions.Settings.UI
             }
 
             return
-                $"/episerver/Epi.Extensions.Settings/settings#context=epi.cms.contentdata:///{contentLink.ID}&viewsetting=viewlanguage:///{language}";
+                $"/episerver/AddOn.Episerver.Settings/settings#context=epi.cms.contentdata:///{contentLink.ID}&viewsetting=viewlanguage:///{language}";
         }
     }
 }

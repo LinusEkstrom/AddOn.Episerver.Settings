@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SettingsComponent.cs" company="none">
+// <copyright file="SettingsReferenceEditorDescriptor.cs" company="none">
 //      Copyright © 2019 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
 //      of this software and associated documentation files (the "Software"), to deal
@@ -21,36 +21,31 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Epi.Extensions.Settings.UI
+namespace AddOn.Episerver.Settings.UI
 {
-    using System.Collections.Generic;
+    using AddOn.Episerver.Settings.Core;
 
-    using EPiServer.Shell;
-    using EPiServer.Shell.ViewComposition;
+    using EPiServer.Core;
+    using EPiServer.Shell.ObjectEditing.EditorDescriptors;
 
     /// <summary>
-    /// Component that provides a tree based navigation for CMS pages.
-    /// Implements the <see cref="EPiServer.Shell.ViewComposition.ComponentDefinitionBase" />
+    /// Editor descriptor that will create a block selector.
+    /// Implements the <see cref="EPiServer.Shell.ObjectEditing.EditorDescriptors.ContentReferenceEditorDescriptor{SettingsBase}" />
     /// </summary>
-    /// <seealso cref="EPiServer.Shell.ViewComposition.ComponentDefinitionBase" />
-    [Component]
-    public sealed class SettingsComponent : ComponentDefinitionBase
+    /// <seealso cref="EPiServer.Shell.ObjectEditing.EditorDescriptors.ContentReferenceEditorDescriptor{SettingsBase}" />
+    [EditorDescriptorRegistration(TargetType = typeof(ContentReference), UIHint = "dynamicsettings")]
+    public class SettingsReferenceEditorDescriptor : ContentReferenceEditorDescriptor<SettingsBase>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SettingsComponent"/> class.
+        /// Gets the repository key.
         /// </summary>
-        public SettingsComponent()
-            : base("epi-cms/component/SharedBlocks")
+        /// <value>The repository key.</value>
+        public override string RepositoryKey
         {
-            this.LanguagePath = "/episerver/cms/components/settings";
-            this.Title = "Settings";
-            this.SortOrder = 200;
-            this.Categories = new string[]
-                                  {
-                                      "cms"
-                                  };
-            this.PlugInAreas = new[] { PlugInArea.AssetsDefaultGroup };
-            this.Settings.Add(new Setting("repositoryKey", value: SettingsRepositoryDescriptor.RepositoryKey));
+            get
+            {
+                return SettingsRepositoryDescriptor.RepositoryKey;
+            }
         }
     }
 }

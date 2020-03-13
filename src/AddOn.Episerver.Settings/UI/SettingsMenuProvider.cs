@@ -21,7 +21,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Epi.Extensions.Settings.UI
+namespace AddOn.Episerver.Settings.UI
 {
     using System.Collections.Generic;
 
@@ -45,7 +45,7 @@ namespace Epi.Extensions.Settings.UI
             UrlMenuItem cmsGlobalSettings = new UrlMenuItem(
                                                 "Global settings",
                                                 "/global/cms/settings",
-                                                "/episerver/Epi.Extensions.Settings/settings")
+                                                "/episerver/AddOn.Episerver.Settings/settings")
                                                 {
                                                     IsAvailable = request => PrincipalInfo.HasAdminAccess
                                                 };
