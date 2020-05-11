@@ -37,15 +37,15 @@ namespace AddOn.Episerver.Settings.UI
 
     /// <summary>
     /// Class SettingsView.
-    /// Implements the <see cref="EPiServer.Shell.ViewComposition.ICompositeView" />
-    /// Implements the <see cref="EPiServer.Web.Routing.IRoutable" />
-    /// Implements the <see cref="EPiServer.Shell.Web.ICustomGlobalNavigationMenuBehavior" />
-    /// Implements the <see cref="EPiServer.Shell.ViewComposition.IRestrictedComponentCategoryDefinition" />
+    /// Implements the <see cref="ICompositeView" />
+    /// Implements the <see cref="IRoutable" />
+    /// Implements the <see cref="ICustomGlobalNavigationMenuBehavior" />
+    /// Implements the <see cref="IRestrictedComponentCategoryDefinition" />
     /// </summary>
-    /// <seealso cref="EPiServer.Shell.ViewComposition.ICompositeView" />
-    /// <seealso cref="EPiServer.Web.Routing.IRoutable" />
-    /// <seealso cref="EPiServer.Shell.Web.ICustomGlobalNavigationMenuBehavior" />
-    /// <seealso cref="EPiServer.Shell.ViewComposition.IRestrictedComponentCategoryDefinition" />
+    /// <seealso cref="ICompositeView" />
+    /// <seealso cref="IRoutable" />
+    /// <seealso cref="ICustomGlobalNavigationMenuBehavior" />
+    /// <seealso cref="IRestrictedComponentCategoryDefinition" />
     [CompositeView]
     public class SettingsView : ICompositeView,
                                 IRoutable,

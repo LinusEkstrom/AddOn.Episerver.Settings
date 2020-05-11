@@ -29,11 +29,11 @@ namespace AddOn.Episerver.Settings.Core
 
     /// <summary>
     /// Class SettingsBase.
-    /// Implements the <see cref="EPiServer.Core.BasicContent" />
-    /// Implements the <see cref="EPiServer.Core.IVersionable" />
+    /// Implements the <see cref="BasicContent" />
+    /// Implements the <see cref="IVersionable" />
     /// </summary>
-    /// <seealso cref="EPiServer.Core.BasicContent" />
-    /// <seealso cref="EPiServer.Core.IVersionable" />
+    /// <seealso cref="BasicContent" />
+    /// <seealso cref="IVersionable" />
     public class SettingsBase : BasicContent, IVersionable
     {
         /// <summary>

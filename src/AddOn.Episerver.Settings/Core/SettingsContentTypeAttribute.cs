@@ -29,9 +29,9 @@ namespace AddOn.Episerver.Settings.Core
 
     /// <summary>
     /// Class SettingsContentTypeAttribute. This class cannot be inherited.
-    /// Implements the <see cref="EPiServer.DataAnnotations.ContentTypeAttribute" />
+    /// Implements the <see cref="ContentTypeAttribute" />
     /// </summary>
-    /// <seealso cref="EPiServer.DataAnnotations.ContentTypeAttribute" />
+    /// <seealso cref="ContentTypeAttribute" />
     [AttributeUsage(validOn: AttributeTargets.Class)]
     public sealed class SettingsContentTypeAttribute : ContentTypeAttribute
     {

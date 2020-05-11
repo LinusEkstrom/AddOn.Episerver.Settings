@@ -31,10 +31,10 @@ namespace AddOn.Episerver.Settings.Core
     /// <summary>
     /// Class LocalizableSettingsBase.
     /// Implements the <see cref="SettingsBase" />
-    /// Implements the <see cref="EPiServer.Core.ILocalizable" />
+    /// Implements the <see cref="ILocalizable" />
     /// </summary>
     /// <seealso cref="SettingsBase" />
-    /// <seealso cref="EPiServer.Core.ILocalizable" />
+    /// <seealso cref="ILocalizable" />
     public class LocalizableSettingsBase : SettingsBase, ILocalizable
     {
         /// <summary>

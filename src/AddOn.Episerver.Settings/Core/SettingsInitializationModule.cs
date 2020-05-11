@@ -37,7 +37,7 @@ namespace AddOn.Episerver.Settings.Core
     /// <summary>
     /// Class SettingsInit.
     /// </summary>
-    /// <seealso cref="EPiServer.Framework.IInitializableModule" />
+    /// <seealso cref="IInitializableModule" />
     /// <author>Jeroen Stemerdink</author>
     [InitializableModule]
     [ModuleDependency(typeof(InitializationModule))]

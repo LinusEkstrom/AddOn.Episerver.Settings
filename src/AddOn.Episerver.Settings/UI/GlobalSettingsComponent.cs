@@ -27,9 +27,9 @@ namespace AddOn.Episerver.Settings.UI
 
     /// <summary>
     /// Component that provides a tree based navigation for global settings.
-    /// Implements the <see cref="EPiServer.Shell.ViewComposition.ComponentDefinitionBase" />
+    /// Implements the <see cref="ComponentDefinitionBase" />
     /// </summary>
-    /// <seealso cref="EPiServer.Shell.ViewComposition.ComponentDefinitionBase" />
+    /// <seealso cref="ComponentDefinitionBase" />
     [Component]
     public sealed class GlobalSettingsComponent : ComponentDefinitionBase
     {

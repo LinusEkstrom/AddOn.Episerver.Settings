@@ -30,9 +30,9 @@ namespace AddOn.Episerver.Settings.UI
 
     /// <summary>
     /// Editor descriptor that will create a block selector.
-    /// Implements the <see cref="EPiServer.Shell.ObjectEditing.EditorDescriptors.ContentReferenceEditorDescriptor{SettingsBase}" />
+    /// Implements the <see cref="ContentReferenceEditorDescriptor{SettingsBase}" />
     /// </summary>
-    /// <seealso cref="EPiServer.Shell.ObjectEditing.EditorDescriptors.ContentReferenceEditorDescriptor{SettingsBase}" />
+    /// <seealso cref="ContentReferenceEditorDescriptor{SettingsBase}" />
     [EditorDescriptorRegistration(TargetType = typeof(ContentReference), UIHint = "dynamicsettings")]
     public class SettingsReferenceEditorDescriptor : ContentReferenceEditorDescriptor<SettingsBase>
     {

@@ -36,9 +36,9 @@ namespace AddOn.Episerver.Settings.UI
 
     /// <summary>
     /// Class GlobalSettingsRepositoryDescriptor.
-    /// Implements the <see cref="EPiServer.Shell.ContentRepositoryDescriptorBase" />
+    /// Implements the <see cref="ContentRepositoryDescriptorBase" />
     /// </summary>
-    /// <seealso cref="EPiServer.Shell.ContentRepositoryDescriptorBase" />
+    /// <seealso cref="ContentRepositoryDescriptorBase" />
     [ServiceConfiguration(typeof(IContentRepositoryDescriptor))]
     public class GlobalSettingsRepositoryDescriptor : ContentRepositoryDescriptorBase
     {
