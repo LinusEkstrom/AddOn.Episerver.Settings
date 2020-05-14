@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="LocalizableSettingsBase.cs" company="none">
-//      Copyright © 2019 Linus Ekström, Jeroen Stemerdink.
+//      Copyright © 2020 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
 //      of this software and associated documentation files (the "Software"), to deal
 //      in the Software without restriction, including without limitation the rights
@@ -31,10 +31,10 @@ namespace AddOn.Episerver.Settings.Core
     /// <summary>
     /// Class LocalizableSettingsBase.
     /// Implements the <see cref="SettingsBase" />
-    /// Implements the <see cref="EPiServer.Core.ILocalizable" />
+    /// Implements the <see cref="ILocalizable" />
     /// </summary>
     /// <seealso cref="SettingsBase" />
-    /// <seealso cref="EPiServer.Core.ILocalizable" />
+    /// <seealso cref="ILocalizable" />
     public class LocalizableSettingsBase : SettingsBase, ILocalizable
     {
         /// <summary>

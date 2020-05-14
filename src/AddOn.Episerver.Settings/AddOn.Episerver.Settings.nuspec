@@ -11,7 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A typed replacement of custom built settings systems built on PageData/BlockData.</description>
     <releaseNotes></releaseNotes>
-    <copyright>Copyright Linus Ekström, Jeroen Stemerdink 2019</copyright>
+    <copyright>Copyright Linus Ekström, Jeroen Stemerdink 2020</copyright>
     <tags>EpiServer,UI,EPiServerModulePackage,EPiServerAddon</tags>
     <dependencies>
       <dependency id="EPiServer.CMS.Core" version="11.1.0" />

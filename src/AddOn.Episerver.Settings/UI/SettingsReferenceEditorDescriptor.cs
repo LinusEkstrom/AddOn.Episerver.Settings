@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SettingsReferenceEditorDescriptor.cs" company="none">
-//      Copyright © 2019 Linus Ekström, Jeroen Stemerdink.
+//      Copyright © 2020 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
 //      of this software and associated documentation files (the "Software"), to deal
 //      in the Software without restriction, including without limitation the rights
@@ -30,9 +30,9 @@ namespace AddOn.Episerver.Settings.UI
 
     /// <summary>
     /// Editor descriptor that will create a block selector.
-    /// Implements the <see cref="EPiServer.Shell.ObjectEditing.EditorDescriptors.ContentReferenceEditorDescriptor{SettingsBase}" />
+    /// Implements the <see cref="ContentReferenceEditorDescriptor{SettingsBase}" />
     /// </summary>
-    /// <seealso cref="EPiServer.Shell.ObjectEditing.EditorDescriptors.ContentReferenceEditorDescriptor{SettingsBase}" />
+    /// <seealso cref="ContentReferenceEditorDescriptor{SettingsBase}" />
     [EditorDescriptorRegistration(TargetType = typeof(ContentReference), UIHint = "dynamicsettings")]
     public class SettingsReferenceEditorDescriptor : ContentReferenceEditorDescriptor<SettingsBase>
     {

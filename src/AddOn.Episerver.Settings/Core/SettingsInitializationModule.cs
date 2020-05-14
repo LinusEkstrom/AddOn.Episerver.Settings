@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SettingsInitializationModule.cs" company="none">
-//      Copyright © 2019 Linus Ekström, Jeroen Stemerdink.
+//      Copyright © 2020 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
 //      of this software and associated documentation files (the "Software"), to deal
 //      in the Software without restriction, including without limitation the rights
@@ -37,7 +37,7 @@ namespace AddOn.Episerver.Settings.Core
     /// <summary>
     /// Class SettingsInit.
     /// </summary>
-    /// <seealso cref="EPiServer.Framework.IInitializableModule" />
+    /// <seealso cref="IInitializableModule" />
     /// <author>Jeroen Stemerdink</author>
     [InitializableModule]
     [ModuleDependency(typeof(InitializationModule))]

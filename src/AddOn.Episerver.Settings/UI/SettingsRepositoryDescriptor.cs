@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SettingsRepositoryDescriptor.cs" company="none">
-//      Copyright © 2019 Linus Ekström, Jeroen Stemerdink.
+//      Copyright © 2020 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
 //      of this software and associated documentation files (the "Software"), to deal
 //      in the Software without restriction, including without limitation the rights
@@ -36,9 +36,9 @@ namespace AddOn.Episerver.Settings.UI
 
     /// <summary>
     /// Class SettingsRepositoryDescriptor.
-    /// Implements the <see cref="EPiServer.Shell.ContentRepositoryDescriptorBase" />
+    /// Implements the <see cref="ContentRepositoryDescriptorBase" />
     /// </summary>
-    /// <seealso cref="EPiServer.Shell.ContentRepositoryDescriptorBase" />
+    /// <seealso cref="ContentRepositoryDescriptorBase" />
     [ServiceConfiguration(typeof(IContentRepositoryDescriptor))]
     public class SettingsRepositoryDescriptor : ContentRepositoryDescriptorBase
     {

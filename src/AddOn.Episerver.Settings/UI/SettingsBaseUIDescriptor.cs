@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SettingsBaseUIDescriptor.cs" company="none">
-//      Copyright © 2019 Linus Ekström, Jeroen Stemerdink.
+//      Copyright © 2020 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
 //      of this software and associated documentation files (the "Software"), to deal
 //      in the Software without restriction, including without limitation the rights
@@ -30,9 +30,9 @@ namespace AddOn.Episerver.Settings.UI
 
     /// <summary>
     /// Class SettingsBaseUIDescriptor.
-    /// Implements the <see cref="EPiServer.Shell.UIDescriptor{SettingsBase}" />
+    /// Implements the <see cref="UIDescriptor{SettingsBase}" />
     /// </summary>
-    /// <seealso cref="EPiServer.Shell.UIDescriptor{SettingsBase}" />
+    /// <seealso cref="UIDescriptor{SettingsBase}" />
     [UIDescriptorRegistration]
     public class SettingsBaseUIDescriptor : UIDescriptor<SettingsBase>
     {

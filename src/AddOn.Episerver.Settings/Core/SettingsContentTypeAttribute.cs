@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SettingsContentTypeAttribute.cs" company="none">
-//      Copyright © 2019 Linus Ekström, Jeroen Stemerdink.
+//      Copyright © 2020 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
 //      of this software and associated documentation files (the "Software"), to deal
 //      in the Software without restriction, including without limitation the rights
@@ -29,9 +29,9 @@ namespace AddOn.Episerver.Settings.Core
 
     /// <summary>
     /// Class SettingsContentTypeAttribute. This class cannot be inherited.
-    /// Implements the <see cref="EPiServer.DataAnnotations.ContentTypeAttribute" />
+    /// Implements the <see cref="ContentTypeAttribute" />
     /// </summary>
-    /// <seealso cref="EPiServer.DataAnnotations.ContentTypeAttribute" />
+    /// <seealso cref="ContentTypeAttribute" />
     [AttributeUsage(validOn: AttributeTargets.Class)]
     public sealed class SettingsContentTypeAttribute : ContentTypeAttribute
     {
