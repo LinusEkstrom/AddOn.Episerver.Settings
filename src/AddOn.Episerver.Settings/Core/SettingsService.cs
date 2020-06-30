@@ -365,9 +365,16 @@ namespace AddOn.Episerver.Settings.Core
                 }
 
                 Guid attributeGuid = new Guid(g: attribute.SettingsInstanceGuid);
-                IContent existingItem = existingItems.Any()
-                    ? existingItems.FirstOrDefault(i => i.ContentGuid == attributeGuid)
-                    : this.contentRepository.Get<IContent>(attributeGuid);
+                IContent existingItem = null;
+                
+                if(existingItems.Any())
+                {
+                    existingItem = existingItems.FirstOrDefault(i => i.ContentGuid == attributeGuid);
+                }
+                if(existingItem == null)
+                {
+                    contentRepository.TryGet<IContent>(attributeGuid, out existingItem);
+                }
 
                 if (existingItem == null)
                 {
