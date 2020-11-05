@@ -31,6 +31,7 @@ namespace AddOn.Episerver.Settings.Core
     using EPiServer;
     using EPiServer.Core;
     using EPiServer.DataAbstraction;
+    using EPiServer.Framework.Cache;
     using EPiServer.Framework.TypeScanner;
     using EPiServer.Logging;
     using EPiServer.Web;
@@ -88,6 +89,11 @@ namespace AddOn.Episerver.Settings.Core
         /// </summary>
         private readonly ITypeScannerLookup typeScannerLookup;
 
+        /// <summary>
+        /// The synchronized object instance cache
+        /// </summary>
+        private readonly ISynchronizedObjectInstanceCache synchronizedObjectInstanceCache;
+
         /// <summary><c>true</c> when this instance is already disposed off; <c>false</c> to when not.</summary>
         private bool disposed;
 
@@ -104,7 +110,8 @@ namespace AddOn.Episerver.Settings.Core
             ContentRootService contentRootService,
             ITypeScannerLookup typeScannerLookup,
             IContentTypeRepository contentTypeRepository,
-            AncestorReferencesLoader ancestorReferencesLoader)
+            AncestorReferencesLoader ancestorReferencesLoader,
+            ISynchronizedObjectInstanceCache synchronizedObjectInstanceCache)
         {
             this.contentRepository = contentRepository;
             this.contentRootService = contentRootService;
@@ -113,6 +120,7 @@ namespace AddOn.Episerver.Settings.Core
             this.ancestorReferencesLoader = ancestorReferencesLoader;
 
             this.GlobalSettings = new Dictionary<Type, object>();
+            this.synchronizedObjectInstanceCache = synchronizedObjectInstanceCache;
         }
 
         /// <summary>
@@ -155,6 +163,55 @@ namespace AddOn.Episerver.Settings.Core
         }
 
         /// <summary>
+        /// Create cache key
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private static string CreateCacheKey(Type type)
+        {
+            return $"Settings_{type}";
+        }
+
+        /// <summary>
+        /// Add cache item
+        /// </summary>
+        /// <param name="cacheKey"></param>
+        /// <param name="value"></param>
+        private void AddCacheItem(string cacheKey, object value)
+        {
+            this.synchronizedObjectInstanceCache.Insert(cacheKey, value, new CacheEvictionPolicy(null, new[] { "Epinova:MasterSettings" }));
+        }
+
+        /// <summary>
+        /// Get cache item
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="cacheKey"></param>
+        /// <returns></returns>
+        private T GetCacheItem<T>(string cacheKey)
+        {
+            var value = this.synchronizedObjectInstanceCache.Get(cacheKey);
+
+            if (value != null)
+            {
+                return (T)value;
+            }
+
+            return default;
+        }
+
+        /// <summary>
+        /// Update cache item
+        /// </summary>
+        /// <param name="cacheKey"></param>
+        /// <param name="value"></param>
+        private void UpdateCacheItem(string cacheKey, object value)
+        {
+            this.synchronizedObjectInstanceCache.Remove(cacheKey);
+            this.AddCacheItem(cacheKey, value);
+        }
+
+        /// <summary>
         /// Gets the settings.
         /// </summary>
         /// <typeparam name="T">The settings type</typeparam>
@@ -168,9 +225,18 @@ namespace AddOn.Episerver.Settings.Core
 
             try
             {
-                if (this.GlobalSettings.ContainsKey(typeof(T)))
+                var type = typeof(T);
+                var cacheKey = CreateCacheKey(type);
+                var cachedSettings = this.GetCacheItem<T>(cacheKey);
+                
+                if (cachedSettings != null)
                 {
-                    return (T)this.GlobalSettings[typeof(T)];
+                    return cachedSettings;
+                }
+
+                if (this.GlobalSettings.ContainsKey(type))
+                {
+                    return (T)this.GlobalSettings[type];
                 }
             }
             catch (KeyNotFoundException keyNotFoundException)
@@ -294,6 +360,10 @@ namespace AddOn.Episerver.Settings.Core
                 }
 
                 this.GlobalSettings[key: contentType] = content;
+
+                var cacheKey = CreateCacheKey(contentType);
+
+                this.UpdateCacheItem(cacheKey, content);
             }
             catch (KeyNotFoundException keyNotFoundException)
             {
@@ -395,7 +465,11 @@ namespace AddOn.Episerver.Settings.Core
                     existingItem = newSettings;
                 }
 
-                this.GlobalSettings.Add(existingItem.GetOriginalType(), value: existingItem);
+                var originalType = existingItem.GetOriginalType();
+                var cacheKey = CreateCacheKey(originalType);
+
+                this.GlobalSettings.Add(originalType, value: existingItem);
+                this.AddCacheItem(cacheKey, existingItem);
             }
         }
 
