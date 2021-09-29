@@ -195,10 +195,7 @@ namespace AddOn.Episerver.Settings.Core
                 return;
             }
 
-            if (e.Content is SettingsBase && e.Content.ParentLink == settingsService.GlobalSettingsRoot)
-            {
-                settingsService.UpdateSettings(content: e.Content);
-            }
+            settingsService.UpdateSettings(e.Content);
         }
     }
 }

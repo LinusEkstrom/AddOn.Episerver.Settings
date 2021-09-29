@@ -26,11 +26,11 @@ namespace AddOn.Episerver.Settings.Core
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
 
     using EPiServer;
     using EPiServer.Core;
     using EPiServer.DataAbstraction;
+    using EPiServer.Framework.Cache;
     using EPiServer.Framework.TypeScanner;
     using EPiServer.Logging;
     using EPiServer.Web;
@@ -41,7 +41,7 @@ namespace AddOn.Episerver.Settings.Core
     /// Implements the <see cref="ISettingsService" />
     /// </summary>
     /// <seealso cref="ISettingsService" />
-    public class SettingsService : ISettingsService, IDisposable
+    public class SettingsService : ISettingsService
     {
         /// <summary>
         /// The global settings root name
@@ -52,6 +52,11 @@ namespace AddOn.Episerver.Settings.Core
         /// The settings root name
         /// </summary>
         public const string SettingsRootName = "Settings Root";
+
+        /// <summary>
+        /// The key used for storing global settings in the synchronized cache
+        /// </summary>
+        private readonly string globalSettingsCacheKey = "addon.episerver.settings.globalsettings";
 
         /// <summary>
         /// The ancestor references loader
@@ -79,17 +84,14 @@ namespace AddOn.Episerver.Settings.Core
         private readonly ILogger log = LogManager.GetLogger();
 
         /// <summary>
-        /// The cache lock
-        /// </summary>
-        private readonly ReaderWriterLockSlim readerWriterLock = new ReaderWriterLockSlim();
-
-        /// <summary>
         /// The type scanner lookup
         /// </summary>
         private readonly ITypeScannerLookup typeScannerLookup;
 
-        /// <summary><c>true</c> when this instance is already disposed off; <c>false</c> to when not.</summary>
-        private bool disposed;
+        /// <summary>
+        /// The synchronized object instance cache
+        /// </summary>
+        private readonly ISynchronizedObjectInstanceCache cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsService"/> class.
@@ -104,22 +106,22 @@ namespace AddOn.Episerver.Settings.Core
             ContentRootService contentRootService,
             ITypeScannerLookup typeScannerLookup,
             IContentTypeRepository contentTypeRepository,
-            AncestorReferencesLoader ancestorReferencesLoader)
+            AncestorReferencesLoader ancestorReferencesLoader,
+            ISynchronizedObjectInstanceCache synchronizedObjectInstanceCache)
         {
             this.contentRepository = contentRepository;
             this.contentRootService = contentRootService;
             this.typeScannerLookup = typeScannerLookup;
             this.contentTypeRepository = contentTypeRepository;
             this.ancestorReferencesLoader = ancestorReferencesLoader;
-
-            this.GlobalSettings = new Dictionary<Type, object>();
+            this.cache = synchronizedObjectInstanceCache;
         }
 
         /// <summary>
         /// Gets the global settings.
         /// </summary>
         /// <value>The global settings.</value>
-        public Dictionary<Type, object> GlobalSettings { get; }
+        public Dictionary<Type, object> GlobalSettings => this.GetGlobalSettings();
 
         /// <summary>
         /// Gets or sets the global settings root.
@@ -143,34 +145,21 @@ namespace AddOn.Episerver.Settings.Core
         /// </summary>
         private Guid SettingsRootGuid { get; } = new Guid("98ed413d-d7b5-4fbf-92a6-120d850fe61c");
 
-        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-        public void Dispose()
-        {
-            if (this.disposed)
-            {
-                return;
-            }
-
-            this.Dispose(true);
-        }
-
         /// <summary>
         /// Gets the settings.
         /// </summary>
         /// <typeparam name="T">The settings type</typeparam>
         /// <returns>An instance of <typeparamref name="T"/> </returns>
-        /// <exception cref="T:System.Threading.LockRecursionException">The current thread cannot acquire the write lock when it holds the read lock.-or-The <see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> property is <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />, and the current thread has attempted to acquire the read lock when it already holds the read lock. -or-The <see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> property is <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />, and the current thread has attempted to acquire the read lock when it already holds the write lock. -or-The recursion number would exceed the capacity of the counter. This limit is so large that applications should never encounter this exception.</exception>
-        /// <exception cref="T:System.ObjectDisposedException">The <see cref="T:System.Threading.ReaderWriterLockSlim" /> object has been disposed.</exception>
-        /// <exception cref="T:System.Threading.SynchronizationLockException">The current thread has not entered the lock in read mode.</exception>
         public T GetSettings<T>()
         {
-            this.readerWriterLock.EnterReadLock();
-
             try
             {
-                if (this.GlobalSettings.ContainsKey(typeof(T)))
+                var type = typeof(T);
+                var globalSettings = GetGlobalSettings();
+
+                if (globalSettings.ContainsKey(type))
                 {
-                    return (T)this.GlobalSettings[typeof(T)];
+                    return (T)globalSettings[type];
                 }
             }
             catch (KeyNotFoundException keyNotFoundException)
@@ -181,12 +170,8 @@ namespace AddOn.Episerver.Settings.Core
             {
                 this.log.Error($"[Settings] {argumentNullException.Message}", exception: argumentNullException);
             }
-            finally
-            {
-                this.readerWriterLock.ExitReadLock();
-            }
 
-            return default;
+            return default(T);
         }
 
         /// <summary>
@@ -282,53 +267,16 @@ namespace AddOn.Episerver.Settings.Core
         /// <exception cref="T:System.Threading.SynchronizationLockException">The current thread has not entered the lock in write mode.</exception>
         public void UpdateSettings(IContent content)
         {
-            Type contentType = content.GetOriginalType();
-
-            this.readerWriterLock.EnterWriteLock();
-
             try
             {
-                if (!this.GlobalSettings.ContainsKey(key: contentType))
+                if (content is SettingsBase && content.ParentLink == this.GlobalSettingsRoot)
                 {
-                    return;
+                    this.ClearCache();
                 }
-
-                this.GlobalSettings[key: contentType] = content;
             }
-            catch (KeyNotFoundException keyNotFoundException)
+            catch (EPiServerException ePiServerException)
             {
-                this.log.Error($"[Settings] {keyNotFoundException.Message}", exception: keyNotFoundException);
-            }
-            catch (ArgumentNullException argumentNullException)
-            {
-                this.log.Error($"[Settings] {argumentNullException.Message}", exception: argumentNullException);
-            }
-            finally
-            {
-                this.readerWriterLock.ExitWriteLock();
-            }
-        }
-
-        /// <summary>Releases unmanaged and - optionally - managed resources.</summary>
-        /// <param name="disposing">
-        /// <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        private void Dispose(bool disposing)
-        {
-            if (this.disposed)
-            {
-                return;
-            }
-
-            if (this.readerWriterLock != null)
-            {
-                this.readerWriterLock.Dispose();
-            }
-
-            this.disposed = true;
-
-            if (disposing)
-            {
-                GC.SuppressFinalize(this);
+                this.log.Error($"[Settings] {ePiServerException.Message}", exception: ePiServerException);
             }
         }
 
@@ -345,14 +293,13 @@ namespace AddOn.Episerver.Settings.Core
 
             try
             {
-                existingItems = this.contentRepository
-                    .GetChildren<IContent>(contentLink: this.GlobalSettingsRoot).ToList();
+                existingItems = this.LoadGlobalSettings().ToList();
             }
             catch (EPiServerException ePiServerException)
             {
                 this.log.Error($"[Settings] {ePiServerException.Message}", exception: ePiServerException);
             }
-            
+
             foreach (Type settingsType in settingsModelTypes)
             {
                 SettingsContentTypeAttribute attribute =
@@ -366,12 +313,12 @@ namespace AddOn.Episerver.Settings.Core
 
                 Guid attributeGuid = new Guid(g: attribute.SettingsInstanceGuid);
                 IContent existingItem = null;
-                
-                if(existingItems.Any())
+
+                if (existingItems.Any())
                 {
                     existingItem = existingItems.FirstOrDefault(i => i.ContentGuid == attributeGuid);
                 }
-                if(existingItem == null)
+                if (existingItem == null)
                 {
                     contentRepository.TryGet<IContent>(attributeGuid, out existingItem);
                 }
@@ -391,12 +338,11 @@ namespace AddOn.Episerver.Settings.Core
                         content: newSettings,
                         action: EPiServer.DataAccess.SaveAction.Publish,
                         access: EPiServer.Security.AccessLevel.NoAccess);
-
-                    existingItem = newSettings;
                 }
-
-                this.GlobalSettings.Add(existingItem.GetOriginalType(), value: existingItem);
             }
+
+            // In case any reads of global settings has occured while populating the settings
+            this.ClearCache();
         }
 
         /// <summary>
@@ -427,6 +373,52 @@ namespace AddOn.Episerver.Settings.Core
             this.contentRepository.TryGet(contentLink: reference, content: out settingsObject);
 
             return settingsObject != null ? settingsObject : default;
+        }
+
+        /// <summary>Loads the global settings instances from below the Global settings root.</summary>
+        /// <returns>
+        ///   All loadable children
+        /// </returns>
+        private IEnumerable<IContent> LoadGlobalSettings()
+        {
+            var existingItemRefs = this.contentRepository.GetDescendents(GlobalSettingsRoot);
+
+            foreach (var itemRef in existingItemRefs)
+            {
+                IContent item = null;
+
+                try
+                {
+                    item = contentRepository.Get<IContent>(itemRef);
+                }
+                catch (EPiServerException ex)
+                {
+                    this.log.Error($"[Settings] {ex.Message}", exception: ex);
+                }
+
+                if (item != null)
+                {
+                    yield return item;
+                }
+            }
+        }
+
+        /// <summary>Gets the global settings from the cache if they exist, otherwise an empty Dictionary.</summary>
+        /// <returns>
+        ///   A dictionary of all existing global settings instances from the cache
+        /// </returns>
+        private Dictionary<Type, object> GetGlobalSettings()
+        {
+            return this.cache.ReadThrough(
+                globalSettingsCacheKey,
+                () =>  this.LoadGlobalSettings().ToDictionary(item => item.GetOriginalType(), item => (object)item), 
+                ReadStrategy.Wait);
+        }
+
+        /// <summary>Removes the global settings entry from the cache.</summary>
+        private void ClearCache()
+        {
+            this.cache.Remove(globalSettingsCacheKey);
         }
     }
 }
