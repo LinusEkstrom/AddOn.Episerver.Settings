@@ -75,7 +75,12 @@ namespace AddOn.Episerver.Settings.UI
             IContentTypeRepository<ContentType> contentTypeRepository,
             EditUrlResolver editUrlResolver,
             ServiceAccessor<SiteDefinition> currentSiteDefinition,
+#if NET461
             LanguageResolver languageResolver,
+#else
+            IContentLanguageAccessor languageResolver,
+#endif
+
             UrlResolver urlResolver,
             TemplateResolver templateResolver,
             UIDescriptorRegistry uiDescriptorRegistry,
