@@ -40,7 +40,7 @@ The convention here is that we will traverse the structure and look for properti
 3. Add a global settings item (will be created at initialization)
 > You can use a [Resharper template](templates/SettingsTemplates.DotSettings)
 ```csharp
-[SettingsContentType(AvailableInEditMode = false, GUID = "15506171-c6b2-4a7a-9c44-bb870f695911", SettingsInstanceGUID = "d8701e64-8206-4e24-bd3f-cb02b875d6c6", SettingsName = "Google Analytics")]
+[SettingsContentType(AvailableInEditMode = false, GUID = "15506171-c6b2-4a7a-9c44-bb870f695911", SettingsInstanceGuid = "d8701e64-8206-4e24-bd3f-cb02b875d6c6", SettingsName = "Google Analytics")]
 public class GoogleAnalyticsSettings : SettingsBase
 {
     public virtual string UserName { get; set; }
@@ -67,7 +67,14 @@ settingsService.GetSettings<GoogleAnalyticsSettings>();
 public virtual ContentReference GoogleAnalyticsSettings { get; set; }
 ```
 * Assign the value of the property to the setting you created in the local settings.
-*After you have done this, content under the node that has assigned the local setting should get these settings, while content outside of this structure should get the global settings.
+* After you have done this, content under the node that has assigned the local setting should get these settings, while content outside of this structure should get the global settings.
+
+## Removing settings classes
+Before removing settings classes it is important to delete any instances of the classes  that has been saved to the database, otherwise there will be problems accessing the folders containing settings. This can be done by going into the adminstrative interface/Tools/Manage Content. Settings instances can be found below *Root/For all Sites/Global Settings Root|Settings Root*.
+
+1. Deploy code no longer using the obsolete classes to the site.
+2. Remove obsolete instances through the administrative interface.
+3. Remove classes from codebase, then deploy again.
 
 ## Requirements
 
