@@ -49,7 +49,6 @@ namespace AddOn.Episerver.Settings.UI
     [CompositeView]
     public class SettingsView : ICompositeView,
                                 IRoutable,
-                                ICustomGlobalNavigationMenuBehavior,
                                 IRestrictedComponentCategoryDefinition
     {
         /// <summary>
@@ -98,18 +97,6 @@ namespace AddOn.Episerver.Settings.UI
             {
                 ContentReference defaultContext = this.settingsService.GlobalSettingsRoot;
                 return defaultContext.GetUri(false).ToString();
-            }
-        }
-
-        /// <summary>
-        /// Gets the type of the menu.
-        /// </summary>
-        /// <value>The type of the menu.</value>
-        public GlobalNavigationMenuType MenuType
-        {
-            get
-            {
-                return GlobalNavigationMenuType.Static;
             }
         }
 

@@ -24,8 +24,11 @@
 namespace AddOn.Episerver.Settings.UI
 {
     using System.Collections.Generic;
-
+#if NET461
     using EPiServer.Security;
+#else
+    using EPiServer.Authorization;
+#endif
     using EPiServer.Shell.Navigation;
 
     /// <summary>
@@ -46,9 +49,13 @@ namespace AddOn.Episerver.Settings.UI
                                                 "Global settings",
                                                 "/global/cms/settings",
                                                 "/episerver/AddOn.Episerver.Settings/settings")
-                                                {
-                                                    IsAvailable = request => PrincipalInfo.HasAdminAccess
-                                                };
+            {
+#if NET461
+                IsAvailable = request => PrincipalInfo.HasAdminAccess
+#else
+                IsAvailable = request => request.User.IsInRole(Roles.CmsAdmins)
+#endif
+            };
 
             return new MenuItem[] { cmsGlobalSettings };
         }

@@ -24,14 +24,17 @@
 namespace AddOn.Episerver.Settings.Core
 {
     using System;
-
     using EPiServer;
     using EPiServer.Core;
     using EPiServer.Framework;
     using EPiServer.Framework.Initialization;
     using EPiServer.Framework.Localization;
     using EPiServer.ServiceLocation;
-
+#if NET461
+#else
+    using EPiServer.Shell.Modules;
+    using Microsoft.Extensions.DependencyInjection;
+#endif
     using InitializationModule = EPiServer.Web.InitializationModule;
 
     /// <summary>
@@ -60,9 +63,15 @@ namespace AddOn.Episerver.Settings.Core
                 return;
             }
 
+#if NET461
             IServiceConfigurationProvider services = context.Services;
-
             services.AddSingleton<ISettingsService, SettingsService>();
+#else
+            context.Services.AddSingleton<ISettingsService, SettingsService>();
+            context.Services.Configure<ProtectedModuleOptions>(pm => pm.Items.Add(new ModuleDetails() { Name = "AddOn.Episerver.Settings" }));
+#endif
+
+
         }
 
         /// <summary>
