@@ -29,6 +29,7 @@
     <None Include="module.config" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="Content\modules\_protected\AddOn.Episerver.Settings" />
     <None Include="module.config" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="contentFiles\any\net5.0\modules\_protected\AddOn.Episerver.Settings" />
     <None Include="..\..\templates\SettingsTemplates.DotSettings" pack="true" PackagePath="Tools" />
+	<None Include="AddOn.Episerver.Settings.targets" pack="true" PackagePath="Build\net5.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
     <PackageReference Include="EPiServer.CMS.AspNetCore.Templating" Version="[12.0.3, 13)" />
