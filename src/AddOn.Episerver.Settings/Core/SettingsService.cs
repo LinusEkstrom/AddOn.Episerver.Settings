@@ -396,7 +396,9 @@ namespace AddOn.Episerver.Settings.Core
                     this.log.Error($"[Settings] {ex.Message}", exception: ex);
                 }
 
-                if (item != null)
+                // If the item is an instance of SettingsBase has been loaded as a fallback 
+                // because the ContentType class no longer exists
+                if (item != null && item.GetOriginalType() != typeof(SettingsBase))
                 {
                     yield return item;
                 }
