@@ -1,7 +1,9 @@
 # AddOn.Episerver.Settings
 
 [![Platform](https://img.shields.io/badge/platform-.NET%204.6.1-blue.svg?style=flat)](https://msdn.microsoft.com/en-us/library/w0x726c2%28v=vs.110%29.aspx)
-[![Platform](https://img.shields.io/badge/EPiServer-%2011.1.0-orange.svg?style=flat)](http://world.episerver.com/cms/)
+[![Platform](https://img.shields.io/badge/platform-.NET%205-blue.svg?style=flat)](https://docs.microsoft.com/en-us/dotnet/)
+[![Platform](https://img.shields.io/badge/Optimizely-%2011.20.7-orange.svg?style=flat)](http://world.episerver.com/cms/)
+[![Platform](https://img.shields.io/badge/Optimizely-%2012.0.2-orange.svg?style=flat)](http://world.episerver.com/cms/)
 [![GitHub license](https://img.shields.io/badge/license-MIT%20license-blue.svg?style=flat)](LICENSE)
 
 
@@ -69,14 +71,17 @@ public virtual ContentReference GoogleAnalyticsSettings { get; set; }
 * Assign the value of the property to the setting you created in the local settings.
 * After you have done this, content under the node that has assigned the local setting should get these settings, while content outside of this structure should get the global settings.
 
-## Removing settings classes
-Before removing settings classes it is important to delete any instances of the classes  that has been saved to the database, otherwise there will be problems accessing the folders containing settings. This can be done by going into the adminstrative interface/Tools/Manage Content. Settings instances can be found below *Root/For all Sites/Global Settings Root|Settings Root*.
+## Removing Settings classes
+If upgrading from an earlier version of AddOn.Episerver.Settings, some values must be set in the database first. In table tblContentType each row that contains a Settings-type must have the Base-column updated to the value **Setting**. This ensures that existing settings entities can be loaded by the CMS even if the type class no longer exists.
 
-1. Deploy code no longer using the obsolete classes to the site.
-2. Remove obsolete instances through the administrative interface.
-3. Remove classes from codebase, then deploy again.
+Then locate and delete all instances that are of the no longer existing settings-types. Remember to remove from the _Global Settings_ **and** to empty the trash can. After this is done the types will be dropped automatically the next time the CMS is restarted.
+
+0. Update tblContentType, set Base column to "Setting" for Settings types.
+1. Deploy code with removed obsolete settings classes to the site.
+2. Remove obsolete instances of settings, including global settings.
+3. Restart site so that the CMS removes the no longer used Content Types.
 
 ## Requirements
 
-* Episerver CMS >= 11.0.0
+* Episerver CMS >= 11.20.7
 * .Net 4.6.1
