@@ -145,12 +145,14 @@ namespace AddOn.Episerver.Settings.Core
         /// <param name="e">The <see cref="DeleteContentEventArgs"/> instance containing the event data.</param>
         private static void DeletingContent(object sender, DeleteContentEventArgs e)
         {
-            if (e == null)
+            if (e == null || e.Content == null)
             {
                 return;
             }
 
-            if (!(e.Content is SettingsBase) || e.Content.ParentLink != settingsService.GlobalSettingsRoot)
+            // if the content item is an instance of SettingsBase, it has been instantiated with the fallback base class
+            // since the ContentType class no longer exists and should be possible to delete
+            if (e.Content.GetOriginalType() == typeof(SettingsBase)  || !(e.Content is SettingsBase) || e.Content.ParentLink != settingsService.GlobalSettingsRoot)
             {
                 return;
             }
@@ -182,8 +184,10 @@ namespace AddOn.Episerver.Settings.Core
                 return;
             }
 
-            if (!(e.Content is SettingsBase) || e.Content.ParentLink != settingsService.GlobalSettingsRoot
-                                             || e.TargetLink.ID != 2)
+            // if the content item is an instance of SettingsBase, it has been instantiated with the fallback base class
+            // since the ContentType class no longer exists and should be possible to move to the waste basket
+            if (e.Content.GetOriginalType() == typeof(SettingsBase) || !(e.Content is SettingsBase) || e.Content.ParentLink != settingsService.GlobalSettingsRoot
+                || e.TargetLink.ID != 2)
             {
                 return;
             }
