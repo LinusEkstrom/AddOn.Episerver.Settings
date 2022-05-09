@@ -6,13 +6,13 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFrameworks>net461;net5.0</TargetFrameworks>
+    <TargetFrameworks>net461;net5.0;net6.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <DebugType>embedded</DebugType>
     <Authors>Linus Ekström, Jeroen Stemerdink</Authors>
     <PackageTags>EpiServer Settings AddOn.Episerver.Settings</PackageTags>
     <PackageProjectUrl>https://github.com/LinusEkstrom/AddOn.Episerver.Settings</PackageProjectUrl>
-    <Version>1.1.4</Version>
+    <Version>1.2.0</Version>
     <Copyright>Copyright © 2021 Linus Ekström, Jeroen Stemerdink</Copyright>
     <Description>A typed replacement of custom built settings systems built on PageData/BlockData.</Description>
   </PropertyGroup>
@@ -28,25 +28,26 @@
     <None Include="web.config.uninstall.xdt" pack="true" PackagePath="Content" />
     <None Include="web.config" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="Content\modules\_protected\AddOn.Episerver.Settings" />
     <None Include="module.config" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="Content\modules\_protected\AddOn.Episerver.Settings" />
-    <None Include="module.config" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="contentFiles\any\net5.0\modules\_protected\AddOn.Episerver.Settings" />
+    <None Include="module.config" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="contentFiles\any\any\modules\_protected\AddOn.Episerver.Settings" />
     <None Include="..\..\templates\SettingsTemplates.DotSettings" pack="true" PackagePath="Tools" />
 	<None Include="AddOn.Episerver.Settings.targets" pack="true" PackagePath="Build\net5.0" />
+    <None Include="AddOn.Episerver.Settings.targets" pack="true" PackagePath="Build\net6.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+    <PackageReference Include="EPiServer.CMS.AspNet" Version="[11.20.7, 12)" />
+    <PackageReference Include="EPiServer.CMS.UI.Core" Version="[11.2, 12)" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
     <PackageReference Include="EPiServer.CMS.AspNetCore.Templating" Version="[12.0.3, 13)" />
     <PackageReference Include="EPiServer.CMS.UI.Core" Version="[12.0.2, 13)" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="5.0.0" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-	<PackageReference Include="EPiServer.CMS.AspNet" Version="[11.20.7, 12)" />
-    <PackageReference Include="EPiServer.CMS.UI.Core" Version="[11.2, 12)" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.0" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="4.4.2" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="EPiServer.CMS.AspNetCore.Templating" Version="[12.5.0, 13)" />
+    <PackageReference Include="EPiServer.CMS.UI.Core" Version="[12.5.0, 13)" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 </Project>
