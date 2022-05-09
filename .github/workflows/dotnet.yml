@@ -1,0 +1,33 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    
+env:
+  BUILD_CONFIGURATION: 'Release'
+  DOTNET_VERSION: '5.0.x'
+  CWD: './src'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Build
+      working-directory: ${{ env.CWD }}
+      run: |
+        dotnet nuget add source https://nuget.episerver.com/feed/packages.svc --name Optimizely
+        dotnet restore
+        dotnet build --no-restore --configuration '${{ env.BUILD_CONFIGURATION }}'
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        path: './src/AddOn.Episerver.Settings/bin/Release/*.nupkg'
