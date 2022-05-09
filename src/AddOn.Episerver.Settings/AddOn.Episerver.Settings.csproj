@@ -45,7 +45,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="EPiServer.CMS.AspNetCore.Templating" Version="[12.5.0, 13)" />
+    <PackageReference Include="EPiServer.CMS.AspNetCore.Templating" Version="[12.4.2, 13)" />
     <PackageReference Include="EPiServer.CMS.UI.Core" Version="[12.5.0, 13)" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
