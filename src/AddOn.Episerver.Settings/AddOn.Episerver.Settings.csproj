@@ -3,6 +3,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>AddOn.Episerver.Settings</RootNamespace>
     <AssemblyName>AddOn.Episerver.Settings</AssemblyName>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFrameworks>net461;net5.0</TargetFrameworks>

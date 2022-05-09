@@ -24,15 +24,17 @@
 namespace AddOn.Episerver.Settings.Core
 {
     using System;
+    using System.Linq;
     using EPiServer;
     using EPiServer.Core;
     using EPiServer.Framework;
     using EPiServer.Framework.Initialization;
     using EPiServer.Framework.Localization;
     using EPiServer.ServiceLocation;
+    using EPiServer.Shell.Configuration;
+    using EPiServer.Shell.Modules;
 #if NET461
 #else
-    using EPiServer.Shell.Modules;
     using Microsoft.Extensions.DependencyInjection;
 #endif
     using InitializationModule = EPiServer.Web.InitializationModule;
@@ -70,8 +72,6 @@ namespace AddOn.Episerver.Settings.Core
             context.Services.AddSingleton<ISettingsService, SettingsService>();
             context.Services.Configure<ProtectedModuleOptions>(pm => pm.Items.Add(new ModuleDetails() { Name = "AddOn.Episerver.Settings" }));
 #endif
-
-
         }
 
         /// <summary>
@@ -93,6 +93,19 @@ namespace AddOn.Episerver.Settings.Core
             {
                 return;
             }
+            
+            context.InitComplete += (sender, args) =>
+            {
+                var moduleTable = context.Locate.Advanced.GetInstance<ModuleTable>();
+                var modules = moduleTable.GetModules().ToList();
+                var settings = modules.FirstOrDefault(m => string.Equals(m.Name, "AddOn.Episerver.Settings", StringComparison.OrdinalIgnoreCase));
+                var commerce = modules.FirstOrDefault(m =>  string.Equals(m.Name, "EPiServer.Commerce.Shell", StringComparison.OrdinalIgnoreCase));
+
+                if (settings != null && commerce != null)
+                {
+                    settings.Manifest.ClientModule.ModuleDependencies.Add(new ModuleDependency { Dependency = "EPiServer.Commerce.Shell", DependencyType = ModuleDependencyTypes.Require | ModuleDependencyTypes.RunAfter });
+                }
+            };
 
             settingsService = context.Locate.Advanced.GetInstance<ISettingsService>();
             contentEvents = context.Locate.Advanced.GetInstance<IContentEvents>();
