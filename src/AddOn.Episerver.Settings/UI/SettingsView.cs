@@ -135,17 +135,33 @@ namespace AddOn.Episerver.Settings.UI
                         new BorderSettingsDictionary(region: BorderContainerRegion.Top)).Add(
                         new ContentPane { PlugInArea = "/episerver/cms/maincontent" },
                         new BorderSettingsDictionary(region: BorderContainerRegion.Center));
-
-                this.rootContainer = new BorderContainer().Add(
-                    component: navigation,
-                    new BorderSettingsDictionary(
-                        region: BorderContainerRegion.Leading,
-                        new Setting("minSize", 305),
-                        new Setting("splitter", "true"),
-                        new Setting("liveSplitters", "false"),
-                        new Setting("id", "navigation"))).Add(
-                    component: content,
-                    new BorderSettingsDictionary(region: BorderContainerRegion.Center));
+                
+                var tools = new PinnablePane().Add(
+                    new ComponentPaneContainer
+                        { ContainerType = ContainerType.System }.Add(
+                        new GlobalSettingsVersionsComponent().CreateComponent()));
+                
+                this.rootContainer = new BorderContainer()
+                    .Add(
+                        component: navigation,
+                        new BorderSettingsDictionary(
+                            region: BorderContainerRegion.Leading, 
+                            new Setting("minSize", 305),
+                            new Setting("splitter", "true"),
+                            new Setting("liveSplitters", "false"),
+                            new Setting("id", "navigation")))
+                    .Add(
+                        component: content,
+                        new BorderSettingsDictionary(region: BorderContainerRegion.Center))
+                    .Add(
+                        component: tools, 
+                        new BorderSettingsDictionary(
+                            region: BorderContainerRegion.Trailing,
+                            420, 305, null,
+                            new Setting("splitter", "true"),
+                            new Setting("liveSplitters", "false"),
+                            new Setting("id", "tools"))
+                        );
 
                 this.rootContainer.Settings["id"] = this.Name + "_rootContainer";
                 return this.rootContainer;
