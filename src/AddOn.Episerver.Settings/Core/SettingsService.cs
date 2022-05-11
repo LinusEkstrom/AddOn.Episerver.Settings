@@ -311,6 +311,14 @@ namespace AddOn.Episerver.Settings.Core
                     continue;
                 }
 
+                if (attribute.SettingsInstanceGuid == null)
+                {
+                    var errorMessage =
+                        $"The SettingsInstanceGuid property must be set on the SettingsContentTypeAttribute of the Settings type {settingsType.Name}";
+                    this.log.Error(errorMessage);
+                    throw new ArgumentException(errorMessage);
+                }
+
                 Guid attributeGuid = new Guid(g: attribute.SettingsInstanceGuid);
                 IContent existingItem = null;
 
