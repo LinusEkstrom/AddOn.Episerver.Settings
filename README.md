@@ -8,7 +8,7 @@
 
 
 ## About
-A typed replacement of custom built settings systems built on PageData/BlockData.
+The Optimizely Settings addon makes it possible to work with "configuration" type settings that you want to be able to edit in your Optimizely solution without the need for a deploy. It uses a code first approach based on the built in content model system with standard editors for property types including support for validation, versioning, multi-language etc. Settings can be both globally defined (a.k.a. for the entire solution) or defined for a sub-part of the page structure. The addon is available on Optimizelys nuget feed with versions for both Optimizely 11 and 12. Development of new functionality is currently mainly done for CMS 12+.
 
 ### Instructions
 
@@ -36,8 +36,9 @@ ISettingsService settingsService = ServiceLocator.Current.GetInstance<ISettingsS
 settingsService.GetSettings<MenuSettings>(currentPage);
 ```
 
-The convention here is that we will traverse the structure and look for properties with the same name as the settings type, in this case "MenuSettings".
+The convention here is that we will traverse the structure and look for properties with the same name as the settings type, in this case "MenuSettings". Settings are created in a gadget in the side bar, just as you would work with blocks:
 
+![Settingsbrowser](https://user-images.githubusercontent.com/3509092/169228176-181e8178-7a4a-4d6b-9a91-a47fdce51dcc.jpg)
 
 3. Add a global settings item (will be created at initialization)
 > You can use a [Resharper template](templates/SettingsTemplates.DotSettings)
@@ -57,6 +58,9 @@ settingsService.GetSettings<GoogleAnalyticsSettings>();
 
 5. If you go into the editorial interface, there should be a new tab under assets: "Settings". You can create new instances here. 
    In the main menu, under CMS, there should be an item "Global settings", where you can find the global settings items.
+   
+![Global Settings View](https://user-images.githubusercontent.com/3509092/169228289-a484d8c4-8223-4aea-ab7e-16bd2b8f8bf8.jpg)
+
 
 6. You can even combine local settings with global settings where a local setting will override a global setting. If you want to try this, you can do the following:
 * Go into the adminstrative interface and change the GoogleAnalyticsSettings content type to allow creation in edit mode.
