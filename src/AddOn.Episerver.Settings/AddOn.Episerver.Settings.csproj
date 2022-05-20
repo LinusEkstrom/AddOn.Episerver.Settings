@@ -13,7 +13,7 @@
     <Authors>Linus Ekström, Jeroen Stemerdink</Authors>
     <PackageTags>EpiServer Settings AddOn.Episerver.Settings</PackageTags>
     <PackageProjectUrl>https://github.com/LinusEkstrom/AddOn.Episerver.Settings</PackageProjectUrl>
-    <Version>1.2.0</Version>
+    <Version>2.0.0</Version>
     <Copyright>Copyright © 2021 Linus Ekström, Jeroen Stemerdink</Copyright>
     <Description>A typed replacement of custom built settings systems built on PageData/BlockData.</Description>
   </PropertyGroup>
