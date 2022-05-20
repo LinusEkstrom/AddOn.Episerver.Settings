@@ -148,7 +148,7 @@ namespace AddOn.Episerver.Settings.UI
             get
             {
                 return this.Settings.Service.GlobalSettings.Select(
-                    gs => ((BasicContent)gs.Value).ContentLink.ToString());
+                    gs => gs.Value.ToString());
             }
         }
 
@@ -161,7 +161,7 @@ namespace AddOn.Episerver.Settings.UI
             get
             {
                 return this.Settings.Service.GlobalSettings.Select(
-                    gs => ((BasicContent)gs.Value).ContentLink.ToString());
+                    gs => gs.Value.ToString());
             }
         }
 
