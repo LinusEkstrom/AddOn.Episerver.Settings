@@ -37,7 +37,7 @@ namespace AddOn.Episerver.Settings.Core
         /// Gets the global settings.
         /// </summary>
         /// <value>The global settings.</value>
-        Dictionary<Type, object> GlobalSettings { get; }
+        Dictionary<Type, ContentReference> GlobalSettings { get; }
 
         /// <summary>
         /// Gets or sets the global settings root.
@@ -56,7 +56,7 @@ namespace AddOn.Episerver.Settings.Core
         /// </summary>
         /// <typeparam name="T">The settings type</typeparam>
         /// <returns>An instance of <typeparamref name="T" /></returns>
-        T GetSettings<T>();
+        T GetSettings<T>() where T : IContent;
 
         /// <summary>
         /// Gets the settings.

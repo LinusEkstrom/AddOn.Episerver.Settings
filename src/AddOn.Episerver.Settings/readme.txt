@@ -6,6 +6,14 @@ public class MenuSettings : SettingsBase
     public virtual ContentReference MenuRoot { get; set; }
 }
 
+If the settings needs properties to be localized, use the LocalizableSettingsBase class.
+
+[ContentType(GUID = "a5506171-c6b2-4a7a-9c44-bb870f695955")]
+public class LocalizableMenuSettings : LocalizableSettingsBase
+{
+    [CultureSpecific]
+    public virtual ContentReference MenuRoot { get; set; }
+}
 
 2. Add a property to e.g the start page
 

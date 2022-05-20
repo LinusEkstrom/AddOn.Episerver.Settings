@@ -101,6 +101,7 @@ namespace AddOn.Episerver.Settings.Core
         /// <param name="typeScannerLookup">The type scanner lookup.</param>
         /// <param name="contentTypeRepository">The content type repository.</param>
         /// <param name="ancestorReferencesLoader">The ancestor references loader.</param>
+        /// <param name="synchronizedObjectInstanceCache"></param>
         public SettingsService(
             IContentRepository contentRepository,
             ContentRootService contentRootService,
@@ -121,7 +122,7 @@ namespace AddOn.Episerver.Settings.Core
         /// Gets the global settings.
         /// </summary>
         /// <value>The global settings.</value>
-        public Dictionary<Type, object> GlobalSettings => this.GetGlobalSettings();
+        public Dictionary<Type, ContentReference> GlobalSettings => this.GetGlobalSettings();
 
         /// <summary>
         /// Gets or sets the global settings root.
@@ -150,7 +151,7 @@ namespace AddOn.Episerver.Settings.Core
         /// </summary>
         /// <typeparam name="T">The settings type</typeparam>
         /// <returns>An instance of <typeparamref name="T"/> </returns>
-        public T GetSettings<T>()
+        public T GetSettings<T>() where T : IContent
         {
             try
             {
@@ -159,7 +160,7 @@ namespace AddOn.Episerver.Settings.Core
 
                 if (globalSettings.ContainsKey(type))
                 {
-                    return (T)globalSettings[type];
+                    return contentRepository.Get<T>(globalSettings[type]);
                 }
             }
             catch (KeyNotFoundException keyNotFoundException)
@@ -417,11 +418,11 @@ namespace AddOn.Episerver.Settings.Core
         /// <returns>
         ///   A dictionary of all existing global settings instances from the cache
         /// </returns>
-        private Dictionary<Type, object> GetGlobalSettings()
+        private Dictionary<Type, ContentReference> GetGlobalSettings()
         {
             return this.cache.ReadThrough(
                 globalSettingsCacheKey,
-                () =>  this.LoadGlobalSettings().ToDictionary(item => item.GetOriginalType(), item => (object)item), 
+                () =>  this.LoadGlobalSettings().ToDictionary(item => item.GetOriginalType(), item => item.ContentLink), 
                 ReadStrategy.Wait);
         }
 
