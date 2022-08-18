@@ -4,16 +4,14 @@
     <RootNamespace>AddOn.Episerver.Settings</RootNamespace>
     <AssemblyName>AddOn.Episerver.Settings</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageVersion>2.0.1</PackageVersion>
-  </PropertyGroup>
-  <PropertyGroup>
+    <PackageVersion>2.0.2</PackageVersion>
     <TargetFrameworks>net461;net5.0;net6.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <DebugType>embedded</DebugType>
     <Authors>Linus Ekström, Jeroen Stemerdink</Authors>
     <PackageTags>EpiServer Settings AddOn.Episerver.Settings</PackageTags>
     <PackageProjectUrl>https://github.com/LinusEkstrom/AddOn.Episerver.Settings</PackageProjectUrl>
-    <Version>2.0.1</Version>
+    <Version>2.0.2</Version>
     <Copyright>Copyright © 2021 Linus Ekström, Jeroen Stemerdink</Copyright>
     <Description>A typed replacement of custom built settings systems built on PageData/BlockData.</Description>
   </PropertyGroup>
@@ -28,8 +26,8 @@
     <None Include="web.config.install.xdt" pack="true" PackagePath="Content" />
     <None Include="web.config.uninstall.xdt" pack="true" PackagePath="Content" />
     <None Include="web.config" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="Content\modules\_protected\AddOn.Episerver.Settings" />
-    <None Include="module.config" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="Content\modules\_protected\AddOn.Episerver.Settings" />
-    <None Include="module.config" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="contentFiles\any\any\modules\_protected\AddOn.Episerver.Settings" />
+    <None Include="AddOn.Episerver.Settings.zip" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="Content\modules\_protected\AddOn.Episerver.Settings" />
+    <None Include="AddOn.Episerver.Settings.zip" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="contentFiles\any\any\modules\_protected\AddOn.Episerver.Settings" />
     <None Include="..\..\templates\SettingsTemplates.DotSettings" pack="true" PackagePath="Tools" />
 	<None Include="AddOn.Episerver.Settings.targets" pack="true" PackagePath="Build\net5.0" />
     <None Include="AddOn.Episerver.Settings.targets" pack="true" PackagePath="Build\net6.0" />
