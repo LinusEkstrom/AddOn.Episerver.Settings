@@ -21,20 +21,20 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
+using AddOn.Episerver.Settings.Core;
+
+using EPiServer.Core;
+using EPiServer.Framework.Localization;
+using EPiServer.Shell;
+using EPiServer.Shell.ViewComposition;
+using EPiServer.Shell.ViewComposition.Containers;
+using EPiServer.Shell.Web;
+using EPiServer.Web.Routing;
+
 namespace AddOn.Episerver.Settings.UI
 {
-    using System.Collections.Generic;
-
-    using AddOn.Episerver.Settings.Core;
-
-    using EPiServer.Core;
-    using EPiServer.Framework.Localization;
-    using EPiServer.Shell;
-    using EPiServer.Shell.ViewComposition;
-    using EPiServer.Shell.ViewComposition.Containers;
-    using EPiServer.Shell.Web;
-    using EPiServer.Web.Routing;
-
     /// <summary>
     /// Class SettingsView.
     /// Implements the <see cref="ICompositeView" />
@@ -44,7 +44,6 @@ namespace AddOn.Episerver.Settings.UI
     /// </summary>
     /// <seealso cref="ICompositeView" />
     /// <seealso cref="IRoutable" />
-    /// <seealso cref="ICustomGlobalNavigationMenuBehavior" />
     /// <seealso cref="IRestrictedComponentCategoryDefinition" />
     [CompositeView]
     public class SettingsView : ICompositeView,
@@ -135,11 +134,12 @@ namespace AddOn.Episerver.Settings.UI
                         new BorderSettingsDictionary(region: BorderContainerRegion.Top)).Add(
                         new ContentPane { PlugInArea = "/episerver/cms/maincontent" },
                         new BorderSettingsDictionary(region: BorderContainerRegion.Center));
-                
+
                 var tools = new PinnablePane().Add(
                     new ComponentPaneContainer
-                        { ContainerType = ContainerType.System }.Add(
-                        new GlobalSettingsVersionsComponent().CreateComponent()));
+                        { ContainerType = ContainerType.System }
+                        .Add(new GlobalSharedBlocksComponent().CreateComponent())
+                        .Add(new GlobalSettingsVersionsComponent().CreateComponent()));
                 
                 this.rootContainer = new BorderContainer()
                     .Add(
