@@ -185,6 +185,8 @@ namespace AddOn.Episerver.Settings.UI
                 return 1100;
             }
         }
+        
+        public bool EnableContextualContent => true;
 
         private Injected<ISettingsService> Settings { get; set; }
     }
