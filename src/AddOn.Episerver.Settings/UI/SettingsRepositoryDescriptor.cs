@@ -21,6 +21,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using EPiServer.Licensing.Services;
+
 namespace AddOn.Episerver.Settings.UI
 {
     using System;
@@ -158,7 +160,7 @@ namespace AddOn.Episerver.Settings.UI
         {
             get
             {
-                return new[] { this.Settings.Service.SettingsRoot };
+                return this.Settings.Service.SettingsRoots;
             }
         }
 

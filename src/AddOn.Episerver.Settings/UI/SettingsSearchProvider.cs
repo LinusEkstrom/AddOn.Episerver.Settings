@@ -134,8 +134,8 @@ namespace AddOn.Episerver.Settings.UI
             List<SearchResult> searchResultList = new List<SearchResult>();
             string str = query.SearchQuery.Trim();
 
-            IEnumerable<ContentReference> settings =
-                this.contentLoader.GetDescendents(contentLink: this.settingsService.SettingsRoot);
+            
+            IEnumerable<ContentReference> settings = this.settingsService.SettingsRoots.SelectMany(root => this.contentLoader.GetDescendents(contentLink: root));
 
             foreach (ContentReference contentReference in settings)
             {

@@ -27,6 +27,7 @@ namespace AddOn.Episerver.Settings.Core
     using System.Collections.Generic;
 
     using EPiServer.Core;
+    using EPiServer.Web;
 
     /// <summary>
     /// Interface ISettingsService
@@ -44,13 +45,19 @@ namespace AddOn.Episerver.Settings.Core
         /// </summary>
         /// <value>The global settings root.</value>
         ContentReference GlobalSettingsRoot { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the settings root.
         /// </summary>
         /// <value>The settings root.</value>
         ContentReference SettingsRoot { get; set; }
-
+        
+        /// <summary>
+        /// Gets the settings roots.
+        /// </summary>
+        /// <value>The settings roots.</value>
+        IEnumerable<ContentReference> SettingsRoots { get; }
+        
         /// <summary>
         /// Gets the settings.
         /// </summary>
@@ -70,7 +77,7 @@ namespace AddOn.Episerver.Settings.Core
         /// <summary>
         /// Initializes the settings.
         /// </summary>
-        /// <exception cref="T:System.NotSupportedException">If the rootname is already registered with another contentRootId.</exception>
+        /// <exception cref="T:System.NotSupportedException">If the root name is already registered with another contentRootId.</exception>
         void InitSettings();
 
         /// <summary>
@@ -78,5 +85,11 @@ namespace AddOn.Episerver.Settings.Core
         /// </summary>
         /// <param name="content">The content.</param>
         void UpdateSettings(IContent content);
+
+        /// <summary>
+        /// Updates the settings root folder for a site.
+        /// </summary>
+        /// <param name="SiteDefinition">The site definition.</param>
+        ContentReference ValidateOrCreateSiteSettingsRoot(SiteDefinition siteDefinition);
     }
 }

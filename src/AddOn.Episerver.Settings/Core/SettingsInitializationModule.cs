@@ -33,6 +33,7 @@ namespace AddOn.Episerver.Settings.Core
     using EPiServer.ServiceLocation;
     using EPiServer.Shell.Configuration;
     using EPiServer.Shell.Modules;
+    using EPiServer.Web;
 #if NET461
 #else
     using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +50,8 @@ namespace AddOn.Episerver.Settings.Core
     public class SettingsInitializationModule : IConfigurableModule
     {
         private static IContentEvents contentEvents;
+        
+        private static ISiteDefinitionEvents siteDefinitionEvents;
 
         private static bool initialized;
 
@@ -109,6 +112,7 @@ namespace AddOn.Episerver.Settings.Core
 
             settingsService = context.Locate.Advanced.GetInstance<ISettingsService>();
             contentEvents = context.Locate.Advanced.GetInstance<IContentEvents>();
+            siteDefinitionEvents = context.Locate.Advanced.GetInstance<ISiteDefinitionEvents>();
             localizationService = context.Locate.Advanced.GetInstance<LocalizationService>();
 
             context.InitComplete += InitCompleteHandler;
@@ -116,6 +120,9 @@ namespace AddOn.Episerver.Settings.Core
             contentEvents.PublishedContent += PublishedContent;
             contentEvents.MovingContent += MovingContent;
             contentEvents.DeletingContent += DeletingContent;
+
+            siteDefinitionEvents.SiteCreated += SiteChanged;
+            siteDefinitionEvents.SiteUpdated += SiteChanged;
 
             initialized = true;
         }
@@ -147,6 +154,9 @@ namespace AddOn.Episerver.Settings.Core
             contentEvents.PublishedContent -= PublishedContent;
             contentEvents.MovingContent -= MovingContent;
             contentEvents.DeletingContent -= DeletingContent;
+            
+            siteDefinitionEvents.SiteCreated -= SiteChanged;
+            siteDefinitionEvents.SiteUpdated -= SiteChanged;
 
             initialized = false;
         }
@@ -222,6 +232,16 @@ namespace AddOn.Episerver.Settings.Core
             }
 
             settingsService.UpdateSettings(e.Content);
+        }
+        
+        public static void SiteChanged(object sender, SiteDefinitionEventArgs e)
+        {
+            if (e.Site == null)
+            {
+                return;
+            }
+            
+            settingsService.ValidateOrCreateSiteSettingsRoot(e.Site);
         }
     }
 }
