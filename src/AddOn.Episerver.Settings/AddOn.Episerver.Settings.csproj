@@ -5,15 +5,14 @@
     <AssemblyName>AddOn.Episerver.Settings</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageVersion>3.0.0</PackageVersion>
-    <TargetFrameworks>net461;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net461;net5.0;net6.0;net7.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <DebugType>embedded</DebugType>
-    <Authors>Linus Ekström, Jeroen Stemerdink</Authors>
+    <Authors>Linus Ekström, Jeroen Stemerdink, Erik Kärrsgård</Authors>
     <PackageTags>EpiServer Settings AddOn.Episerver.Settings</PackageTags>
     <PackageProjectUrl>https://github.com/LinusEkstrom/AddOn.Episerver.Settings</PackageProjectUrl>
-    <Version>3.0.0</Version>
-    <Copyright>Copyright © 2021 Linus Ekström, Jeroen Stemerdink</Copyright>
-    <Description>A typed replacement of custom built settings systems built on PageData/BlockData.</Description>
+    <Copyright>Copyright © 2022 Linus Ekström, Jeroen Stemerdink, Erik Kärrsgård</Copyright>
+    <Description>A typed settings system for Optimizely built on standardized ContentData.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -29,8 +28,9 @@
     <None Include="AddOn.Episerver.Settings.zip" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="Content\modules\_protected\AddOn.Episerver.Settings" />
     <None Include="AddOn.Episerver.Settings.zip" pack="true" PackageCopyToOutput="true" PackageFlatten="false" PackagePath="contentFiles\any\any\modules\_protected\AddOn.Episerver.Settings" />
     <None Include="..\..\templates\SettingsTemplates.DotSettings" pack="true" PackagePath="Tools" />
-	<None Include="AddOn.Episerver.Settings.targets" pack="true" PackagePath="Build\net5.0" />
+    <None Include="AddOn.Episerver.Settings.targets" pack="true" PackagePath="Build\net5.0" />
     <None Include="AddOn.Episerver.Settings.targets" pack="true" PackagePath="Build\net6.0" />
+    <None Include="AddOn.Episerver.Settings.targets" pack="true" PackagePath="Build\net7.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <PackageReference Include="EPiServer.CMS.AspNet" Version="[11.20.7, 12)" />
@@ -44,6 +44,12 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="EPiServer.CMS.AspNetCore.Templating" Version="[12.4.2, 13)" />
+    <PackageReference Include="EPiServer.CMS.UI.Core" Version="[12.5.0, 13)" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
     <PackageReference Include="EPiServer.CMS.AspNetCore.Templating" Version="[12.4.2, 13)" />
     <PackageReference Include="EPiServer.CMS.UI.Core" Version="[12.5.0, 13)" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />

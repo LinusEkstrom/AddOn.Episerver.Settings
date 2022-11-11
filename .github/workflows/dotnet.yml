@@ -8,7 +8,7 @@ on:
     
 env:
   BUILD_CONFIGURATION: 'Release'
-  DOTNET_VERSION: '6.0.x'
+  DOTNET_VERSION: '7.0.x'
   CWD: './src'
 
 jobs:
@@ -21,6 +21,7 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
+        include-prerelease: true
     - name: Build
       working-directory: ${{ env.CWD }}
       run: |
