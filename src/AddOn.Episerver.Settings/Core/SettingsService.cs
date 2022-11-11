@@ -21,11 +21,15 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using EPiServer.DataAccess;
+using EPiServer.Security;
+
 namespace AddOn.Episerver.Settings.Core
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Collections.Concurrent;
 
     using EPiServer;
     using EPiServer.Core;
@@ -52,6 +56,11 @@ namespace AddOn.Episerver.Settings.Core
         /// The settings root name
         /// </summary>
         public const string SettingsRootName = "Settings Root";
+        
+        /// <summary>
+        /// The site settings root name
+        /// </summary>
+        public const string SiteSettingsRootName = "Site Settings Root";
 
         /// <summary>
         /// The key used for storing global settings in the synchronized cache
@@ -67,6 +76,11 @@ namespace AddOn.Episerver.Settings.Core
         /// The content repository
         /// </summary>
         private readonly IContentRepository contentRepository;
+
+        /// <summary>
+        /// The site definition repository
+        /// </summary>
+        private readonly ISiteDefinitionRepository siteDefinitionRepository;
 
         /// <summary>
         /// The content root service
@@ -97,6 +111,7 @@ namespace AddOn.Episerver.Settings.Core
         /// Initializes a new instance of the <see cref="SettingsService"/> class.
         /// </summary>
         /// <param name="contentRepository">The content repository.</param>
+        /// <param name="siteDefinitionRepository">The site definition reposi</param>
         /// <param name="contentRootService">The content root service.</param>
         /// <param name="typeScannerLookup">The type scanner lookup.</param>
         /// <param name="contentTypeRepository">The content type repository.</param>
@@ -104,6 +119,7 @@ namespace AddOn.Episerver.Settings.Core
         /// <param name="synchronizedObjectInstanceCache"></param>
         public SettingsService(
             IContentRepository contentRepository,
+            ISiteDefinitionRepository siteDefinitionRepository,
             ContentRootService contentRootService,
             ITypeScannerLookup typeScannerLookup,
             IContentTypeRepository contentTypeRepository,
@@ -111,6 +127,7 @@ namespace AddOn.Episerver.Settings.Core
             ISynchronizedObjectInstanceCache synchronizedObjectInstanceCache)
         {
             this.contentRepository = contentRepository;
+            this.siteDefinitionRepository = siteDefinitionRepository;
             this.contentRootService = contentRootService;
             this.typeScannerLookup = typeScannerLookup;
             this.contentTypeRepository = contentTypeRepository;
@@ -129,12 +146,35 @@ namespace AddOn.Episerver.Settings.Core
         /// </summary>
         /// <value>The global settings root.</value>
         public ContentReference GlobalSettingsRoot { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the settings root.
         /// </summary>
         /// <value>The settings root.</value>
         public ContentReference SettingsRoot { get; set; }
+        
+        /// <summary>
+        /// Gets the settings roots. In case site-specific assets are enabled this will contain
+        /// both the shared and site specific roots, otherwise only the shared root.
+        /// </summary>
+        /// <value>The settings root.</value>
+        public IEnumerable<ContentReference> SettingsRoots {
+            get
+            {
+                var settings = new List<ContentReference> { SettingsRoot };
+                if (!SiteDefinition.Current.GlobalAssetsRoot.CompareToIgnoreWorkID(SiteDefinition.Current.SiteAssetsRoot))
+                {
+                    if (this.siteSettingsRoots.TryGetValue(SiteDefinition.Current.Id, out var settingsRef))
+                    {
+                        settings.Add(settingsRef);
+                    }
+                }
+
+                return settings;
+            }
+        }
+
+        private readonly ConcurrentDictionary<Guid, ContentReference> siteSettingsRoots = new ConcurrentDictionary<Guid, ContentReference>(); 
 
         /// <summary>
         /// Gets the global settings root unique identifier
@@ -241,7 +281,7 @@ namespace AddOn.Episerver.Settings.Core
                 this.log.Error($"[Settings] {notSupportedException.Message}", exception: notSupportedException);
                 throw;
             }
-
+            
             try
             {
                 this.contentRootService.Register<ContentFolder>(
@@ -256,6 +296,11 @@ namespace AddOn.Episerver.Settings.Core
                 throw;
             }
 
+            foreach (var siteDefinition in siteDefinitionRepository.List())
+            {
+                this.ValidateOrCreateSiteSettingsRoot(siteDefinition);
+            }
+            
             this.InitializeContentInstances();
         }
 
@@ -278,6 +323,40 @@ namespace AddOn.Episerver.Settings.Core
             catch (EPiServerException ePiServerException)
             {
                 this.log.Error($"[Settings] {ePiServerException.Message}", exception: ePiServerException);
+            }
+        }
+
+        /// <summary>
+        /// Creates a settings folder for a site and adds it to the settings lookup
+        /// </summary>
+        public ContentReference ValidateOrCreateSiteSettingsRoot(SiteDefinition siteDefinition)
+        {
+            if (siteDefinition.SiteAssetsRoot.CompareToIgnoreWorkID(siteDefinition.GlobalAssetsRoot))
+            {
+                return ContentReference.EmptyReference;
+            }
+            
+            try
+            {
+                return this.siteSettingsRoots.GetOrAdd(siteDefinition.Id, id =>
+                {
+                    var contentRootId = DeterministicGuid.Create(siteDefinition.Id, SettingsRootName);
+                    if (!this.contentRepository.TryGet<ContentFolder>(contentRootId, out var root))
+                    {
+                        root = this.contentRepository.GetDefault<ContentFolder>(siteDefinition.SiteAssetsRoot);
+                        root.ContentGuid = contentRootId;
+                        root.Name = SiteSettingsRootName;
+
+                        this.contentRepository.Save(root, SaveAction.Publish | SaveAction.SkipValidation, AccessLevel.NoAccess);
+                    }
+                    
+                    return root.ContentLink;
+                });
+            }
+            catch (NotSupportedException notSupportedException)
+            {
+                this.log.Error($"[Settings] {notSupportedException.Message}", exception: notSupportedException);
+                throw;
             }
         }
 

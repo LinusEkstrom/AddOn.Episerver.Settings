@@ -4,16 +4,15 @@
     <RootNamespace>AddOn.Episerver.Settings</RootNamespace>
     <AssemblyName>AddOn.Episerver.Settings</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageVersion>2.3.0-prerelease</PackageVersion>
+    <PackageVersion>3.0.0-prerelease</PackageVersion>
     <TargetFrameworks>net461;net5.0;net6.0;net7.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <DebugType>embedded</DebugType>
-    <Authors>Linus Ekström, Jeroen Stemerdink</Authors>
+    <Authors>Linus Ekström, Jeroen Stemerdink, Erik Kärrsgård</Authors>
     <PackageTags>EpiServer Settings AddOn.Episerver.Settings</PackageTags>
     <PackageProjectUrl>https://github.com/LinusEkstrom/AddOn.Episerver.Settings</PackageProjectUrl>
-    <Version>2.3.0</Version>
-    <Copyright>Copyright © 2021 Linus Ekström, Jeroen Stemerdink</Copyright>
-    <Description>A typed replacement of custom built settings systems built on PageData/BlockData.</Description>
+    <Copyright>Copyright © 2022 Linus Ekström, Jeroen Stemerdink, Erik Kärrsgård</Copyright>
+    <Description>A typed settings system for Optimizely built on standardized ContentData.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
