@@ -21,28 +21,27 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace AddOn.Episerver.Settings.UI
-{
-    using EPiServer.Shell.ViewComposition;
+using EPiServer.Shell.ViewComposition;
 
+namespace AddOn.Episerver.Settings.UI;
+
+/// <summary>
+///     Component that provides a tree based navigation for global settings.
+///     Implements the <see cref="ComponentDefinitionBase" />
+/// </summary>
+/// <seealso cref="ComponentDefinitionBase" />
+[Component]
+public sealed class GlobalSettingsComponent : ComponentDefinitionBase
+{
     /// <summary>
-    /// Component that provides a tree based navigation for global settings.
-    /// Implements the <see cref="ComponentDefinitionBase" />
+    ///     Initializes a new instance of the <see cref="GlobalSettingsComponent" /> class.
     /// </summary>
-    /// <seealso cref="ComponentDefinitionBase" />
-    [Component]
-    public sealed class GlobalSettingsComponent : ComponentDefinitionBase
+    public GlobalSettingsComponent()
+        : base("epi-cms/component/MainNavigationComponent")
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GlobalSettingsComponent"/> class.
-        /// </summary>
-        public GlobalSettingsComponent()
-            : base("epi-cms/component/MainNavigationComponent")
-        {
-            this.LanguagePath = "/episerver/cms/components/globalsettings";
-            this.Title = "Global settings";
-            this.SortOrder = 100;
-            this.Settings.Add(new Setting("repositoryKey", value: GlobalSettingsRepositoryDescriptor.RepositoryKey));
-        }
+        LanguagePath = "/episerver/cms/components/globalsettings";
+        Title = "Global settings";
+        SortOrder = 100;
+        Settings.Add(new Setting("repositoryKey", GlobalSettingsRepositoryDescriptor.RepositoryKey));
     }
 }

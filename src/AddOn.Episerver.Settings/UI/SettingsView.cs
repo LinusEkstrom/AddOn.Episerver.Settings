@@ -21,200 +21,181 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Collections.Generic;
-
 using AddOn.Episerver.Settings.Core;
-
-using EPiServer.Core;
 using EPiServer.Framework.Localization;
 using EPiServer.Shell;
 using EPiServer.Shell.ViewComposition;
 using EPiServer.Shell.ViewComposition.Containers;
 using EPiServer.Shell.Web;
 using EPiServer.Web.Routing;
+using System.Collections.Generic;
 
-namespace AddOn.Episerver.Settings.UI
+namespace AddOn.Episerver.Settings.UI;
+
+/// <summary>
+///     Class SettingsView.
+///     Implements the <see cref="ICompositeView" />
+///     Implements the <see cref="IRoutable" />
+///     Implements the <see cref="ICustomGlobalNavigationMenuBehavior" />
+///     Implements the <see cref="IRestrictedComponentCategoryDefinition" />
+/// </summary>
+/// <seealso cref="ICompositeView" />
+/// <seealso cref="IRoutable" />
+/// <seealso cref="IRestrictedComponentCategoryDefinition" />
+[CompositeView]
+public class SettingsView : ICompositeView,
+    IRoutable,
+    IRestrictedComponentCategoryDefinition
 {
     /// <summary>
-    /// Class SettingsView.
-    /// Implements the <see cref="ICompositeView" />
-    /// Implements the <see cref="IRoutable" />
-    /// Implements the <see cref="ICustomGlobalNavigationMenuBehavior" />
-    /// Implements the <see cref="IRestrictedComponentCategoryDefinition" />
+    ///     The view name
     /// </summary>
-    /// <seealso cref="ICompositeView" />
-    /// <seealso cref="IRoutable" />
-    /// <seealso cref="IRestrictedComponentCategoryDefinition" />
-    [CompositeView]
-    public class SettingsView : ICompositeView,
-                                IRoutable,
-                                IRestrictedComponentCategoryDefinition
+    public static readonly string ViewName = "/episerver/cms/settings";
+
+    /// <summary>
+    ///     The localization service
+    /// </summary>
+    private readonly LocalizationService localizationService;
+
+    /// <summary>
+    ///     The settings service
+    /// </summary>
+    private readonly ISettingsService settingsService;
+
+    /// <summary>
+    ///     The root container
+    /// </summary>
+    private IContainer rootContainer;
+
+    /// <summary>
+    ///     The route segment
+    /// </summary>
+    private string routeSegment;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="SettingsView" /> class.
+    /// </summary>
+    /// <param name="localizationService">The localization service used for getting localized resources.</param>
+    /// <param name="settingsService">The settings service.</param>
+    public SettingsView(LocalizationService localizationService, ISettingsService settingsService)
     {
-        /// <summary>
-        /// The view name
-        /// </summary>
-        public static readonly string ViewName = "/episerver/cms/settings";
+        this.localizationService = localizationService;
+        this.settingsService = settingsService;
+    }
 
-        /// <summary>
-        /// The localization service
-        /// </summary>
-        private readonly LocalizationService localizationService;
-
-        /// <summary>
-        /// The settings service
-        /// </summary>
-        private readonly ISettingsService settingsService;
-
-        /// <summary>
-        /// The root container
-        /// </summary>
-        private IContainer rootContainer;
-
-        /// <summary>
-        /// The route segment
-        /// </summary>
-        private string routeSegment;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SettingsView" /> class.
-        /// </summary>
-        /// <param name="localizationService">The localization service used for getting localized resources.</param>
-        /// <param name="settingsService">The settings service.</param>
-        public SettingsView(LocalizationService localizationService, ISettingsService settingsService)
+    /// <summary>
+    ///     Gets the default context.
+    /// </summary>
+    /// <value>
+    ///     Returns a context reference to the start page, if defined, otherwise a context reference to the root page is
+    ///     returned.
+    /// </value>
+    public string DefaultContext
+    {
+        get
         {
-            this.localizationService = localizationService;
-            this.settingsService = settingsService;
+            var defaultContext = settingsService.GlobalSettingsRoot;
+            return defaultContext.GetUri(false).ToString();
         }
+    }
 
-        /// <summary>
-        /// Gets the default context. 
-        /// </summary>
-        /// <value>Returns a context reference to the start page, if defined, otherwise a context reference to the root page is returned.</value>
-        public string DefaultContext
+    /// <summary>
+    ///     Gets the name of the view. Used or finding views.
+    /// </summary>
+    /// <value>The name.</value>
+    public string Name => ViewName;
+
+    /// <summary>
+    ///     Gets the root <see cref="IContainer" /> that contains the different panels for the view.
+    /// </summary>
+    /// <value>The container.</value>
+    public IContainer RootContainer
+    {
+        get
         {
-            get
+            if (rootContainer != null)
             {
-                ContentReference defaultContext = this.settingsService.GlobalSettingsRoot;
-                return defaultContext.GetUri(false).ToString();
-            }
-        }
-
-        /// <summary>
-        /// Gets the name of the view. Used or finding views.
-        /// </summary>
-        /// <value>The name.</value>
-        public string Name
-        {
-            get
-            {
-                return ViewName;
-            }
-        }
-
-        /// <summary>
-        /// Gets the root <see cref="IContainer" /> that contains the different panels for the view.
-        /// </summary>
-        /// <value>The container.</value>
-        public IContainer RootContainer
-        {
-            get
-            {
-                if (this.rootContainer != null)
-                {
-                    return this.rootContainer;
-                }
-
-                IContainer navigation = new PinnablePane().Add(
-                    new ComponentPaneContainer { ContainerType = ContainerType.System }.Add(
-                        new GlobalSettingsComponent().CreateComponent()));
-
-                IContainer<BorderSettingsDictionary> content = new BorderContainer()
-                    .Add(
-                        new ContentPane { PlugInArea = "/episerver/cms/action" },
-                        new BorderSettingsDictionary(region: BorderContainerRegion.Top)).Add(
-                        new ContentPane { PlugInArea = "/episerver/cms/maincontent" },
-                        new BorderSettingsDictionary(region: BorderContainerRegion.Center));
-
-                var tools = new PinnablePane().Add(
-                    new ComponentPaneContainer
-                        { ContainerType = ContainerType.System }
-                        .Add(new GlobalSharedBlocksComponent().CreateComponent())
-                        .Add(new GlobalSettingsVersionsComponent().CreateComponent()));
-                
-                this.rootContainer = new BorderContainer()
-                    .Add(
-                        component: navigation,
-                        new BorderSettingsDictionary(
-                            region: BorderContainerRegion.Leading, 
-                            new Setting("minSize", 305),
-                            new Setting("splitter", "true"),
-                            new Setting("liveSplitters", "false"),
-                            new Setting("id", "navigation")))
-                    .Add(
-                        component: content,
-                        new BorderSettingsDictionary(region: BorderContainerRegion.Center))
-                    .Add(
-                        component: tools, 
-                        new BorderSettingsDictionary(
-                            region: BorderContainerRegion.Trailing,
-                            420, 305, null,
-                            new Setting("splitter", "true"),
-                            new Setting("liveSplitters", "false"),
-                            new Setting("id", "tools"))
-                        );
-
-                this.rootContainer.Settings["id"] = this.Name + "_rootContainer";
-                return this.rootContainer;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the Route segment.
-        /// </summary>
-        /// <value>The Route segment.</value>
-        public string RouteSegment
-        {
-            get
-            {
-                return this.routeSegment ?? (this.routeSegment = "settings");
+                return rootContainer;
             }
 
-            set
-            {
-                this.routeSegment = value;
-            }
-        }
+            var navigation = new PinnablePane().Add(
+            new ComponentPaneContainer { ContainerType = ContainerType.System }.Add(
+            new GlobalSettingsComponent().CreateComponent()));
 
-        /// <summary>
-        /// Gets a localized title for this view.
-        /// </summary>
-        /// <value>The title.</value>
-        public string Title
-        {
-            get
-            {
-                return "Settings";
-            }
-        }
+            var content = new BorderContainer()
+                .Add(
+                new ContentPane { PlugInArea = "/episerver/cms/action" },
+                new BorderSettingsDictionary(BorderContainerRegion.Top)).Add(
+                new ContentPane { PlugInArea = "/episerver/cms/maincontent" },
+                new BorderSettingsDictionary(BorderContainerRegion.Center));
 
-        /// <summary>
-        /// Creates a new instance of the view.
-        /// </summary>
-        /// <returns>A new instance of the view.</returns>
-        public ICompositeView CreateView()
-        {
-            return new SettingsView(
-                localizationService: this.localizationService,
-                settingsService: this.settingsService);
-        }
+            var tools = new PinnablePane().Add(
+            new ComponentPaneContainer
+                    { ContainerType = ContainerType.System }
+                .Add(new GlobalSharedBlocksComponent().CreateComponent())
+                .Add(new GlobalSettingsVersionsComponent().CreateComponent()));
 
-        /// <summary>
-        /// Gets the component categories.
-        /// </summary>
-        /// <returns>An <see cref="IEnumerable{T}"/> of categories.</returns>
-        public IEnumerable<string> GetComponentCategories()
-        {
-            return new string[] { };
+            rootContainer = new BorderContainer()
+                .Add(
+                navigation,
+                new BorderSettingsDictionary(
+                BorderContainerRegion.Leading,
+                new Setting("minSize", 305),
+                new Setting("splitter", "true"),
+                new Setting("liveSplitters", "false"),
+                new Setting("id", "navigation")))
+                .Add(
+                content,
+                new BorderSettingsDictionary(BorderContainerRegion.Center))
+                .Add(
+                tools,
+                new BorderSettingsDictionary(
+                BorderContainerRegion.Trailing,
+                420, 305, null,
+                new Setting("splitter", "true"),
+                new Setting("liveSplitters", "false"),
+                new Setting("id", "tools"))
+                );
+
+            rootContainer.Settings["id"] = Name + "_rootContainer";
+            return rootContainer;
         }
+    }
+
+    /// <summary>
+    ///     Gets a localized title for this view.
+    /// </summary>
+    /// <value>The title.</value>
+    public string Title => "Settings";
+
+    /// <summary>
+    ///     Creates a new instance of the view.
+    /// </summary>
+    /// <returns>A new instance of the view.</returns>
+    public ICompositeView CreateView()
+    {
+        return new SettingsView(
+        localizationService,
+        settingsService);
+    }
+
+    /// <summary>
+    ///     Gets the component categories.
+    /// </summary>
+    /// <returns>An <see cref="IEnumerable{T}" /> of categories.</returns>
+    public IEnumerable<string> GetComponentCategories()
+    {
+        return new string[] { };
+    }
+
+    /// <summary>
+    ///     Gets or sets the Route segment.
+    /// </summary>
+    /// <value>The Route segment.</value>
+    public string RouteSegment
+    {
+        get => routeSegment ?? (routeSegment = "settings");
+
+        set => routeSegment = value;
     }
 }

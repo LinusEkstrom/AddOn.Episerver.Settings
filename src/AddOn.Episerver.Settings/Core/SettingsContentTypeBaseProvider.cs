@@ -21,25 +21,23 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-
 using EPiServer.DataAbstraction;
 using EPiServer.DataAbstraction.RuntimeModel;
 using EPiServer.ServiceLocation;
+using System;
+using System.Collections.Generic;
 
-namespace AddOn.Episerver.Settings.Core
+namespace AddOn.Episerver.Settings.Core;
+
+[ServiceConfiguration(typeof(IContentTypeBaseProvider), Lifecycle = ServiceInstanceScope.Singleton)]
+public class SettingsContentTypeBaseProvider : IContentTypeBaseProvider
 {
-    [ServiceConfiguration(typeof (IContentTypeBaseProvider), Lifecycle = ServiceInstanceScope.Singleton)]
-    public class SettingsContentTypeBaseProvider : IContentTypeBaseProvider
+    private static readonly ContentTypeBase SettingContentType = new ContentTypeBase("Setting");
+
+    public IEnumerable<ContentTypeBase> ContentTypeBases => new[] { SettingContentType };
+
+    public Type Resolve(ContentTypeBase contentTypeBase)
     {
-        private static readonly ContentTypeBase SettingContentType = new ContentTypeBase("Setting");
-
-        public IEnumerable<ContentTypeBase> ContentTypeBases => new [] { SettingContentType };
-
-        public Type Resolve(ContentTypeBase contentTypeBase)
-        {
-            return typeof(SettingsBase);
-        }
+        return typeof(SettingsBase);
     }
 }

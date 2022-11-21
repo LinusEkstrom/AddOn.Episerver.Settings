@@ -21,43 +21,44 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace AddOn.Episerver.Settings.UI
-{
-    using System.Collections.Generic;
-#if NET461
-    using EPiServer.Security;
+using EPiServer.Shell.Navigation;
+using System.Collections.Generic;
+
+namespace AddOn.Episerver.Settings.UI;
+
+#if NET48
+using EPiServer.Security;
+
 #else
     using EPiServer.Authorization;
 #endif
-    using EPiServer.Shell.Navigation;
 
+/// <summary>
+///     Provides menu items for the settings component.
+/// </summary>
+[MenuProvider]
+public class SettingsMenuProvider : IMenuProvider
+{
     /// <summary>
-    ///     Provides menu items for the settings component.
+    ///     Provides the CMS menu section and the CMS settings section.
     /// </summary>
-    [MenuProvider]
-    public class SettingsMenuProvider : IMenuProvider
+    /// <returns>
+    ///     A list of <see cref="MenuItem" />s that the provider exposes.
+    /// </returns>
+    public IEnumerable<MenuItem> GetMenuItems()
     {
-        /// <summary>
-        ///     Provides the CMS menu section and the CMS settings section.
-        /// </summary>
-        /// <returns>
-        ///     A list of <see cref="MenuItem" />s that the provider exposes.
-        /// </returns>
-        public IEnumerable<MenuItem> GetMenuItems()
+        var cmsGlobalSettings = new UrlMenuItem(
+        "Global settings",
+        "/global/cms/settings",
+        "/episerver/AddOn.Episerver.Settings/settings")
         {
-            UrlMenuItem cmsGlobalSettings = new UrlMenuItem(
-                                                "Global settings",
-                                                "/global/cms/settings",
-                                                "/episerver/AddOn.Episerver.Settings/settings")
-            {
-#if NET461
-                IsAvailable = request => PrincipalInfo.HasAdminAccess
+#if NET48
+            IsAvailable = request => PrincipalInfo.HasAdminAccess
 #else
                 IsAvailable = request => request.User.IsInRole(Roles.CmsAdmins)
 #endif
-            };
+        };
 
-            return new MenuItem[] { cmsGlobalSettings };
-        }
+        return new MenuItem[] { cmsGlobalSettings };
     }
 }
