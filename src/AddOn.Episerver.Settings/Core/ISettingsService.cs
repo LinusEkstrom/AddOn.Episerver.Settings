@@ -62,7 +62,7 @@ public interface ISettingsService
     /// </summary>
     /// <typeparam name="T">The settings type</typeparam>
     /// <returns>An instance of <typeparamref name="T" /></returns>
-    T GetSettings<T>() where T : IContent;
+        T GetSettings<T>() where T : SettingsBase;
 
     /// <summary>
     ///     Gets the settings.
@@ -71,7 +71,7 @@ public interface ISettingsService
     /// <param name="content">The content.</param>
     /// <returns>An instance of <typeparamref name="T" /></returns>
     T GetSettings<T>(IContent content)
-        where T : IContent;
+            where T : SettingsBase;
 
     /// <summary>
     ///     Initializes the settings.

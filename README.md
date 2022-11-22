@@ -87,10 +87,33 @@ public virtual ContentReference GoogleAnalyticsSettings { get; set; }
 * Assign the value of the property to the setting you created in the local settings.
 * After you have done this, content under the node that has assigned the local setting should get these settings, while content outside of this structure should get the global settings.
 
+## Customize how settings are resolved
+By default, settings are resolved by searching for properties with name matching the Settings type. If you wish to add a custom way for this, it is possible to add a class implementing __ISettingsResolver__. For example this gives the power to have nested settings.
+
+The registered resolvers are ordered by the SortOrder property will be called for each IContent item traversed. The first resolver that returns a setting will "win" and that setting will be the on used.
+
+Implement a class:
+```csharp
+public class CustomSettingsResolver : ISettingsResolver
+{
+    public int SortOrder => 1;
+    
+    public bool TryResolveSettingFromContent<T>(IContent content, out T setting) where T : SettingsBase
+    {
+        // Add suitable logic to get the correct settings-instance 
+    }
+}
+```
+
+Register it in the di-container:
+```csharp
+services.AddSingleton<ISettingsResolver, CustomSettingsResolver>();
+```
+
 ## Site specific settings
 *From version 3:* If "Use site specific assets" is enabled for a site, a "Site settings Root" folder is created for each site where settings for the site can be stored.
 
-![Settings Gdget](./settings_gadget.jpg)
+![Settings Gadget](./settings_gadget.jpg)
 
 If upgrading from version 2 *AND* and sites in the solution has had site specific assets enabled.
 
@@ -98,8 +121,6 @@ If upgrading from version 2 *AND* and sites in the solution has had site specifi
 2. Using the blocks gadget, locate the folder "For this site / Settings Root"
 3. Move it into "For all sites / Settings Root"
 4. Now all settings are available in the settings gadget so that they can be moved into the specific site they target (or being kept as shared)
-
-
 
 ## Removing Settings classes
 If upgrading from an earlier version of AddOn.Episerver.Settings, some values must be set in the database first. In table tblContentType each row that contains a Settings-type must have the Base-column updated to the value **Setting**. This ensures that existing settings entities can be loaded by the CMS even if the type class no longer exists.

@@ -107,6 +107,8 @@ public class SettingsService : ISettingsService
     /// </summary>
     private readonly ITypeScannerLookup typeScannerLookup;
 
+        private readonly ISettingsResolver[] settingsResolvers;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="SettingsService" /> class.
     /// </summary>
@@ -117,6 +119,7 @@ public class SettingsService : ISettingsService
     /// <param name="contentTypeRepository">The content type repository.</param>
     /// <param name="ancestorReferencesLoader">The ancestor references loader.</param>
     /// <param name="synchronizedObjectInstanceCache"></param>
+        /// <param name="settingsResolvers"></param>
     public SettingsService(
         IContentRepository contentRepository,
         ISiteDefinitionRepository siteDefinitionRepository,
@@ -124,7 +127,8 @@ public class SettingsService : ISettingsService
         ITypeScannerLookup typeScannerLookup,
         IContentTypeRepository contentTypeRepository,
         AncestorReferencesLoader ancestorReferencesLoader,
-        ISynchronizedObjectInstanceCache synchronizedObjectInstanceCache)
+        ISynchronizedObjectInstanceCache synchronizedObjectInstanceCache, 
+        IEnumerable<ISettingsResolver> settingsResolvers)
     {
         this.contentRepository = contentRepository;
         this.siteDefinitionRepository = siteDefinitionRepository;
@@ -133,6 +137,7 @@ public class SettingsService : ISettingsService
         this.contentTypeRepository = contentTypeRepository;
         this.ancestorReferencesLoader = ancestorReferencesLoader;
         cache = synchronizedObjectInstanceCache;
+        this.settingsResolvers = settingsResolvers.OrderBy(x => x.SortOrder).ToArray();
     }
 
     /// <summary>
@@ -190,7 +195,7 @@ public class SettingsService : ISettingsService
     /// </summary>
     /// <typeparam name="T">The settings type</typeparam>
     /// <returns>An instance of <typeparamref name="T" /> </returns>
-    public T GetSettings<T>() where T : IContent
+        public T GetSettings<T>() where T : SettingsBase
     {
         try
         {
@@ -239,7 +244,7 @@ public class SettingsService : ISettingsService
     ///     has been disposed.
     /// </exception>
     public T GetSettings<T>(IContent content)
-        where T : IContent
+            where T : SettingsBase
     {
         if (content == null)
         {
@@ -475,28 +480,18 @@ public class SettingsService : ISettingsService
     /// <param name="content">The content.</param>
     /// <returns>An instance of <typeparamref name="T" /> </returns>
     private T TryGetSettingsFromContent<T>(IContent content)
-        where T : IContent
-    {
-        var property = content.Property[typeof(T).Name];
-
-        if (property == null || property.IsNull)
+        where T : SettingsBase
         {
+            foreach (var settingsResolver in settingsResolvers)
+            {
+                if (settingsResolver.TryResolveSettingFromContent<T>(content, out var setting))
+                {
+                    return setting;
+                }
+            }
+
             return default;
         }
-
-        var reference = property.Value as ContentReference;
-
-        if (reference == null)
-        {
-            return default;
-        }
-
-        T settingsObject;
-
-        contentRepository.TryGet(reference, out settingsObject);
-
-        return settingsObject != null ? settingsObject : default;
-    }
 
     /// <summary>Loads the global settings instances from below the Global settings root.</summary>
     /// <returns>
