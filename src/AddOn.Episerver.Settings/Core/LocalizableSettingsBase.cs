@@ -21,38 +21,36 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace AddOn.Episerver.Settings.Core
-{
-    using System.Collections.Generic;
-    using System.Globalization;
+using EPiServer.Core;
+using System.Collections.Generic;
+using System.Globalization;
 
-    using EPiServer.Core;
+namespace AddOn.Episerver.Settings.Core;
+
+/// <summary>
+///     Class LocalizableSettingsBase.
+///     Implements the <see cref="SettingsBase" />
+///     Implements the <see cref="ILocalizable" />
+/// </summary>
+/// <seealso cref="SettingsBase" />
+/// <seealso cref="ILocalizable" />
+public class LocalizableSettingsBase : SettingsBase, ILocalizable
+{
+    /// <summary>
+    ///     Gets or sets the existing languages for the <see cref="T:EPiServer.Core.ContentData" />
+    /// </summary>
+    /// <value>The existing languages.</value>
+    public IEnumerable<CultureInfo> ExistingLanguages { get; set; }
 
     /// <summary>
-    /// Class LocalizableSettingsBase.
-    /// Implements the <see cref="SettingsBase" />
-    /// Implements the <see cref="ILocalizable" />
+    ///     Gets or sets the language for this instance (typically a <see cref="T:EPiServer.Core.ContentData" /> instance).
     /// </summary>
-    /// <seealso cref="SettingsBase" />
-    /// <seealso cref="ILocalizable" />
-    public class LocalizableSettingsBase : SettingsBase, ILocalizable
-    {
-        /// <summary>
-        /// Gets or sets the existing languages for the <see cref="T:EPiServer.Core.ContentData" />
-        /// </summary>
-        /// <value>The existing languages.</value>
-        public IEnumerable<CultureInfo> ExistingLanguages { get; set; }
+    /// <value>The language.</value>
+    public CultureInfo Language { get; set; }
 
-        /// <summary>
-        /// Gets or sets the language for this instance (typically a <see cref="T:EPiServer.Core.ContentData" /> instance).
-        /// </summary>
-        /// <value>The language.</value>
-        public CultureInfo Language { get; set; }
-
-        /// <summary>
-        /// Gets or sets the master language for this <see cref="T:EPiServer.Core.ContentData" /> instance.
-        /// </summary>
-        /// <value>The master language.</value>
-        public CultureInfo MasterLanguage { get; set; }
-    }
+    /// <summary>
+    ///     Gets or sets the master language for this <see cref="T:EPiServer.Core.ContentData" /> instance.
+    /// </summary>
+    /// <value>The master language.</value>
+    public CultureInfo MasterLanguage { get; set; }
 }

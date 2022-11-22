@@ -21,30 +21,28 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace AddOn.Episerver.Settings.Core
-{
-    using System;
+using EPiServer.DataAnnotations;
+using System;
 
-    using EPiServer.DataAnnotations;
+namespace AddOn.Episerver.Settings.Core;
+
+/// <summary>
+///     Class SettingsContentTypeAttribute. This class cannot be inherited.
+///     Implements the <see cref="ContentTypeAttribute" />
+/// </summary>
+/// <seealso cref="ContentTypeAttribute" />
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class SettingsContentTypeAttribute : ContentTypeAttribute
+{
+    /// <summary>
+    ///     Gets or sets the settings instance unique identifier.
+    /// </summary>
+    /// <value>The settings instance unique identifier.</value>
+    public string SettingsInstanceGuid { get; set; }
 
     /// <summary>
-    /// Class SettingsContentTypeAttribute. This class cannot be inherited.
-    /// Implements the <see cref="ContentTypeAttribute" />
+    ///     Gets or sets the name of the settings.
     /// </summary>
-    /// <seealso cref="ContentTypeAttribute" />
-    [AttributeUsage(validOn: AttributeTargets.Class)]
-    public sealed class SettingsContentTypeAttribute : ContentTypeAttribute
-    {
-        /// <summary>
-        /// Gets or sets the settings instance unique identifier.
-        /// </summary>
-        /// <value>The settings instance unique identifier.</value>
-        public string SettingsInstanceGuid { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the settings.
-        /// </summary>
-        /// <value>The name of the settings.</value>
-        public string SettingsName { get; set; }
-    }
+    /// <value>The name of the settings.</value>
+    public string SettingsName { get; set; }
 }

@@ -21,175 +21,110 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using EPiServer.Licensing.Services;
+using AddOn.Episerver.Settings.Core;
+using EPiServer.Cms.Shell.UI.CompositeViews.Internal;
+using EPiServer.Core;
+using EPiServer.Framework.Localization;
+using EPiServer.ServiceLocation;
+using EPiServer.Shell;
+using System;
+using System.Collections.Generic;
 
-namespace AddOn.Episerver.Settings.UI
+namespace AddOn.Episerver.Settings.UI;
+
+/// <summary>
+///     Class SettingsRepositoryDescriptor.
+///     Implements the <see cref="ContentRepositoryDescriptorBase" />
+/// </summary>
+/// <seealso cref="ContentRepositoryDescriptorBase" />
+[ServiceConfiguration(typeof(IContentRepositoryDescriptor))]
+public class SettingsRepositoryDescriptor : ContentRepositoryDescriptorBase
 {
-    using System;
-    using System.Collections.Generic;
-
-    using AddOn.Episerver.Settings.Core;
-
-    using EPiServer.Cms.Shell.UI.CompositeViews.Internal;
-    using EPiServer.Core;
-    using EPiServer.Framework.Localization;
-    using EPiServer.ServiceLocation;
-    using EPiServer.Shell;
+    /// <summary>
+    ///     Gets the repository key.
+    /// </summary>
+    /// <value>The repository key.</value>
+    public static string RepositoryKey => "dynamiccontent";
 
     /// <summary>
-    /// Class SettingsRepositoryDescriptor.
-    /// Implements the <see cref="ContentRepositoryDescriptorBase" />
+    ///     Gets the contained types.
     /// </summary>
-    /// <seealso cref="ContentRepositoryDescriptorBase" />
-    [ServiceConfiguration(typeof(IContentRepositoryDescriptor))]
-    public class SettingsRepositoryDescriptor : ContentRepositoryDescriptorBase
+    /// <value>The contained types.</value>
+    public override IEnumerable<Type> ContainedTypes
     {
-        /// <summary>
-        /// Gets the repository key.
-        /// </summary>
-        /// <value>The repository key.</value>
-        public static string RepositoryKey
-        {
-            get
-            {
-                return "dynamiccontent";
-            }
-        }
-
-        /// <summary>
-        /// Gets the contained types.
-        /// </summary>
-        /// <value>The contained types.</value>
-        public override IEnumerable<Type> ContainedTypes
-        {
-            get
-            {
-                return new[] { typeof(ContentFolder), typeof(SettingsBase) };
-            }
-        }
-
-        /// <summary>
-        /// Gets the creatable types.
-        /// </summary>
-        /// <value>The creatable types.</value>
-        public override IEnumerable<Type> CreatableTypes
-        {
-            get
-            {
-                return new[] { typeof(SettingsBase) };
-            }
-        }
-
-        /// <summary>
-        /// Gets the custom navigation widget.
-        /// </summary>
-        /// <value>The custom navigation widget.</value>
-        public override string CustomNavigationWidget
-        {
-            get
-            {
-                return "epi-cms/component/PageNavigationTree";
-            }
-        }
-
-        /// <summary>
-        /// Gets the custom select title.
-        /// </summary>
-        /// <value>The custom select title.</value>
-        public override string CustomSelectTitle
-        {
-            get
-            {
-                return LocalizationService.Current.GetString("/contentrepositories/settings/customselecttitle");
-            }
-        }
-
-        /// <summary>
-        /// Gets the key.
-        /// </summary>
-        /// <value>The key.</value>
-        public override string Key
-        {
-            get
-            {
-                return RepositoryKey;
-            }
-        }
-
-        /// <summary>
-        /// Gets the main navigation types.
-        /// </summary>
-        /// <value>The main navigation types.</value>
-        public override IEnumerable<Type> MainNavigationTypes
-        {
-            get
-            {
-                return new[] { typeof(ContentFolder) };
-            }
-        }
-
-        /// <summary>
-        /// Gets the main views.
-        /// </summary>
-        /// <value>The main views.</value>
-        public override IEnumerable<string> MainViews
-        {
-            get
-            {
-                return new[] { HomeView.ViewName };
-            }
-        }
-
-        /// <summary>
-        /// Gets the name.
-        /// </summary>
-        /// <value>The name.</value>
-        public override string Name
-        {
-            get
-            {
-                return LocalizationService.Current.GetString("/contentrepositories/settings/name");
-            }
-        }
-
-        /// <summary>
-        /// Gets the roots.
-        /// </summary>
-        /// <value>The roots.</value>
-        public override IEnumerable<ContentReference> Roots
-        {
-            get
-            {
-                return this.Settings.Service.SettingsRoots;
-            }
-        }
-
-        /// <summary>
-        /// Gets the search area.
-        /// </summary>
-        /// <value>The search area.</value>
-        public override string SearchArea
-        {
-            get
-            {
-                return SettingsSearchProvider.SearchArea;
-            }
-        }
-
-        /// <summary>
-        /// Gets the sort order.
-        /// </summary>
-        /// <value>The sort order.</value>
-        public override int SortOrder
-        {
-            get
-            {
-                return 1100;
-            }
-        }
-        
-        public bool EnableContextualContent => true;
-
-        private Injected<ISettingsService> Settings { get; set; }
+        get { return new[] { typeof(ContentFolder), typeof(SettingsBase) }; }
     }
+
+    /// <summary>
+    ///     Gets the creatable types.
+    /// </summary>
+    /// <value>The creatable types.</value>
+    public override IEnumerable<Type> CreatableTypes
+    {
+        get { return new[] { typeof(SettingsBase) }; }
+    }
+
+    /// <summary>
+    ///     Gets the custom navigation widget.
+    /// </summary>
+    /// <value>The custom navigation widget.</value>
+    public override string CustomNavigationWidget => "epi-cms/component/PageNavigationTree";
+
+    /// <summary>
+    ///     Gets the custom select title.
+    /// </summary>
+    /// <value>The custom select title.</value>
+    public override string CustomSelectTitle => LocalizationService.Current.GetString("/contentrepositories/settings/customselecttitle");
+
+    /// <summary>
+    ///     Gets the key.
+    /// </summary>
+    /// <value>The key.</value>
+    public override string Key => RepositoryKey;
+
+    /// <summary>
+    ///     Gets the main navigation types.
+    /// </summary>
+    /// <value>The main navigation types.</value>
+    public override IEnumerable<Type> MainNavigationTypes
+    {
+        get { return new[] { typeof(ContentFolder) }; }
+    }
+
+    /// <summary>
+    ///     Gets the main views.
+    /// </summary>
+    /// <value>The main views.</value>
+    public override IEnumerable<string> MainViews
+    {
+        get { return new[] { HomeView.ViewName }; }
+    }
+
+    /// <summary>
+    ///     Gets the name.
+    /// </summary>
+    /// <value>The name.</value>
+    public override string Name => LocalizationService.Current.GetString("/contentrepositories/settings/name");
+
+    /// <summary>
+    ///     Gets the roots.
+    /// </summary>
+    /// <value>The roots.</value>
+    public override IEnumerable<ContentReference> Roots => Settings.Service.SettingsRoots;
+
+    /// <summary>
+    ///     Gets the search area.
+    /// </summary>
+    /// <value>The search area.</value>
+    public override string SearchArea => SettingsSearchProvider.SearchArea;
+
+    /// <summary>
+    ///     Gets the sort order.
+    /// </summary>
+    /// <value>The sort order.</value>
+    public override int SortOrder => 1100;
+
+    public bool EnableContextualContent => true;
+
+    private Injected<ISettingsService> Settings { get; set; }
 }

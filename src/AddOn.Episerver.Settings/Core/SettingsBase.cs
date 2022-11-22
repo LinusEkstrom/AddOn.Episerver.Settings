@@ -21,45 +21,43 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace AddOn.Episerver.Settings.Core
-{
-    using System;
+using EPiServer.Core;
+using EPiServer.DataAnnotations;
+using System;
 
-    using EPiServer.Core;
-    using EPiServer.DataAnnotations;
+namespace AddOn.Episerver.Settings.Core;
+
+/// <summary>
+///     Class SettingsBase.
+///     Implements the <see cref="BasicContent" />
+///     Implements the <see cref="IVersionable" />
+/// </summary>
+/// <seealso cref="BasicContent" />
+/// <seealso cref="IVersionable" />
+[ContentType(GUID = "484DAD32-3E16-4943-B7BF-A542C7BDC379", AvailableInEditMode = false)]
+public class SettingsBase : BasicContent, IVersionable
+{
+    /// <summary>
+    ///     Gets or sets a value indicating whether this item is in pending publish state.
+    /// </summary>
+    /// <value><c>true</c> if this instance is in pending publish state; otherwise, <c>false</c>.</value>
+    public bool IsPendingPublish { get; set; }
 
     /// <summary>
-    /// Class SettingsBase.
-    /// Implements the <see cref="BasicContent" />
-    /// Implements the <see cref="IVersionable" />
+    ///     Gets or sets the start publish date for this item.
     /// </summary>
-    /// <seealso cref="BasicContent" />
-    /// <seealso cref="IVersionable" />
-    [ContentType(GUID = "484DAD32-3E16-4943-B7BF-A542C7BDC379", AvailableInEditMode = false)]
-    public class SettingsBase : BasicContent, IVersionable
-    {
-        /// <summary>
-        /// Gets or sets a value indicating whether this item is in pending publish state.
-        /// </summary>
-        /// <value><c>true</c> if this instance is in pending publish state; otherwise, <c>false</c>.</value>
-        public bool IsPendingPublish { get; set; }
+    /// <value>The start publish.</value>
+    public DateTime? StartPublish { get; set; }
 
-        /// <summary>
-        /// Gets or sets the start publish date for this item.
-        /// </summary>
-        /// <value>The start publish.</value>
-        public DateTime? StartPublish { get; set; }
+    /// <summary>
+    ///     Gets or sets the version status of this item.
+    /// </summary>
+    /// <value>The status.</value>
+    public VersionStatus Status { get; set; }
 
-        /// <summary>
-        /// Gets or sets the version status of this item.
-        /// </summary>
-        /// <value>The status.</value>
-        public VersionStatus Status { get; set; }
-
-        /// <summary>
-        /// Gets or sets the stop publish date for this item.
-        /// </summary>
-        /// <value>The stop publish.</value>
-        public DateTime? StopPublish { get; set; }
-    }
+    /// <summary>
+    ///     Gets or sets the stop publish date for this item.
+    /// </summary>
+    /// <value>The stop publish.</value>
+    public DateTime? StopPublish { get; set; }
 }

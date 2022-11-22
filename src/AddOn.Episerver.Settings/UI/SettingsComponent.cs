@@ -21,34 +21,34 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace AddOn.Episerver.Settings.UI
-{
-    using EPiServer.Shell;
-    using EPiServer.Shell.ViewComposition;
+using EPiServer.Shell;
+using EPiServer.Shell.ViewComposition;
 
+namespace AddOn.Episerver.Settings.UI;
+
+/// <summary>
+///     Component that provides a tree based navigation for CMS pages.
+///     Implements the <see cref="ComponentDefinitionBase" />
+/// </summary>
+/// <seealso cref="ComponentDefinitionBase" />
+[Component]
+public sealed class SettingsComponent : ComponentDefinitionBase
+{
     /// <summary>
-    /// Component that provides a tree based navigation for CMS pages.
-    /// Implements the <see cref="ComponentDefinitionBase" />
+    ///     Initializes a new instance of the <see cref="SettingsComponent" /> class.
     /// </summary>
-    /// <seealso cref="ComponentDefinitionBase" />
-    [Component]
-    public sealed class SettingsComponent : ComponentDefinitionBase
+    public SettingsComponent()
+        : base("epi-cms/component/SharedBlocks")
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SettingsComponent"/> class.
-        /// </summary>
-        public SettingsComponent()
-            : base("epi-cms/component/SharedBlocks")
+        LanguagePath = "/episerver/cms/components/settings";
+        Title = "Settings";
+        SortOrder = 200;
+        Categories = new[]
         {
-            this.LanguagePath = "/episerver/cms/components/settings";
-            this.Title = "Settings";
-            this.SortOrder = 200;
-            this.Categories = new string[]
-                                  {
-                                      "cms"
-                                  };
-            this.PlugInAreas = new[] { PlugInArea.AssetsDefaultGroup };
-            this.Settings.Add(new Setting("repositoryKey", value: SettingsRepositoryDescriptor.RepositoryKey));
-        }
+            "cms"
+        };
+
+        PlugInAreas = new[] { PlugInArea.AssetsDefaultGroup };
+        Settings.Add(new Setting("repositoryKey", SettingsRepositoryDescriptor.RepositoryKey));
     }
 }

@@ -21,31 +21,23 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace AddOn.Episerver.Settings.UI
+using AddOn.Episerver.Settings.Core;
+using EPiServer.Core;
+using EPiServer.Shell.ObjectEditing.EditorDescriptors;
+
+namespace AddOn.Episerver.Settings.UI;
+
+/// <summary>
+///     Editor descriptor that will create a block selector.
+///     Implements the <see cref="ContentReferenceEditorDescriptor{SettingsBase}" />
+/// </summary>
+/// <seealso cref="ContentReferenceEditorDescriptor{SettingsBase}" />
+[EditorDescriptorRegistration(TargetType = typeof(ContentReference), UIHint = "dynamicsettings")]
+public class SettingsReferenceEditorDescriptor : ContentReferenceEditorDescriptor<SettingsBase>
 {
-    using AddOn.Episerver.Settings.Core;
-
-    using EPiServer.Core;
-    using EPiServer.Shell.ObjectEditing.EditorDescriptors;
-
     /// <summary>
-    /// Editor descriptor that will create a block selector.
-    /// Implements the <see cref="ContentReferenceEditorDescriptor{SettingsBase}" />
+    ///     Gets the repository key.
     /// </summary>
-    /// <seealso cref="ContentReferenceEditorDescriptor{SettingsBase}" />
-    [EditorDescriptorRegistration(TargetType = typeof(ContentReference), UIHint = "dynamicsettings")]
-    public class SettingsReferenceEditorDescriptor : ContentReferenceEditorDescriptor<SettingsBase>
-    {
-        /// <summary>
-        /// Gets the repository key.
-        /// </summary>
-        /// <value>The repository key.</value>
-        public override string RepositoryKey
-        {
-            get
-            {
-                return SettingsRepositoryDescriptor.RepositoryKey;
-            }
-        }
-    }
+    /// <value>The repository key.</value>
+    public override string RepositoryKey => SettingsRepositoryDescriptor.RepositoryKey;
 }

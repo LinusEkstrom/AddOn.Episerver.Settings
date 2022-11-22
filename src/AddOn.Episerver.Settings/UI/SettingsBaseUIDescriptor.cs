@@ -21,32 +21,30 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace AddOn.Episerver.Settings.UI
+using AddOn.Episerver.Settings.Core;
+using EPiServer.Core;
+using EPiServer.Shell;
+
+namespace AddOn.Episerver.Settings.UI;
+
+/// <summary>
+///     Class SettingsBaseUIDescriptor.
+///     Implements the <see cref="UIDescriptor{SettingsBase}" />
+/// </summary>
+/// <seealso cref="UIDescriptor{SettingsBase}" />
+[UIDescriptorRegistration]
+public class SettingsBaseUIDescriptor : UIDescriptor<SettingsBase>
 {
-    using AddOn.Episerver.Settings.Core;
-
-    using EPiServer.Core;
-    using EPiServer.Shell;
-
     /// <summary>
-    /// Class SettingsBaseUIDescriptor.
-    /// Implements the <see cref="UIDescriptor{SettingsBase}" />
+    ///     Initializes a new instance of the <see cref="SettingsBaseUIDescriptor" /> class.
     /// </summary>
-    /// <seealso cref="UIDescriptor{SettingsBase}" />
-    [UIDescriptorRegistration]
-    public class SettingsBaseUIDescriptor : UIDescriptor<SettingsBase>
+    public SettingsBaseUIDescriptor()
+        : base("dijitIcon")
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SettingsBaseUIDescriptor" /> class.
-        /// </summary>
-        public SettingsBaseUIDescriptor()
-            : base("dijitIcon")
-        {
-            this.IsPrimaryType = true;
-            this.ContainerTypes = new[] { typeof(ContentFolder) };
-            this.CommandIconClass = "epi-iconSettings";
-            this.IconClass = "epi-iconSettings";
-            this.LanguageKey = "settingsbase";
-        }
+        IsPrimaryType = true;
+        ContainerTypes = new[] { typeof(ContentFolder) };
+        CommandIconClass = "epi-iconSettings";
+        IconClass = "epi-iconSettings";
+        LanguageKey = "settingsbase";
     }
 }

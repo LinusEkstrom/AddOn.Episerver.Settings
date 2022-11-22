@@ -21,75 +21,73 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace AddOn.Episerver.Settings.Core
-{
-    using System;
-    using System.Collections.Generic;
+using EPiServer.Core;
+using EPiServer.Web;
+using System;
+using System.Collections.Generic;
 
-    using EPiServer.Core;
-    using EPiServer.Web;
+namespace AddOn.Episerver.Settings.Core;
+
+/// <summary>
+///     Interface ISettingsService
+/// </summary>
+public interface ISettingsService
+{
+    /// <summary>
+    ///     Gets the global settings.
+    /// </summary>
+    /// <value>The global settings.</value>
+    Dictionary<Type, ContentReference> GlobalSettings { get; }
 
     /// <summary>
-    /// Interface ISettingsService
+    ///     Gets or sets the global settings root.
     /// </summary>
-    public interface ISettingsService
-    {
-        /// <summary>
-        /// Gets the global settings.
-        /// </summary>
-        /// <value>The global settings.</value>
-        Dictionary<Type, ContentReference> GlobalSettings { get; }
+    /// <value>The global settings root.</value>
+    ContentReference GlobalSettingsRoot { get; set; }
 
-        /// <summary>
-        /// Gets or sets the global settings root.
-        /// </summary>
-        /// <value>The global settings root.</value>
-        ContentReference GlobalSettingsRoot { get; set; }
-        
-        /// <summary>
-        /// Gets or sets the settings root.
-        /// </summary>
-        /// <value>The settings root.</value>
-        ContentReference SettingsRoot { get; set; }
-        
-        /// <summary>
-        /// Gets the settings roots.
-        /// </summary>
-        /// <value>The settings roots.</value>
-        IEnumerable<ContentReference> SettingsRoots { get; }
-        
-        /// <summary>
-        /// Gets the settings.
-        /// </summary>
-        /// <typeparam name="T">The settings type</typeparam>
-        /// <returns>An instance of <typeparamref name="T" /></returns>
-        T GetSettings<T>() where T : IContent;
+    /// <summary>
+    ///     Gets or sets the settings root.
+    /// </summary>
+    /// <value>The settings root.</value>
+    ContentReference SettingsRoot { get; set; }
 
-        /// <summary>
-        /// Gets the settings.
-        /// </summary>
-        /// <typeparam name="T">The settings type</typeparam>
-        /// <param name="content">The content.</param>
-        /// <returns>An instance of <typeparamref name="T" /></returns>
-        T GetSettings<T>(IContent content)
-            where T : IContent;
+    /// <summary>
+    ///     Gets the settings roots.
+    /// </summary>
+    /// <value>The settings roots.</value>
+    IEnumerable<ContentReference> SettingsRoots { get; }
 
-        /// <summary>
-        /// Initializes the settings.
-        /// </summary>
-        /// <exception cref="T:System.NotSupportedException">If the root name is already registered with another contentRootId.</exception>
-        void InitSettings();
+    /// <summary>
+    ///     Gets the settings.
+    /// </summary>
+    /// <typeparam name="T">The settings type</typeparam>
+    /// <returns>An instance of <typeparamref name="T" /></returns>
+    T GetSettings<T>() where T : IContent;
 
-        /// <summary>
-        /// Updates the settings.
-        /// </summary>
-        /// <param name="content">The content.</param>
-        void UpdateSettings(IContent content);
+    /// <summary>
+    ///     Gets the settings.
+    /// </summary>
+    /// <typeparam name="T">The settings type</typeparam>
+    /// <param name="content">The content.</param>
+    /// <returns>An instance of <typeparamref name="T" /></returns>
+    T GetSettings<T>(IContent content)
+        where T : IContent;
 
-        /// <summary>
-        /// Updates the settings root folder for a site.
-        /// </summary>
-        /// <param name="SiteDefinition">The site definition.</param>
-        ContentReference ValidateOrCreateSiteSettingsRoot(SiteDefinition siteDefinition);
-    }
+    /// <summary>
+    ///     Initializes the settings.
+    /// </summary>
+    /// <exception cref="T:System.NotSupportedException">If the root name is already registered with another contentRootId.</exception>
+    void InitSettings();
+
+    /// <summary>
+    ///     Updates the settings.
+    /// </summary>
+    /// <param name="content">The content.</param>
+    void UpdateSettings(IContent content);
+
+    /// <summary>
+    ///     Updates the settings root folder for a site.
+    /// </summary>
+    /// <param name="SiteDefinition">The site definition.</param>
+    ContentReference ValidateOrCreateSiteSettingsRoot(SiteDefinition siteDefinition);
 }
