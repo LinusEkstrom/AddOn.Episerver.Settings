@@ -71,8 +71,10 @@ public class SettingsInitializationModule : IConfigurableModule
 #if NET48
         var services = context.Services;
         services.AddSingleton<ISettingsService, SettingsService>();
+            services.AddSingleton<ISettingsResolver, PropertyNameSettingsResolver>();
 #else
             context.Services.AddSingleton<ISettingsService, SettingsService>();
+            context.Services.AddSingleton<ISettingsResolver, PropertyNameSettingsResolver>();
             context.Services.Configure<ProtectedModuleOptions>(pm => pm.Items.Add(new ModuleDetails() { Name = "AddOn.Episerver.Settings" }));
 #endif
     }
