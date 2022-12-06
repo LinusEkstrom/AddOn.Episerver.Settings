@@ -67,14 +67,13 @@ public class MenuSettings : SettingsBase
 [AllowedTypes(new Type[] { typeof(MenuSettings) })]
 [Display(GroupName = "SiteSettings")]
 public virtual ContentReference MenuSettings { get; set; }
+```
 
 3. Settings are created in a gadget in the side bar, just as you would work with blocks:
 
 ![Settingsbrowser](https://user-images.githubusercontent.com/3509092/169228176-181e8178-7a4a-4d6b-9a91-a47fdce51dcc.jpg)
 
 Once you have created your setting you can assign the value of your page property to connect them.
-
-```
 
 4. Getting the settings
 ```csharp
