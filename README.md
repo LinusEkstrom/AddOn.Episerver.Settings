@@ -16,7 +16,7 @@ The Optimizely Settings addon makes it possible to work with different types of 
 Settings can be defined either as global (for the entire solution) or created and assigned to a section of the content tree.
 
 ### Global Settings
-Lets start with looking on how to work with global settings.
+Lets start with looking at how to work with global settings.
 
 1. Create a settings type and make this a global setting by adding the SettingsContentType attribute.
 The settings system will ensure that that this item is created at initialization if it does not already exist.
@@ -51,7 +51,7 @@ settingsService.GetSettings<GoogleAnalyticsSettings>();
 
 ### Local Settings
 
-1. A local setting is basically the same as a global setting with that difference that you use the standard ContentType attribute instead of the SettingsContentType attribute.
+1. A local setting is basically the same as a global setting with the difference that you use the standard ContentType attribute instead of the SettingsContentType attribute.
 > You can use a [Resharper template](templates/SettingsTemplates.DotSettings)
 ```csharp
 [ContentType(GUID = "a5506171-c6b2-4a7a-9c44-bb870f695956")]
@@ -88,7 +88,7 @@ If you want to clarify that a content types is a source of a certain type of set
 
 ### Combining local and global settings
 
-You can even combine local settings with global settings where the global setting will used as a fallback if there are no local settings defined in the requested content hierarchy. If you want to try this, you can do the following:
+You can even combine local settings with global settings where the global setting will be used as a fallback if there are no local settings defined in the requested content hierarchy. If you want to try this, you can do the following:
 * Go into the adminstrative interface and change the GoogleAnalyticsSettings content type to allow creation in edit mode.
 * Go into the settings gadget in the editorial view and create a GoogleAnalyticsSettings setting.
 * Add this property to a page type:
@@ -135,16 +135,6 @@ Register it in the di-container:
 ```csharp
 services.AddSingleton<ISettingsResolver, CustomSettingsResolver>();
 ```
-
-## Removing Settings classes
-If upgrading from an earlier version of AddOn.Episerver.Settings, some values must be set in the database first. In table tblContentType each row that contains a Settings-type must have the Base-column updated to the value **Setting**. This ensures that existing settings entities can be loaded by the CMS even if the type class no longer exists.
-
-Then locate and delete all instances that are of the no longer existing settings-types. Remember to remove from the _Global Settings_ **and** to empty the trash can. After this is done the types will be dropped automatically the next time the CMS is restarted.
-
-0. Update tblContentType, set Base column to "Setting" for Settings types.
-1. Deploy code with removed obsolete settings classes to the site.
-2. Remove obsolete instances of settings, including global settings.
-3. Restart site so that the CMS removes the no longer used Content Types.
 
 ## Requirements
 
