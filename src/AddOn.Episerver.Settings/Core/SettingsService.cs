@@ -195,7 +195,7 @@ public class SettingsService : ISettingsService
     /// </summary>
     /// <typeparam name="T">The settings type</typeparam>
     /// <returns>An instance of <typeparamref name="T" /> </returns>
-        public T GetSettings<T>() where T : SettingsBase
+    public T GetSettings<T>() where T : SettingsBase
     {
         try
         {
@@ -514,9 +514,9 @@ public class SettingsService : ISettingsService
                 log.Error($"[Settings] {ex.Message}", ex);
             }
 
-            // If the item is an instance of SettingsBase has been loaded as a fallback 
-            // because the ContentType class no longer exists
-            if (item != null && item.GetOriginalType() != typeof(SettingsBase))
+            // If the item is an instance of SettingsBase has been loaded as a fallback because the ContentType class no longer exists
+            // or if it's no setting at all..
+            if (item != null && item.GetOriginalType() != typeof(SettingsBase) && item is SettingsBase)
             {
                 yield return item;
             }
@@ -531,7 +531,7 @@ public class SettingsService : ISettingsService
     {
         return cache.ReadThrough(
         globalSettingsCacheKey,
-        () => LoadGlobalSettings().ToDictionary(item => item.GetOriginalType(), item => item.ContentLink),
+        () => LoadGlobalSettings().Distinct(new ContentTypeComparer()).ToDictionary(item => item.GetOriginalType(), item => item.ContentLink),
         ReadStrategy.Wait);
     }
 
@@ -539,5 +539,18 @@ public class SettingsService : ISettingsService
     private void ClearCache()
     {
         cache.Remove(globalSettingsCacheKey);
+    }
+
+    private class ContentTypeComparer : IEqualityComparer<IContent>
+    {
+        public bool Equals(IContent x, IContent y)
+        {
+            return x.GetOriginalType() == y.GetOriginalType();
+        }
+
+        public int GetHashCode(IContent obj)
+        {
+            return obj.GetOriginalType().GetHashCode();
+        }
     }
 }
