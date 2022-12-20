@@ -75,16 +75,6 @@ public virtual ContentReference MenuSettings { get; set; }
 
 Once you have created your setting you can assign the value of your page property to connect them.
 
-4. Getting the settings
-```csharp
-ISettingsService settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
-settingsService.GetSettings<MenuSettings>(currentPage);
-```
-
-Note that the call to get these settings include the current content object. The default settings resolver will traverse the structure and look for properties with the same name as the settings type, in this case "MenuSettings", and return the first property with a defined value. Since the settings are matched by name - you can implement settings across content types.
-
-If you want to clarify that a content types is a source of a certain type of settings - you can create your own interface to declare this. However, this is not something that the settings system will use.
-
 ### Combining local and global settings
 
 You can even combine local settings with global settings where the global setting will be used as a fallback if there are no local settings defined in the requested content hierarchy. If you want to try this, you can do the following:
@@ -112,10 +102,39 @@ If upgrading from version 2 *AND* and sites in the solution has had site specifi
 3. Move it into "For all sites / Settings Root"
 4. Now all settings are available in the settings gadget so that they can be moved into the specific site they target (or being kept as shared)
 
+## Getting a setting
+To get a settings instance from your code you use the ISettingsService. It has a number of methods for resolving settings depending on the need.
+
+```csharp
+ISettingsService settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
+
+// Will resolve the first menuSetting found, starting from the current content context
+settingsService.GetSetting<MenuSettings>();
+
+// Will resolve the first menuSetting found, starting from the provided content reference
+settingsService.GetSetting<MenuSettings>(myContentReference);
+
+// Will resolve the first menuSetting found, starting from the provided content
+settingsService.GetSetting<MenuSettings>(myContentInstance);
+
+// Will resolve a menuSetting only from the global settings
+settingsService.GetGlobalSetting<MenuSettings>();
+
+// Will resolve all menuSettings found, starting from the provided content reference
+settingsService.GetSettingsRecursive<MenuSettings>(myContentReference);
+
+// Will resolve all menuSettings found, starting from the provided content
+settingsService.GetSettingsRecursive<MenuSettings>(myContentInstance);
+```
+
+The default settings resolver will traverse the structure and look for properties with the same name as the settings type, in this case "MenuSettings", and return the first property with a defined value. Since the settings are matched by name - you can implement settings across content types.
+
+If you want to clarify that a content types is a source of a certain type of settings - you can create your own interface to declare this. However, this is not something that the settings system will use.
+
 ## Customize how settings are resolved
 By default, settings are resolved by searching for properties with name matching the Settings type. If you wish to add a custom way for this, it is possible to add a class implementing __ISettingsResolver__. For example this gives the power to have nested settings.
 
-The registered resolvers are ordered by the SortOrder property will be called for each IContent item traversed. The first resolver that returns a setting will "win" and that setting will be the on used.
+The registered resolvers are ordered by the SortOrder property and will be called for each IContent item traversed. The first resolver that returns a setting will "win" and that setting will be the on used.
 
 Implement a class:
 ```csharp

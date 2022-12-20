@@ -58,20 +58,48 @@ public interface ISettingsService
     IEnumerable<ContentReference> SettingsRoots { get; }
 
     /// <summary>
-    ///     Gets the settings.
+    ///     Gets the first matching setting by traversing the content tree, starting the search for it from the current content context.
     /// </summary>
     /// <typeparam name="T">The settings type</typeparam>
     /// <returns>An instance of <typeparamref name="T" /></returns>
-        T GetSettings<T>() where T : SettingsBase;
+    T GetSetting<T>() where T : SettingsBase;
 
     /// <summary>
-    ///     Gets the settings.
+    ///     Gets the first matching setting by traversing the content tree, starting the search from the provided content reference.
+    /// </summary>
+    /// <typeparam name="T">The settings type</typeparam>
+    /// <param name="contentLink">The content link.</param>
+    /// <returns>An instance of <typeparamref name="T" /></returns>
+    T GetSetting<T>(ContentReference contentLink) where T : SettingsBase;
+    
+    /// <summary>
+    ///     Gets the first matching setting by traversing the content tree, starting the search from the provided content.
     /// </summary>
     /// <typeparam name="T">The settings type</typeparam>
     /// <param name="content">The content.</param>
     /// <returns>An instance of <typeparamref name="T" /></returns>
-    T GetSettings<T>(IContent content)
-            where T : SettingsBase;
+    T GetSetting<T>(IContent content) where T : SettingsBase;
+    
+    /// <summary>
+    ///     Gets the setting implementing the specified type from the global settings repository.
+    /// </summary>
+    /// <typeparam name="T">The settings type</typeparam>
+    /// <returns>An instance of <typeparamref name="T" /></returns>
+    T GetGlobalSetting<T>() where T : SettingsBase;
+
+    /// <summary>
+    ///     Gets all settings found traversing the content tree starting from the provided content link.
+    /// </summary>
+    /// <typeparam name="T">The settings type</typeparam>
+    /// <returns>An instance of <typeparamref name="T" /></returns>
+    IEnumerable<T> GetSettingsRecursive<T>(ContentReference contentLink) where T : SettingsBase;
+    
+    /// <summary>
+    ///     Gets all settings found traversing the content tree starting from the provided content.
+    /// </summary>
+    /// <typeparam name="T">The settings type</typeparam>
+    /// <returns>An instance of <typeparamref name="T" /></returns>
+    IEnumerable<T> GetSettingsRecursive<T>(IContent content) where T : SettingsBase;
 
     /// <summary>
     ///     Initializes the settings.
@@ -88,6 +116,6 @@ public interface ISettingsService
     /// <summary>
     ///     Updates the settings root folder for a site.
     /// </summary>
-    /// <param name="SiteDefinition">The site definition.</param>
+    /// <param name="siteDefinition">The site definition.</param>
     ContentReference ValidateOrCreateSiteSettingsRoot(SiteDefinition siteDefinition);
 }

@@ -22,6 +22,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using EPiServer;
+using EPiServer.Cms.Shell.UI.Rest;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
@@ -70,6 +71,8 @@ public class SettingsService : ISettingsService
     /// </summary>
     private readonly ISynchronizedObjectInstanceCache cache;
 
+    private readonly IContentRouteHelper contentRouteHelper;
+
     /// <summary>
     ///     The content repository
     /// </summary>
@@ -107,19 +110,20 @@ public class SettingsService : ISettingsService
     /// </summary>
     private readonly ITypeScannerLookup typeScannerLookup;
 
-        private readonly ISettingsResolver[] settingsResolvers;
+    private readonly ISettingsResolver[] settingsResolvers;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SettingsService" /> class.
     /// </summary>
     /// <param name="contentRepository">The content repository.</param>
-    /// <param name="siteDefinitionRepository">The site definition reposi</param>
+    /// <param name="siteDefinitionRepository">The site definition repository</param>
     /// <param name="contentRootService">The content root service.</param>
     /// <param name="typeScannerLookup">The type scanner lookup.</param>
     /// <param name="contentTypeRepository">The content type repository.</param>
     /// <param name="ancestorReferencesLoader">The ancestor references loader.</param>
     /// <param name="synchronizedObjectInstanceCache"></param>
-        /// <param name="settingsResolvers"></param>
+    /// <param name="settingsResolvers"></param>
+    /// <param name="contentRouteHelper"></param>
     public SettingsService(
         IContentRepository contentRepository,
         ISiteDefinitionRepository siteDefinitionRepository,
@@ -127,8 +131,10 @@ public class SettingsService : ISettingsService
         ITypeScannerLookup typeScannerLookup,
         IContentTypeRepository contentTypeRepository,
         AncestorReferencesLoader ancestorReferencesLoader,
-        ISynchronizedObjectInstanceCache synchronizedObjectInstanceCache, 
-        IEnumerable<ISettingsResolver> settingsResolvers)
+        ISynchronizedObjectInstanceCache synchronizedObjectInstanceCache,
+        IEnumerable<ISettingsResolver> settingsResolvers,
+        IContentRouteHelper contentRouteHelper
+    )
     {
         this.contentRepository = contentRepository;
         this.siteDefinitionRepository = siteDefinitionRepository;
@@ -136,7 +142,8 @@ public class SettingsService : ISettingsService
         this.typeScannerLookup = typeScannerLookup;
         this.contentTypeRepository = contentTypeRepository;
         this.ancestorReferencesLoader = ancestorReferencesLoader;
-        cache = synchronizedObjectInstanceCache;
+        this.cache = synchronizedObjectInstanceCache;
+        this.contentRouteHelper = contentRouteHelper;
         this.settingsResolvers = settingsResolvers.OrderBy(x => x.SortOrder).ToArray();
     }
 
@@ -191,11 +198,11 @@ public class SettingsService : ISettingsService
     }
 
     /// <summary>
-    ///     Gets the settings.
+    ///     Gets the setting implementing the specified type from the global settings repository.
     /// </summary>
     /// <typeparam name="T">The settings type</typeparam>
     /// <returns>An instance of <typeparamref name="T" /> </returns>
-    public T GetSettings<T>() where T : SettingsBase
+    public T GetGlobalSetting<T>() where T : SettingsBase
     {
         try
         {
@@ -220,14 +227,12 @@ public class SettingsService : ISettingsService
     }
 
     /// <summary>
-    ///     Gets the settings.
+    ///     Gets the setting, starting the search at the current content context.
     /// </summary>
     /// <typeparam name="T">The settings type</typeparam>
-    /// <param name="content">The content.</param>
     /// <returns>An instance of <typeparamref name="T" /> </returns>
     /// <exception cref="T:System.Threading.SynchronizationLockException">
-    ///     The current thread has not entered the lock in read
-    ///     mode.
+    ///     The current thread has not entered the lock in read mode.
     /// </exception>
     /// <exception cref="T:System.Threading.LockRecursionException">
     ///     The current thread cannot acquire the write lock when it
@@ -243,29 +248,118 @@ public class SettingsService : ISettingsService
     ///     The <see cref="T:System.Threading.ReaderWriterLockSlim" /> object
     ///     has been disposed.
     /// </exception>
-    public T GetSettings<T>(IContent content)
-            where T : SettingsBase
+    public T GetSetting<T>() where T : SettingsBase
+    {
+        if (contentRouteHelper.Content is null)
+        {
+            return default;
+        }
+        
+        return GetSetting<T>(contentRouteHelper.Content);
+    }
+
+    /// <summary>
+    ///     Gets the setting, starting the search at the provided content link.
+    /// </summary>
+    /// <typeparam name="T">The settings type</typeparam>
+    /// <param name="contentLink">The content link.</param>
+    /// <returns>An instance of <typeparamref name="T" /> </returns>
+    /// <exception cref="T:System.Threading.SynchronizationLockException">
+    ///     The current thread has not entered the lock in read mode.
+    /// </exception>
+    /// <exception cref="T:System.Threading.LockRecursionException">
+    ///     The current thread cannot acquire the write lock when it
+    ///     holds the read lock.-or-The <see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> property is
+    ///     <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />, and the current thread has attempted to acquire
+    ///     the read lock when it already holds the read lock. -or-The
+    ///     <see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> property is
+    ///     <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />, and the current thread has attempted to acquire
+    ///     the read lock when it already holds the write lock. -or-The recursion number would exceed the capacity of the
+    ///     counter. This limit is so large that applications should never encounter this exception.
+    /// </exception>
+    /// <exception cref="T:System.ObjectDisposedException">
+    ///     The <see cref="T:System.Threading.ReaderWriterLockSlim" /> object
+    ///     has been disposed.
+    /// </exception>
+    public T GetSetting<T>(ContentReference contentLink) where T : SettingsBase
+    {
+        if (contentRepository.TryGet(contentLink, out IContent content))
+        {
+            return GetSetting<T>(content);
+        }
+
+        return default;
+    }
+
+    /// <summary>
+    ///     Gets the setting, starting the search at the provided content.
+    /// </summary>
+    /// <typeparam name="T">The settings type</typeparam>
+    /// <param name="content">The content.</param>
+    /// <returns>An instance of <typeparamref name="T" /> </returns>
+    /// <exception cref="T:System.Threading.SynchronizationLockException">
+    ///     The current thread has not entered the lock in read mode.
+    /// </exception>
+    /// <exception cref="T:System.Threading.LockRecursionException">
+    ///     The current thread cannot acquire the write lock when it
+    ///     holds the read lock.-or-The <see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> property is
+    ///     <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />, and the current thread has attempted to acquire
+    ///     the read lock when it already holds the read lock. -or-The
+    ///     <see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> property is
+    ///     <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />, and the current thread has attempted to acquire
+    ///     the read lock when it already holds the write lock. -or-The recursion number would exceed the capacity of the
+    ///     counter. This limit is so large that applications should never encounter this exception.
+    /// </exception>
+    /// <exception cref="T:System.ObjectDisposedException">
+    ///     The <see cref="T:System.Threading.ReaderWriterLockSlim" /> object
+    ///     has been disposed.
+    /// </exception>
+    public T GetSetting<T>(IContent content) where T : SettingsBase
+    {
+        return GetSettingsRecursive<T>(content).FirstOrDefault();
+    }
+
+    /// <summary>
+    ///     Gets all settings found traversing the content tree starting from the provided content link.
+    /// </summary>
+    /// <typeparam name="T">The settings type</typeparam>
+    /// <param name="contentLink">The content link</param>
+    /// <returns>An instance of <typeparamref name="T" /> </returns>
+    public IEnumerable<T> GetSettingsRecursive<T>(ContentReference contentLink) where T : SettingsBase
+    {
+        if (contentRepository.TryGet(contentLink, out IContent content))
+        {
+            return GetSettingsRecursive<T>(content);
+        }
+
+        return default;
+    }
+
+    /// <summary>
+    ///     Gets all settings found traversing the content tree starting from the provided content.
+    /// </summary>
+    /// <typeparam name="T">The settings type</typeparam>
+    /// <param name="content">The content</param>
+    /// <returns>An instance of <typeparamref name="T" /> </returns>
+    public IEnumerable<T> GetSettingsRecursive<T>(IContent content) where T : SettingsBase
     {
         if (content == null)
         {
-            return default;
+            yield break;
         }
 
         var settingsFromContent = TryGetSettingsFromContent<T>(content);
 
         if (settingsFromContent != null)
         {
-            return settingsFromContent;
+            yield return settingsFromContent;
         }
 
-        var ancestors =
-            ancestorReferencesLoader.GetAncestors(content.ContentLink);
+        var ancestors = ancestorReferencesLoader.GetAncestors(content.ContentLink);
 
         foreach (var parentReference in ancestors)
         {
-            IContent parentContent;
-
-            if (!contentRepository.TryGet(parentReference, out parentContent))
+            if (!contentRepository.TryGet(parentReference, out IContent parentContent))
             {
                 continue;
             }
@@ -274,17 +368,17 @@ public class SettingsService : ISettingsService
 
             if (settingsFromContent != null)
             {
-                return settingsFromContent;
+                yield return settingsFromContent;
             }
         }
 
-        return GetSettings<T>();
+        yield return GetGlobalSetting<T>();
     }
 
     /// <summary>
     ///     Initializes the settings.
     /// </summary>
-    /// <exception cref="T:System.NotSupportedException">If the rootname is already registered with another contentRootId.</exception>
+    /// <exception cref="T:System.NotSupportedException">If the root name is already registered with another contentRootId.</exception>
     public void InitSettings()
     {
         try
