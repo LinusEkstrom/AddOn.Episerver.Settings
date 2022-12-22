@@ -355,8 +355,15 @@ public class SettingsService : ISettingsService
             yield return settingsFromContent;
         }
 
-        var ancestors = ancestorReferencesLoader.GetAncestors(content.ContentLink);
+        var ancestors = ancestorReferencesLoader.GetAncestors(content.ContentLink)
+            .Where(x => !x.CompareToIgnoreWorkID(ContentReference.RootPage))
+            .ToList();
 
+        if (!ancestors.Contains(ContentReference.StartPage, ContentReferenceComparer.IgnoreVersion))
+        {
+            ancestors.Add(ContentReference.StartPage);
+        }
+        
         foreach (var parentReference in ancestors)
         {
             if (!contentRepository.TryGet(parentReference, out IContent parentContent))
