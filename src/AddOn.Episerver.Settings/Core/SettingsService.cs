@@ -22,7 +22,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using EPiServer;
-using EPiServer.Cms.Shell.UI.Rest;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
@@ -36,6 +35,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace AddOn.Episerver.Settings.Core;
 
@@ -71,6 +71,9 @@ public class SettingsService : ISettingsService
     /// </summary>
     private readonly ISynchronizedObjectInstanceCache cache;
 
+    /// <summary>
+    ///     The ContentRouteHelper
+    /// </summary>
     private readonly IContentRouteHelper contentRouteHelper;
 
     /// <summary>
@@ -103,15 +106,19 @@ public class SettingsService : ISettingsService
     /// </summary>
     private readonly ISiteDefinitionRepository siteDefinitionRepository;
 
-    private readonly ConcurrentDictionary<Guid, ContentReference> siteSettingsRoots = new ConcurrentDictionary<Guid, ContentReference>();
-
     /// <summary>
     ///     The type scanner lookup
     /// </summary>
     private readonly ITypeScannerLookup typeScannerLookup;
 
+    private readonly ConcurrentDictionary<Guid, ContentReference> siteSettingsRoots = new ConcurrentDictionary<Guid, ContentReference>();
     private readonly ISettingsResolver[] settingsResolvers;
-
+    
+    private readonly MethodInfo getSettingMethod = typeof(SettingsService).GetMethod(nameof(GetSetting), new [] { typeof(IContent) });
+    private readonly Dictionary<Type, MethodInfo> getSettingGenericMethods = new Dictionary<Type, MethodInfo>();
+    private readonly MethodInfo getGlobalSettingMethod = typeof(SettingsService).GetMethod(nameof(GetGlobalSetting), Type.EmptyTypes );
+    private readonly Dictionary<Type, MethodInfo> getGlobalSettingGenericMethods = new Dictionary<Type, MethodInfo>();
+    
     /// <summary>
     ///     Initializes a new instance of the <see cref="SettingsService" /> class.
     /// </summary>
@@ -225,6 +232,25 @@ public class SettingsService : ISettingsService
 
         return default;
     }
+    
+    /// <summary>
+    ///     Gets the setting implementing the specified type from the global settings repository.
+    /// </summary>
+    /// <param name="settingsType">The settings type</param>
+    /// <returns>An instance of <typeparamref name="SettingsBase" /> </returns>
+    /// <exception cref="ArgumentException">It type does not inherit from <typeparamref name="SettingsBase" /></exception>
+    public SettingsBase GetGlobalSetting(Type settingsType)
+    {
+        if (!settingsType.IsSubclassOf(typeof(SettingsBase)) )
+        {
+            throw new ArgumentException("Type must inherit from SettingsBase");
+        }
+
+        var method = getGlobalSettingGenericMethods[settingsType] ??= getGlobalSettingMethod.MakeGenericMethod(settingsType);
+
+        return method
+            .Invoke(this, Array.Empty<object>() ) as SettingsBase;
+    }
 
     /// <summary>
     ///     Gets the setting, starting the search at the current content context.
@@ -289,6 +315,44 @@ public class SettingsService : ISettingsService
         }
 
         return default;
+    }
+
+    /// <summary>
+    ///     Gets the first matching setting by traversing the content tree, starting the search from the provided content reference.
+    /// </summary>
+    /// <param name="settingsType">The settings type</param>
+    /// <param name="contentLink">The content link</param>
+    /// <returns>An instance of <typeparamref name="SettingsBase" /></returns>
+    public SettingsBase GetSetting(Type settingsType, ContentReference contentLink)
+    {
+        if (contentRepository.TryGet(contentLink, out IContent content))
+        {
+            return GetSetting(settingsType, content);
+        }
+
+        return default;
+    }
+    
+    /// <summary>
+    ///     Gets the first matching setting by traversing the content tree, starting the search from the provided content.
+    /// </summary>
+    /// <param name="settingsType">The settings type</param>
+    /// <param name="content">The content</param>
+    /// <returns>An instance of <typeparamref name="SettingsBase" /></returns>
+    public SettingsBase GetSetting(Type settingsType, IContent content)
+    {
+        if (!settingsType.IsSubclassOf(typeof(SettingsBase)) )
+        {
+            throw new ArgumentException("Type must inherit from SettingsBase");
+        }
+
+        if (!getSettingGenericMethods.ContainsKey(settingsType))
+        {
+            getSettingGenericMethods[settingsType] = getSettingMethod.MakeGenericMethod(settingsType);
+        }
+        
+        return getSettingGenericMethods[settingsType]
+            .Invoke(this, new object[] { content }) as SettingsBase;
     }
 
     /// <summary>
@@ -580,19 +644,18 @@ public class SettingsService : ISettingsService
     /// <typeparam name="T">The settings type</typeparam>
     /// <param name="content">The content.</param>
     /// <returns>An instance of <typeparamref name="T" /> </returns>
-    private T TryGetSettingsFromContent<T>(IContent content)
-        where T : SettingsBase
+    private T TryGetSettingsFromContent<T>(IContent content) where T : SettingsBase
+    {
+        foreach (var settingsResolver in settingsResolvers)
         {
-            foreach (var settingsResolver in settingsResolvers)
+            if (settingsResolver.TryResolveSettingFromContent<T>(content, out var setting))
             {
-                if (settingsResolver.TryResolveSettingFromContent<T>(content, out var setting))
-                {
-                    return setting;
-                }
+                return setting;
             }
-
-            return default;
         }
+
+        return default;
+    }
 
     /// <summary>Loads the global settings instances from below the Global settings root.</summary>
     /// <returns>

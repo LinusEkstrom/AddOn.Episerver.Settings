@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution 
 		..\.github\workflows\dotnet.yml = ..\.github\workflows\dotnet.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Addon.Episerver.Settings.Test", "Addon.Episerver.Settings.Test\Addon.Episerver.Settings.Test.csproj", "{D6000721-07E2-4FAE-BE0A-610304EBD463}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D999E2CF-F01E-48E6-85ED-98AEEE83B6FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D999E2CF-F01E-48E6-85ED-98AEEE83B6FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D999E2CF-F01E-48E6-85ED-98AEEE83B6FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6000721-07E2-4FAE-BE0A-610304EBD463}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6000721-07E2-4FAE-BE0A-610304EBD463}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6000721-07E2-4FAE-BE0A-610304EBD463}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6000721-07E2-4FAE-BE0A-610304EBD463}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
