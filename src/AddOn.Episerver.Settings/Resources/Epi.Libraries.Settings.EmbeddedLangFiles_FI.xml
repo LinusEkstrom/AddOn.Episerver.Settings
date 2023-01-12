@@ -84,6 +84,12 @@
       <deletesetting>
         <deletenotsupported>Yleistä asetusta ei voi poistaa</deletenotsupported>
       </deletesetting>
+      <createsetting>
+        <createnotsupported>Sisällön luominen yleisten asetusten kansioon ei ole sallittua</createnotsupported>
+      </createsetting>
+      <movesetting>
+        <contenttoglobalsetting>Sisällön siirtäminen yleisten asetusten kansioon ei ole sallittua</contenttoglobalsetting>
+      </movesetting>
     </edit>
   </language>
 </languages>

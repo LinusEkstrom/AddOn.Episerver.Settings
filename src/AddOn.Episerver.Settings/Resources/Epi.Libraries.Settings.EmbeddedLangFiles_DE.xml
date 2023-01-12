@@ -84,6 +84,12 @@
       <deletesetting>
         <deletenotsupported>Eine globale Einstellung kann nicht gelöscht werden</deletenotsupported>
       </deletesetting>
+      <createsetting>
+        <createnotsupported>Das Erstellen von Inhalten im Ordner mit den globalen Einstellungen ist nicht zulässig</createnotsupported>
+      </createsetting>
+      <movesetting>
+        <contenttoglobalsetting>Das Verschieben von Inhalten in den Ordner mit den globalen Einstellungen ist nicht zulässig</contenttoglobalsetting>
+      </movesetting>
     </edit>
   </language>
 </languages>

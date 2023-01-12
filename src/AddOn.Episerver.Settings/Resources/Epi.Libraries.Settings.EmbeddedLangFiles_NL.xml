@@ -84,6 +84,12 @@
       <deletesetting>
         <deletenotsupported>Globale configuraties kunnen niet verwijderd worden.</deletenotsupported>
       </deletesetting>
+      <createsetting>
+        <createnotsupported>Het maken van inhoud in de map met algemene instellingen is niet toegestaan</createnotsupported>
+      </createsetting>
+      <movesetting>
+        <contenttoglobalsetting>Het verplaatsen van inhoud naar de map met algemene instellingen is niet toegestaan</contenttoglobalsetting>
+      </movesetting>
     </edit>
   </language>
 </languages>
