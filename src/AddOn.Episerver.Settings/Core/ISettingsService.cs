@@ -63,13 +63,19 @@ public interface ISettingsService
     /// <typeparam name="T">The settings type</typeparam>
     /// <returns>An instance of <typeparamref name="T" /></returns>
     T GetSetting<T>() where T : SettingsBase;
+    
+    /// <summary>
+    ///     Gets the first matching setting by traversing the content tree, starting the search for it from the current content context.
+    /// </summary>
+    /// <returns>An instance of <see cref="SettingsBase" /></returns>
+    SettingsBase GetSetting(Type settingsType);
 
     /// <summary>
     ///     Gets the first matching setting by traversing the content tree, starting the search from the provided content reference.
     /// </summary>
     /// <typeparam name="T">The settings type</typeparam>
     /// <param name="contentLink">The content link.</param>
-    /// <returns>An instance of <typeparamref name="T" /></returns>
+    /// <returns>An instance of <see cref="SettingsBase" />></returns>
     T GetSetting<T>(ContentReference contentLink) where T : SettingsBase;
 
     /// <summary>
@@ -77,7 +83,7 @@ public interface ISettingsService
     /// </summary>
     /// <param name="settingsType">The settings type</param>
     /// <param name="contentLink">The content link.</param>
-    /// <returns>An instance of <typeparamref name="SettingsBase" /></returns>
+    /// <returns>An instance of <see cref="SettingsBase" /></returns>
     SettingsBase GetSetting(Type settingsType, ContentReference contentLink);
     
     /// <summary>
@@ -93,7 +99,7 @@ public interface ISettingsService
     /// </summary>
     /// <param name="settingsType">The settings type</param>
     /// <param name="content">The content where to start the search.</param>
-    /// <returns><typeparamref name="SettingsBase" /></returns>
+    /// <returns><see cref="SettingsBase" /></returns>
     SettingsBase GetSetting(Type settingsType, IContent content);
     
     /// <summary>
@@ -107,7 +113,7 @@ public interface ISettingsService
     ///     Gets the setting implementing the specified type from the global settings repository.
     /// </summary>
     /// <param name="settingsType">The settings type</param>
-    /// <returns>An instance of <typeparamref name="SettingsBase" /> </returns>
+    /// <returns>An instance of <see cref="SettingsBase" /></returns>
     /// <exception cref="ArgumentException">It type does not inherit from <typeparamref name="SettingsBase" /></exception>
     SettingsBase GetGlobalSetting(Type settingsType);
 

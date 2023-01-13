@@ -285,6 +285,38 @@ public class SettingsService : ISettingsService
     }
 
     /// <summary>
+    ///     Gets the setting, starting the search at the current content context.
+    /// </summary>
+    /// <param name="settingsType">The settings type</param>
+    /// <returns>An instance of <see cref="SettingsBase" /> </returns>
+    /// <exception cref="T:System.Threading.SynchronizationLockException">
+    ///     The current thread has not entered the lock in read mode.
+    /// </exception>
+    /// <exception cref="T:System.Threading.LockRecursionException">
+    ///     The current thread cannot acquire the write lock when it
+    ///     holds the read lock.-or-The <see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> property is
+    ///     <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />, and the current thread has attempted to acquire
+    ///     the read lock when it already holds the read lock. -or-The
+    ///     <see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> property is
+    ///     <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />, and the current thread has attempted to acquire
+    ///     the read lock when it already holds the write lock. -or-The recursion number would exceed the capacity of the
+    ///     counter. This limit is so large that applications should never encounter this exception.
+    /// </exception>
+    /// <exception cref="T:System.ObjectDisposedException">
+    ///     The <see cref="T:System.Threading.ReaderWriterLockSlim" /> object
+    ///     has been disposed.
+    /// </exception>
+    public SettingsBase GetSetting(Type settingsType)
+    {
+        if (contentRouteHelper.Content is null)
+        {
+            return default;
+        }
+
+        return GetSetting(settingsType, contentRouteHelper.Content);
+    }
+
+    /// <summary>
     ///     Gets the setting, starting the search at the provided content link.
     /// </summary>
     /// <typeparam name="T">The settings type</typeparam>
@@ -322,7 +354,7 @@ public class SettingsService : ISettingsService
     /// </summary>
     /// <param name="settingsType">The settings type</param>
     /// <param name="contentLink">The content link</param>
-    /// <returns>An instance of <typeparamref name="SettingsBase" /></returns>
+    /// <returns>An instance of <see cref="SettingsBase" /></returns>
     public SettingsBase GetSetting(Type settingsType, ContentReference contentLink)
     {
         if (contentRepository.TryGet(contentLink, out IContent content))
