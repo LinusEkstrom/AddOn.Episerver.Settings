@@ -97,28 +97,32 @@ public virtual ContentReference GoogleAnalyticsSettings { get; set; }
 
 If upgrading from version 2 *AND* and sites in the solution has had site specific assets enabled.
 
-1. Upgrade to version 3.x
+1. Upgrade to version 3.x or newer
 2. Using the blocks gadget, locate the folder "For this site / Settings Root"
 3. Move it into "For all sites / Settings Root"
 4. Now all settings are available in the settings gadget so that they can be moved into the specific site they target (or being kept as shared)
 
 ## Getting a setting
-To get a settings instance from your code you use the ISettingsService. It has a number of methods for resolving settings depending on the need.
+To get a settings instance from your code you use the ISettingsService. It has a number of methods for resolving settings depending on the need. 
 
 ```csharp
 ISettingsService settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
 
 // Will resolve the first menuSetting found, starting from the current content context
 settingsService.GetSetting<MenuSettings>();
+settingsService.GetSetting(typeof(MenuSettings));
 
 // Will resolve the first menuSetting found, starting from the provided content reference
 settingsService.GetSetting<MenuSettings>(myContentReference);
+settingsService.GetSetting(typeof(MenuSettings), myContentReference));
 
 // Will resolve the first menuSetting found, starting from the provided content
 settingsService.GetSetting<MenuSettings>(myContentInstance);
+settingsService.GetSetting(typeof(MenuSettings), myContentInstance));
 
 // Will resolve a menuSetting only from the global settings
 settingsService.GetGlobalSetting<MenuSettings>();
+settingsService.GetGlobalSetting(typeof(MenuSettings));
 
 // Will resolve all menuSettings found, starting from the provided content reference
 settingsService.GetSettingsRecursive<MenuSettings>(myContentReference);
@@ -128,6 +132,8 @@ settingsService.GetSettingsRecursive<MenuSettings>(myContentInstance);
 ```
 
 The default settings resolver will traverse the structure and look for properties with the same name as the settings type, in this case "MenuSettings", and return the first property with a defined value. Since the settings are matched by name - you can implement settings across content types.
+
+As seen in the examples, most methods have overloads to either use generics or a *Type* argument to use in cases where the type is not known at compile time.
 
 If you want to clarify that a content types is a source of a certain type of settings - you can create your own interface to declare this. However, this is not something that the settings system will use.
 
