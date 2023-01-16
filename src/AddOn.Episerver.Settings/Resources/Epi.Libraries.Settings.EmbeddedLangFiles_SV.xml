@@ -84,6 +84,12 @@
       <deletesetting>
         <deletenotsupported>En global inställning kan inte raderas</deletenotsupported>
       </deletesetting>
+      <createsetting>
+        <createnotsupported>Det är inte tillåtet att skapa innehåll i globala inställningar</createnotsupported>
+      </createsetting>
+      <movesetting>
+        <contenttoglobalsetting>Det är inte tillåtet att flytta innehåll till globala inställningar</contenttoglobalsetting>
+      </movesetting>
     </edit>
   </language>
 </languages>

@@ -59,6 +59,8 @@ public class SettingsInitializationModule : IConfigurableModule
 
     private static ISettingsService settingsService;
 
+    private static ModuleTable moduleTable;
+
     /// <summary>Configure the IoC container before initialization.</summary>
     /// <param name="context">The context on which the container can be accessed.</param>
     public void ConfigureContainer(ServiceConfigurationContext context)
@@ -71,11 +73,11 @@ public class SettingsInitializationModule : IConfigurableModule
 #if NET48
         var services = context.Services;
         services.AddSingleton<ISettingsService, SettingsService>();
-            services.AddSingleton<ISettingsResolver, PropertyNameSettingsResolver>();
+        services.AddSingleton<ISettingsResolver, PropertyNameSettingsResolver>();
 #else
-            context.Services.AddSingleton<ISettingsService, SettingsService>();
-            context.Services.AddSingleton<ISettingsResolver, PropertyNameSettingsResolver>();
-            context.Services.Configure<ProtectedModuleOptions>(pm => pm.Items.Add(new ModuleDetails() { Name = "AddOn.Episerver.Settings" }));
+        context.Services.AddSingleton<ISettingsService, SettingsService>();
+        context.Services.AddSingleton<ISettingsResolver, PropertyNameSettingsResolver>();
+        context.Services.Configure<ProtectedModuleOptions>(pm => pm.Items.Add(new ModuleDetails() { Name = "AddOn.Episerver.Settings" }));
 #endif
     }
 
@@ -103,34 +105,21 @@ public class SettingsInitializationModule : IConfigurableModule
         {
             return;
         }
-
-        context.InitComplete += (sender, args) =>
-        {
-            var moduleTable = context.Locate.Advanced.GetInstance<ModuleTable>();
-            var modules = moduleTable.GetModules().ToList();
-            var settings = modules.FirstOrDefault(m => string.Equals(m.Name, "AddOn.Episerver.Settings", StringComparison.OrdinalIgnoreCase));
-            var commerce = modules.FirstOrDefault(m => string.Equals(m.Name, "EPiServer.Commerce.Shell", StringComparison.OrdinalIgnoreCase));
-
-            if (settings != null && commerce != null)
-            {
-                settings.Manifest.ClientModule.ModuleDependencies.Add(new ModuleDependency
-                    { Dependency = "EPiServer.Commerce.Shell", DependencyType = ModuleDependencyTypes.Require | ModuleDependencyTypes.RunAfter });
-            }
-        };
-
+        
         settingsService = context.Locate.Advanced.GetInstance<ISettingsService>();
         contentEvents = context.Locate.Advanced.GetInstance<IContentEvents>();
         siteDefinitionEvents = context.Locate.Advanced.GetInstance<ISiteDefinitionEvents>();
         localizationService = context.Locate.Advanced.GetInstance<LocalizationService>();
-
-        context.InitComplete += InitCompleteHandler;
-
+        moduleTable = context.Locate.Advanced.GetInstance<ModuleTable>();
+        
+        contentEvents.CreatingContent += CreatingContent;
         contentEvents.PublishedContent += PublishedContent;
         contentEvents.MovingContent += MovingContent;
-        contentEvents.DeletingContent += DeletingContent;
 
         siteDefinitionEvents.SiteCreated += SiteChanged;
         siteDefinitionEvents.SiteUpdated += SiteChanged;
+        
+        context.InitComplete += InitCompleteHandler;
 
         initialized = true;
     }
@@ -147,8 +136,7 @@ public class SettingsInitializationModule : IConfigurableModule
     ///     </para>
     ///     <para>
     ///         Any work done by
-    ///         <see
-    ///             cref="M:EPiServer.Framework.IInitializableModule.Initialize(EPiServer.Framework.Initialization.InitializationEngine)" />
+    ///         <see cref="M:EPiServer.Framework.IInitializableModule.Initialize(EPiServer.Framework.Initialization.InitializationEngine)" />
     ///         as well as any code executing on
     ///         <see cref="E:EPiServer.Framework.Initialization.InitializationEngine.InitComplete" /> should be reversed.
     ///     </para>
@@ -165,49 +153,40 @@ public class SettingsInitializationModule : IConfigurableModule
             return;
         }
 
+        contentEvents.CreatingContent -= CreatingContent;
         contentEvents.PublishedContent -= PublishedContent;
         contentEvents.MovingContent -= MovingContent;
-        contentEvents.DeletingContent -= DeletingContent;
 
         siteDefinitionEvents.SiteCreated -= SiteChanged;
         siteDefinitionEvents.SiteUpdated -= SiteChanged;
+        
+        context.InitComplete -= InitCompleteHandler;
 
         initialized = false;
     }
-
+    
     /// <summary>
-    ///     Executed when the content is being deleted.
+    ///     Executed when the content is being created.
     /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="DeleteContentEventArgs" /> instance containing the event data.</param>
-    private static void DeletingContent(object sender, DeleteContentEventArgs e)
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private static void CreatingContent(object sender, ContentEventArgs e)
     {
         if (e == null || e.Content == null)
         {
             return;
         }
 
-        // if the content item is an instance of SettingsBase, it has been instantiated with the fallback base class
-        // since the ContentType class no longer exists and should be possible to delete
-        if (e.Content.GetOriginalType() == typeof(SettingsBase) || !(e.Content is SettingsBase) || e.Content.ParentLink != settingsService.GlobalSettingsRoot)
+        // Nothing into global settings
+        if (e.Content.ParentLink != settingsService.GlobalSettingsRoot)
         {
             return;
         }
-
+        
         e.CancelAction = true;
-        e.CancelReason = localizationService.GetString("/edit/deletesetting/deletenotsupported");
+        e.CancelReason = localizationService.GetString("/edit/globalsettings/createnotsupported");
     }
 
-    /// <summary>
-    ///     Initializes the complete handler.
-    /// </summary>
-    /// <param name="sender"> The sender. </param>
-    /// <param name="e"> The <see cref="EventArgs" /> instance containing the event data. </param>
-    /// <exception cref="T:System.NotSupportedException">If the rootname is already registered with another contentRootId.</exception>
-    private static void InitCompleteHandler(object sender, EventArgs e)
-    {
-        settingsService.InitSettings();
-    }
 
     /// <summary>
     ///     Executed when the content is being moved.
@@ -216,23 +195,36 @@ public class SettingsInitializationModule : IConfigurableModule
     /// <param name="e">The <see cref="ContentEventArgs" /> instance containing the event data.</param>
     private static void MovingContent(object sender, ContentEventArgs e)
     {
-        if (e == null)
+        if (e == null || e.Content == null)
         {
             return;
         }
-
-        // if the content item is an instance of SettingsBase, it has been instantiated with the fallback base class
-        // since the ContentType class no longer exists and should be possible to move to the waste basket
-        if (e.Content.GetOriginalType() == typeof(SettingsBase) ||
-            !(e.Content is SettingsBase) ||
-            e.Content.ParentLink != settingsService.GlobalSettingsRoot ||
-            e.TargetLink.ID != 2)
+        
+        // if trying to move something into the global settings folder
+        if (e.TargetLink == settingsService.GlobalSettingsRoot)
         {
+            e.CancelAction = true;
+            e.CancelReason = localizationService.GetString("/edit/movesetting/contenttoglobalsetting");
+
             return;
         }
+        
+        // if it's a global setting
+        if (e.Content is SettingsBase && e.Content.ParentLink == settingsService.GlobalSettingsRoot )
+        {
+            // if the content item is an instance of SettingsBase, it has been instantiated with the fallback base class
+            // since the ContentType class no longer exists and should be possible to move to the waste basket
+            if (e.Content.GetOriginalType() == typeof(SettingsBase) && e.TargetLink == ContentReference.WasteBasket)
+            {
+                return;
+            }
 
-        e.CancelAction = true;
-        e.CancelReason = localizationService.GetString("/edit/deletesetting/deletenotsupported");
+            if (e.TargetLink == ContentReference.WasteBasket)
+            {
+                e.CancelAction = true;
+                e.CancelReason = localizationService.GetString("/edit/deletesetting/deletenotsupported");
+            }
+        }
     }
 
     /// <summary>
@@ -250,7 +242,12 @@ public class SettingsInitializationModule : IConfigurableModule
         settingsService.UpdateSettings(e.Content);
     }
 
-    public static void SiteChanged(object sender, SiteDefinitionEventArgs e)
+    /// <summary>
+    ///     Executed when a site configuration changes.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="SiteDefinitionEventArgs" /> instance containing the event data.</param>
+    private static void SiteChanged(object sender, SiteDefinitionEventArgs e)
     {
         if (e.Site == null)
         {
@@ -258,5 +255,26 @@ public class SettingsInitializationModule : IConfigurableModule
         }
 
         settingsService.ValidateOrCreateSiteSettingsRoot(e.Site);
+    }
+    
+    /// <summary>
+    ///     Initializes the complete handler.
+    /// </summary>
+    /// <param name="sender"> The sender. </param>
+    /// <param name="e"> The <see cref="EventArgs" /> instance containing the event data. </param>
+    /// <exception cref="T:System.NotSupportedException">If the root name is already registered with another contentRootId.</exception>
+    private static void InitCompleteHandler(object sender, EventArgs e)
+    {
+        var modules = moduleTable.GetModules().ToList();
+        var settings = modules.FirstOrDefault(m => string.Equals(m.Name, "AddOn.Episerver.Settings", StringComparison.OrdinalIgnoreCase));
+        var commerce = modules.FirstOrDefault(m => string.Equals(m.Name, "EPiServer.Commerce.Shell", StringComparison.OrdinalIgnoreCase));
+
+        if (settings != null && commerce != null)
+        {
+            settings.Manifest.ClientModule.ModuleDependencies.Add(new ModuleDependency
+                { Dependency = "EPiServer.Commerce.Shell", DependencyType = ModuleDependencyTypes.Require | ModuleDependencyTypes.RunAfter });
+        }
+        
+        settingsService.InitSettings();
     }
 }

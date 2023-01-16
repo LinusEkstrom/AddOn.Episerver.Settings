@@ -84,6 +84,12 @@
       <deletesetting>
         <deletenotsupported>No se puede eliminar una configuración global</deletenotsupported>
       </deletesetting>
+      <createsetting>
+        <createnotsupported>No se permite crear contenido en la carpeta de configuración global</createnotsupported>
+      </createsetting>
+      <movesetting>
+        <contenttoglobalsetting>No se permite mover contenido a la carpeta de configuración global</contenttoglobalsetting>
+      </movesetting>
     </edit>
   </language>
 </languages>

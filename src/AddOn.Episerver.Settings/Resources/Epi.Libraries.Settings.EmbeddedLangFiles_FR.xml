@@ -84,6 +84,12 @@
       <deletesetting>
         <deletenotsupported>Un paramètre global ne peut pas être supprimé</deletenotsupported>
       </deletesetting>
+      <createsetting>
+        <createnotsupported>La création de contenu dans le dossier des paramètres globaux n'est pas autorisée</createnotsupported>
+      </createsetting>
+      <movesetting>
+        <contenttoglobalsetting>Le déplacement de contenu dans le dossier des paramètres globaux n'est pas autorisé</contenttoglobalsetting>
+      </movesetting>
     </edit>
   </language>
 </languages>

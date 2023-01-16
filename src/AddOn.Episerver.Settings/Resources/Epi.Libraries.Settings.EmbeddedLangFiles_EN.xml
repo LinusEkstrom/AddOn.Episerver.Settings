@@ -85,6 +85,12 @@
       <deletesetting>
         <deletenotsupported>A global setting cannot be deleted</deletenotsupported>
       </deletesetting>
+      <createsetting>
+        <createnotsupported>Creating content in the global settings folder is not allowed</createnotsupported>
+      </createsetting>
+      <movesetting>
+        <contenttoglobalsetting>Moving content into the global settings folder is not allowed</contenttoglobalsetting>
+      </movesetting>
     </edit>
   </language>
 </languages>

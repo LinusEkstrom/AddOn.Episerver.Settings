@@ -84,6 +84,12 @@
       <deletesetting>
         <deletenotsupported>En global innstilling kan ikke slettes</deletenotsupported>
       </deletesetting>
+      <createsetting>
+        <createnotsupported>Det er ikke tillatt å lage innhold i mappen for globale innstillinger</createnotsupported>
+      </createsetting>
+      <movesetting>
+        <contenttoglobalsetting>Det er ikke tillatt å flytte innhold til mappen for globale innstillinger</contenttoglobalsetting>
+      </movesetting>
     </edit>
   </language>
 </languages>
