@@ -59,6 +59,8 @@ public class SettingsInitializationModule : IConfigurableModule
 
     private static ISettingsService settingsService;
 
+    private static ModuleTable moduleTable;
+
     /// <summary>Configure the IoC container before initialization.</summary>
     /// <param name="context">The context on which the container can be accessed.</param>
     public void ConfigureContainer(ServiceConfigurationContext context)
@@ -103,34 +105,21 @@ public class SettingsInitializationModule : IConfigurableModule
         {
             return;
         }
-
-        context.InitComplete += (sender, args) =>
-        {
-            var moduleTable = context.Locate.Advanced.GetInstance<ModuleTable>();
-            var modules = moduleTable.GetModules().ToList();
-            var settings = modules.FirstOrDefault(m => string.Equals(m.Name, "AddOn.Episerver.Settings", StringComparison.OrdinalIgnoreCase));
-            var commerce = modules.FirstOrDefault(m => string.Equals(m.Name, "EPiServer.Commerce.Shell", StringComparison.OrdinalIgnoreCase));
-
-            if (settings != null && commerce != null)
-            {
-                settings.Manifest.ClientModule.ModuleDependencies.Add(new ModuleDependency
-                    { Dependency = "EPiServer.Commerce.Shell", DependencyType = ModuleDependencyTypes.Require | ModuleDependencyTypes.RunAfter });
-            }
-        };
-
+        
         settingsService = context.Locate.Advanced.GetInstance<ISettingsService>();
         contentEvents = context.Locate.Advanced.GetInstance<IContentEvents>();
         siteDefinitionEvents = context.Locate.Advanced.GetInstance<ISiteDefinitionEvents>();
         localizationService = context.Locate.Advanced.GetInstance<LocalizationService>();
-
-        context.InitComplete += InitCompleteHandler;
-
+        moduleTable = context.Locate.Advanced.GetInstance<ModuleTable>();
+        
         contentEvents.CreatingContent += CreatingContent;
         contentEvents.PublishedContent += PublishedContent;
         contentEvents.MovingContent += MovingContent;
 
         siteDefinitionEvents.SiteCreated += SiteChanged;
         siteDefinitionEvents.SiteUpdated += SiteChanged;
+        
+        context.InitComplete += InitCompleteHandler;
 
         initialized = true;
     }
@@ -170,19 +159,10 @@ public class SettingsInitializationModule : IConfigurableModule
 
         siteDefinitionEvents.SiteCreated -= SiteChanged;
         siteDefinitionEvents.SiteUpdated -= SiteChanged;
+        
+        context.InitComplete -= InitCompleteHandler;
 
         initialized = false;
-    }
-
-    /// <summary>
-    ///     Initializes the complete handler.
-    /// </summary>
-    /// <param name="sender"> The sender. </param>
-    /// <param name="e"> The <see cref="EventArgs" /> instance containing the event data. </param>
-    /// <exception cref="T:System.NotSupportedException">If the rootname is already registered with another contentRootId.</exception>
-    private static void InitCompleteHandler(object sender, EventArgs e)
-    {
-        settingsService.InitSettings();
     }
     
     /// <summary>
@@ -267,7 +247,7 @@ public class SettingsInitializationModule : IConfigurableModule
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="SiteDefinitionEventArgs" /> instance containing the event data.</param>
-    public static void SiteChanged(object sender, SiteDefinitionEventArgs e)
+    private static void SiteChanged(object sender, SiteDefinitionEventArgs e)
     {
         if (e.Site == null)
         {
@@ -275,5 +255,26 @@ public class SettingsInitializationModule : IConfigurableModule
         }
 
         settingsService.ValidateOrCreateSiteSettingsRoot(e.Site);
+    }
+    
+    /// <summary>
+    ///     Initializes the complete handler.
+    /// </summary>
+    /// <param name="sender"> The sender. </param>
+    /// <param name="e"> The <see cref="EventArgs" /> instance containing the event data. </param>
+    /// <exception cref="T:System.NotSupportedException">If the root name is already registered with another contentRootId.</exception>
+    private static void InitCompleteHandler(object sender, EventArgs e)
+    {
+        var modules = moduleTable.GetModules().ToList();
+        var settings = modules.FirstOrDefault(m => string.Equals(m.Name, "AddOn.Episerver.Settings", StringComparison.OrdinalIgnoreCase));
+        var commerce = modules.FirstOrDefault(m => string.Equals(m.Name, "EPiServer.Commerce.Shell", StringComparison.OrdinalIgnoreCase));
+
+        if (settings != null && commerce != null)
+        {
+            settings.Manifest.ClientModule.ModuleDependencies.Add(new ModuleDependency
+                { Dependency = "EPiServer.Commerce.Shell", DependencyType = ModuleDependencyTypes.Require | ModuleDependencyTypes.RunAfter });
+        }
+        
+        settingsService.InitSettings();
     }
 }
