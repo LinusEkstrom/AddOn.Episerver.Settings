@@ -111,14 +111,7 @@ public class SettingsInitializationModule : IConfigurableModule
         siteDefinitionEvents = context.Locate.Advanced.GetInstance<ISiteDefinitionEvents>();
         localizationService = context.Locate.Advanced.GetInstance<LocalizationService>();
         moduleTable = context.Locate.Advanced.GetInstance<ModuleTable>();
-        
-        contentEvents.CreatingContent += CreatingContent;
-        contentEvents.PublishedContent += PublishedContent;
-        contentEvents.MovingContent += MovingContent;
 
-        siteDefinitionEvents.SiteCreated += SiteChanged;
-        siteDefinitionEvents.SiteUpdated += SiteChanged;
-        
         context.InitComplete += InitCompleteHandler;
 
         initialized = true;
@@ -276,5 +269,12 @@ public class SettingsInitializationModule : IConfigurableModule
         }
         
         settingsService.InitSettings();
+        
+        contentEvents.CreatingContent += CreatingContent;
+        contentEvents.PublishedContent += PublishedContent;
+        contentEvents.MovingContent += MovingContent;
+
+        siteDefinitionEvents.SiteCreated += SiteChanged;
+        siteDefinitionEvents.SiteUpdated += SiteChanged;
     }
 }
