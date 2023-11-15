@@ -131,7 +131,7 @@ public class SettingsView : ICompositeView,
 
             var tools = new PinnablePane().Add(
             new ComponentPaneContainer
-                    { ContainerType = ContainerType.System }
+                    { ContainerType = ContainerType.User }
                 .Add(new GlobalSharedBlocksComponent().CreateComponent())
                 .Add(new GlobalSettingsVersionsComponent().CreateComponent()));
 
@@ -185,7 +185,7 @@ public class SettingsView : ICompositeView,
     /// <returns>An <see cref="IEnumerable{T}" /> of categories.</returns>
     public IEnumerable<string> GetComponentCategories()
     {
-        return new string[] { };
+        return new [] { "cms", "content" };
     }
 
     /// <summary>
