@@ -21,9 +21,12 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
-using System;
+using EPiServer.Security;
+using EPiServer.ServiceLocation;
 
 namespace AddOn.Episerver.Settings.Core;
 
@@ -35,8 +38,10 @@ namespace AddOn.Episerver.Settings.Core;
 /// <seealso cref="BasicContent" />
 /// <seealso cref="IVersionable" />
 [ContentType(GUID = "484DAD32-3E16-4943-B7BF-A542C7BDC379", AvailableInEditMode = false)]
-public class SettingsBase : BasicContent, IVersionable
+public class SettingsBase : BasicContent, IVersionable, IContentSecurable
 {
+    private readonly Injected<IContentLoader> _contentLoader;
+    
     /// <summary>
     ///     Gets or sets a value indicating whether this item is in pending publish state.
     /// </summary>
@@ -60,4 +65,26 @@ public class SettingsBase : BasicContent, IVersionable
     /// </summary>
     /// <value>The stop publish.</value>
     public DateTime? StopPublish { get; set; }
+
+    /// <summary>
+    ///     Gets the security descriptor for this item.
+    /// </summary>
+    /// <returns>The security descriptor.</returns>
+    public ISecurityDescriptor GetSecurityDescriptor()
+    {
+        return GetContentSecurityDescriptor();
+    }
+    
+    /// <summary>
+    ///     Gets the content security descriptor for this item.
+    /// </summary>
+    /// <returns>The content security descriptor.</returns>
+    public IContentSecurityDescriptor GetContentSecurityDescriptor()
+    {
+        // return any list of valid ACL, for example from Root or StartPage which those settings belong to
+        var accessControlList = (_contentLoader.Service.Get<IContent>(ContentReference.StartPage) as PageData)?.ACL;
+
+        return accessControlList?.CreateWritableClone() as IContentSecurityDescriptor;
+    }
 }
+
