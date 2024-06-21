@@ -133,6 +133,8 @@ settingsService.GetSettingsRecursive<MenuSettings>(myContentInstance);
 
 The default settings resolver will traverse the structure and look for properties with the same name as the settings type, in this case "MenuSettings", and return the first property with a defined value. Since the settings are matched by name - you can implement settings across content types.
 
+In case the hierarchy traversed does not include the start page (this will be the case for content type like blocks or products) the start page will be added as a convenience since it is a common place to store shared settings.
+
 As seen in the examples, most methods have overloads to either use generics or a *Type* argument to use in cases where the type is not known at compile time.
 
 If you want to clarify that a content types is a source of a certain type of settings - you can create your own interface to declare this. However, this is not something that the settings system will use.
