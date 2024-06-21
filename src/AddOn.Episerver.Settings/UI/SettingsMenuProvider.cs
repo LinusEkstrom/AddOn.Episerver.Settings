@@ -23,6 +23,7 @@
 
 using EPiServer.Shell.Navigation;
 using System.Collections.Generic;
+using EPiServer.Shell;
 
 namespace AddOn.Episerver.Settings.UI;
 
@@ -47,10 +48,11 @@ public class SettingsMenuProvider : IMenuProvider
     /// </returns>
     public IEnumerable<MenuItem> GetMenuItems()
     {
+        var url = Paths.ToResource(GetType(), "settings");
         var cmsGlobalSettings = new UrlMenuItem(
         "Global settings",
-        "/global/cms/settings",
-        "/episerver/AddOn.Episerver.Settings/settings")
+        MenuPaths.Global+"/cms/settings",
+         url )
         {
 #if NET48
             IsAvailable = request => PrincipalInfo.HasAdminAccess
