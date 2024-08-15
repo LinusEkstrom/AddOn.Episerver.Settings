@@ -22,11 +22,13 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
 using EPiServer.Security;
 using EPiServer.ServiceLocation;
+using EPiServer.Shell.Services.Rest;
 
 namespace AddOn.Episerver.Settings.Core;
 
@@ -83,8 +85,12 @@ public class SettingsBase : BasicContent, IVersionable, IContentSecurable
     {
         // return any list of valid ACL, for example from Root or StartPage which those settings belong to
         var accessControlList = (_contentLoader.Service.Get<IContent>(ContentReference.StartPage) as PageData)?.ACL;
-
-        return accessControlList?.CreateWritableClone() as IContentSecurityDescriptor;
+        var writableAccessControlList = accessControlList?.CreateWritableClone();
+        // If the ACL is inherited the ACL isn't allowed to be modified.
+        if (writableAccessControlList is not null && writableAccessControlList.IsInherited) { 
+            writableAccessControlList.IsInherited = false;
+        }
+        return writableAccessControlList as IContentSecurityDescriptor;
     }
 }
 
