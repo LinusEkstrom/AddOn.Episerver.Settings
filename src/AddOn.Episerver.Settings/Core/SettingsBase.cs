@@ -22,13 +22,11 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Linq;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
 using EPiServer.Security;
 using EPiServer.ServiceLocation;
-using EPiServer.Shell.Services.Rest;
 
 namespace AddOn.Episerver.Settings.Core;
 
