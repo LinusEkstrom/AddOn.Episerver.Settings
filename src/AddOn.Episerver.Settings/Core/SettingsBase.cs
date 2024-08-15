@@ -82,7 +82,8 @@ public class SettingsBase : BasicContent, IVersionable, IContentSecurable
     public IContentSecurityDescriptor GetContentSecurityDescriptor()
     {
         // return any list of valid ACL, for example from Root or StartPage which those settings belong to
-        var accessControlList = (_contentLoader.Service.Get<IContent>(ContentReference.StartPage) as PageData)?.ACL;
+        var contentRef = ContentReference.IsNullOrEmpty(ContentReference.StartPage) ? ContentReference.RootPage : ContentReference.StartPage;
+        var accessControlList = (_contentLoader.Service.Get<IContent>(contentRef) as PageData)?.ACL;
         var writableAccessControlList = accessControlList?.CreateWritableClone();
         // If the ACL is inherited the ACL isn't allowed to be modified.
         if (writableAccessControlList is not null && writableAccessControlList.IsInherited) { 
