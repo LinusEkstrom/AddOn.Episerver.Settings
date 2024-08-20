@@ -82,7 +82,9 @@ public class SettingsBase : BasicContent, IVersionable, IContentSecurable
     public IContentSecurityDescriptor GetContentSecurityDescriptor()
     {
         // return any list of valid ACL, for example from Root or StartPage which those settings belong to
-        var accessControlList = (_contentLoader.Service.Get<IContent>(ContentReference.StartPage) as PageData)?.ACL;
+        // Fallback to the root page if the wildcard isn't set for the site hostname
+        var aclReference = ContentReference.IsNullOrEmpty(ContentReference.StartPage) ? ContentReference.RootPage : ContentReference.StartPage;
+        var accessControlList = (_contentLoader.Service.Get<IContent>(aclReference) as PageData)?.ACL;
         if (accessControlList is not null && accessControlList.IsInherited)
         {
             accessControlList = (_contentLoader.Service.Get<IContent>(ContentReference.RootPage) as PageData)?.ACL;
