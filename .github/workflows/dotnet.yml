@@ -29,6 +29,6 @@ jobs:
         dotnet restore
         dotnet build --no-restore --configuration '${{ env.BUILD_CONFIGURATION }}'
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: './src/AddOn.Episerver.Settings/bin/Release/*.nupkg'
