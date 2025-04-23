@@ -4,7 +4,7 @@
     <RootNamespace>AddOn.Episerver.Settings</RootNamespace>
     <AssemblyName>AddOn.Episerver.Settings</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageVersion>5.1.4</PackageVersion>
+    <PackageVersion>5.1.5</PackageVersion>
     <LangVersion>10</LangVersion>
     <TargetFrameworks>net48;net6.0;net7.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
