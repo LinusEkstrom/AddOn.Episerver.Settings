@@ -34,6 +34,7 @@ using EPiServer.Web.Routing;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 
@@ -519,7 +520,15 @@ public class SettingsService : ISettingsService
             ValidateOrCreateSiteSettingsRoot(siteDefinition);
         }
 
-        InitializeContentInstances();
+        try
+        {
+            InitializeContentInstances();
+        }
+        catch (Exception ex)
+        {
+            log.Warning("[Settings]", ex);
+        }
+        
     }
 
     /// <summary>
@@ -706,6 +715,10 @@ public class SettingsService : ISettingsService
                 item = contentRepository.Get<IContent>(itemRef);
             }
             catch (EPiServerException ex)
+            {
+                log.Error($"[Settings] {ex.Message}", ex);
+            }
+            catch (Exception ex)
             {
                 log.Error($"[Settings] {ex.Message}", ex);
             }
