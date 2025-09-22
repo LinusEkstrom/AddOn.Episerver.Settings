@@ -34,7 +34,6 @@ using EPiServer.Web.Routing;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 
@@ -93,6 +92,11 @@ public class SettingsService : ISettingsService
     private readonly IContentTypeRepository contentTypeRepository;
 
     /// <summary>
+    ///     The site definition resolver
+    /// </summary>
+    private readonly ISiteDefinitionResolver siteDefinitionResolver;
+
+    /// <summary>
     ///     The key used for storing global settings in the synchronized cache
     /// </summary>
     private readonly string globalSettingsCacheKey = "addon.episerver.settings.globalsettings";
@@ -141,11 +145,13 @@ public class SettingsService : ISettingsService
         AncestorReferencesLoader ancestorReferencesLoader,
         ISynchronizedObjectInstanceCache synchronizedObjectInstanceCache,
         IEnumerable<ISettingsResolver> settingsResolvers,
-        IContentRouteHelper contentRouteHelper
+        IContentRouteHelper contentRouteHelper,
+        ISiteDefinitionResolver siteDefinitionResolver
     )
     {
         this.contentRepository = contentRepository;
         this.siteDefinitionRepository = siteDefinitionRepository;
+        this.siteDefinitionResolver = siteDefinitionResolver;
         this.contentRootService = contentRootService;
         this.typeScannerLookup = typeScannerLookup;
         this.contentTypeRepository = contentTypeRepository;
@@ -458,7 +464,11 @@ public class SettingsService : ISettingsService
 
         if (!ancestors.Contains(ContentReference.StartPage, ContentReferenceComparer.IgnoreVersion))
         {
-            ancestors.Add(ContentReference.StartPage);
+            var siteDefinition = siteDefinitionResolver.GetByContent(content.ContentLink, false);
+            if (!ContentReference.IsNullOrEmpty(siteDefinition?.StartPage))
+            {
+                ancestors.Add(siteDefinition.StartPage);
+            }
         }
         
         foreach (var parentReference in ancestors)
@@ -569,7 +579,7 @@ public class SettingsService : ISettingsService
     /// <summary>
     ///     Creates a settings folder for a site and adds it to the settings lookup
     /// </summary>
-    public ContentReference ValidateOrCreateSiteSettingsRoot(SiteDefinition siteDefinition)
+    public ContentReference ValidateOrCreateSiteSettingsRoot(EPiServer.Web.SiteDefinition siteDefinition)
     {
         if (siteDefinition.SiteAssetsRoot.CompareToIgnoreWorkID(siteDefinition.GlobalAssetsRoot))
         {

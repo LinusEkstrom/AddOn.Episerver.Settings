@@ -2,6 +2,7 @@ using AddOn.Episerver.Settings.Core;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.Framework.Cache;
+using EPiServer.Web;
 using EPiServer.Web.Routing;
 using Moq;
 
@@ -85,6 +86,7 @@ public class SettingsServiceTests
     private SettingsService SetupSettingsService(PageData[] pages, SettingsBase? result)
     {
         var contentRepository = new Mock<IContentRepository>();
+        var siteDefinitionResolver = new Mock<ISiteDefinitionResolver>();
         var ancestorReferencesLoader = new Mock<AncestorReferencesLoader>();
         var settingsResolver = new Mock<ISettingsResolver>();
         var globalSettingsCache = new Mock<ISynchronizedObjectInstanceCache>();
@@ -122,7 +124,8 @@ public class SettingsServiceTests
             ancestorReferencesLoader.Object,
             globalSettingsCache.Object,
             new[] { settingsResolver.Object },
-            null
+            null,
+            siteDefinitionResolver.Object
         );
 
         return settingsService;
