@@ -65,12 +65,12 @@ public class SettingsView : ICompositeView,
     /// <summary>
     ///     The root container
     /// </summary>
-    private IContainer rootContainer;
+    private IContainer? rootContainer;
 
     /// <summary>
     ///     The route segment
     /// </summary>
-    private string routeSegment;
+    private string? routeSegment;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SettingsView" /> class.
@@ -194,7 +194,7 @@ public class SettingsView : ICompositeView,
     /// <value>The Route segment.</value>
     public string RouteSegment
     {
-        get => routeSegment ?? (routeSegment = "settings");
+        get => routeSegment ??= "settings";
 
         set => routeSegment = value;
     }

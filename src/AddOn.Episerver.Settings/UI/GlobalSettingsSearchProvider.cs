@@ -123,22 +123,28 @@ public class GlobalSettingsSearchProvider : ContentSearchProviderBase<SettingsBa
     /// </summary>
     /// <param name="query">The query.</param>
     /// <returns>An <see cref="IEnumerable{T}" /> of <see cref="SearchResult" />.</returns>
-    public override IEnumerable<SearchResult> Search(Query query)
+    public override IEnumerable<SearchResult> Search(Query? query)
     {
-        if (string.IsNullOrWhiteSpace(query?.SearchQuery) || query.SearchQuery.Trim().Length < 2)
+        if (query is null)
+        {
+            return Enumerable.Empty<SearchResult>();
+        }
+
+        var searchQuery = query.SearchQuery?.Trim();
+
+        if (searchQuery is null || searchQuery.Length < 2)
         {
             return Enumerable.Empty<SearchResult>();
         }
 
         var searchResultList = new List<SearchResult>();
-        var str = query.SearchQuery.Trim();
 
         var globalSettings =
             contentLoader.GetChildren<SettingsBase>(settingsService.GlobalSettingsRoot);
 
         foreach (var setting in globalSettings)
         {
-            if (setting.Name.IndexOf(str, StringComparison.OrdinalIgnoreCase) < 0)
+            if (setting.Name is null || setting.Name.IndexOf(searchQuery, StringComparison.OrdinalIgnoreCase) < 0)
             {
                 continue;
             }
@@ -159,7 +165,7 @@ public class GlobalSettingsSearchProvider : ContentSearchProviderBase<SettingsBa
     /// </summary>
     /// <param name="content">The content.</param>
     /// <returns>The preview text.</returns>
-    override protected string CreatePreviewText(IContentData content)
+    override protected string CreatePreviewText(IContentData? content)
     {
         return content == null
             ? string.Empty
@@ -172,7 +178,7 @@ public class GlobalSettingsSearchProvider : ContentSearchProviderBase<SettingsBa
     /// <param name="contentData">The content data.</param>
     /// <param name="onCurrentHost">if set to <c>true</c> [on current host].</param>
     /// <returns>The edit url.</returns>
-    override protected string GetEditUrl(SettingsBase contentData, out bool onCurrentHost)
+    override protected string GetEditUrl(SettingsBase? contentData, out bool onCurrentHost)
     {
         onCurrentHost = true;
 
@@ -183,9 +189,8 @@ public class GlobalSettingsSearchProvider : ContentSearchProviderBase<SettingsBa
 
         var contentLink = ((IContent)contentData).ContentLink;
         var language = string.Empty;
-        var localizable = contentData as ILocalizable;
 
-        if (localizable != null)
+        if (contentData is ILocalizable localizable)
         {
             language = localizable.Language.Name;
         }

@@ -122,29 +122,33 @@ public class SettingsSearchProvider : ContentSearchProviderBase<SettingsBase, Co
     /// </summary>
     /// <param name="query">The query.</param>
     /// <returns>An <see cref="IEnumerable{T}" /> of <see cref="SearchResult" />.</returns>
-    public override IEnumerable<SearchResult> Search(Query query)
+    public override IEnumerable<SearchResult> Search(Query? query)
     {
-        if (string.IsNullOrWhiteSpace(query?.SearchQuery) || query.SearchQuery.Trim().Length < 2)
+        if (query is null)
+        {
+            return Enumerable.Empty<SearchResult>();
+        }
+
+        var searchQuery = query.SearchQuery?.Trim();
+
+        if (searchQuery is null || searchQuery.Length < 2)
         {
             return Enumerable.Empty<SearchResult>();
         }
 
         var searchResultList = new List<SearchResult>();
-        var str = query.SearchQuery.Trim();
 
 
         var settings = settingsService.SettingsRoots.SelectMany(root => contentLoader.GetDescendents(root));
 
         foreach (var contentReference in settings)
         {
-            SettingsBase setting;
-
-            if (!contentLoader.TryGet(contentReference, out setting))
+            if (!contentLoader.TryGet(contentReference, out SettingsBase setting))
             {
                 continue;
             }
 
-            if (setting.Name.IndexOf(str, StringComparison.OrdinalIgnoreCase) < 0)
+            if (setting.Name is null || setting.Name.IndexOf(searchQuery, StringComparison.OrdinalIgnoreCase) < 0)
             {
                 continue;
             }
@@ -165,7 +169,7 @@ public class SettingsSearchProvider : ContentSearchProviderBase<SettingsBase, Co
     /// </summary>
     /// <param name="content">The content.</param>
     /// <returns>The preview text.</returns>
-    override protected string CreatePreviewText(IContentData content)
+    override protected string CreatePreviewText(IContentData? content)
     {
         return content == null
             ? string.Empty

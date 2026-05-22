@@ -21,5 +21,5 @@ public interface ISettingsResolver
     /// <param name="setting"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns>A boolean indicating if a setting was found</returns>
-    public bool TryResolveSettingFromContent<T>(IContent content, out T setting)  where T : SettingsBase;
+    public bool TryResolveSettingFromContent<T>(IContent? content, out T? setting)  where T : SettingsBase;
 }

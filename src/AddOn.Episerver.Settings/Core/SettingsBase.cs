@@ -70,7 +70,7 @@ public class SettingsBase : BasicContent, IVersionable, IContentSecurable
     ///     Gets the security descriptor for this item.
     /// </summary>
     /// <returns>The security descriptor.</returns>
-    public ISecurityDescriptor GetSecurityDescriptor()
+    public ISecurityDescriptor? GetSecurityDescriptor()
     {
         return GetContentSecurityDescriptor();
     }
@@ -79,7 +79,7 @@ public class SettingsBase : BasicContent, IVersionable, IContentSecurable
     ///     Gets the content security descriptor for this item.
     /// </summary>
     /// <returns>The content security descriptor.</returns>
-    public IContentSecurityDescriptor GetContentSecurityDescriptor()
+    public IContentSecurityDescriptor? GetContentSecurityDescriptor()
     {
         // return any list of valid ACL, for example from Root or StartPage which those settings belong to
         // Fallback to the root page if the wildcard isn't set for the site hostname

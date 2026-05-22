@@ -32,7 +32,7 @@ namespace AddOn.Episerver.Settings.Core;
 [ServiceConfiguration(typeof(IContentTypeBaseProvider), Lifecycle = ServiceInstanceScope.Singleton)]
 public class SettingsContentTypeBaseProvider : IContentTypeBaseProvider
 {
-    private static readonly ContentTypeBase SettingContentType = new ContentTypeBase("Setting");
+    private static readonly ContentTypeBase SettingContentType = new("Setting");
 
     public IEnumerable<ContentTypeBase> ContentTypeBases => new[] { SettingContentType };
 

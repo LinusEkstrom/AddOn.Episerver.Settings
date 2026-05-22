@@ -118,12 +118,12 @@ public class SettingsService : ISettingsService
 
     private readonly ConcurrentDictionary<Guid, ContentReference> siteSettingsRoots = new ConcurrentDictionary<Guid, ContentReference>();
     private readonly ISettingsResolver[] settingsResolvers;
-    
-    private readonly MethodInfo getSettingMethod = typeof(SettingsService).GetMethod(nameof(GetSetting), new [] { typeof(IContent) });
+
+    private readonly MethodInfo getSettingMethod = typeof(SettingsService).GetMethod(nameof(GetSetting), new[] { typeof(IContent) })!;
     private readonly Dictionary<Type, MethodInfo> getSettingGenericMethods = new Dictionary<Type, MethodInfo>();
-    private readonly MethodInfo getGlobalSettingMethod = typeof(SettingsService).GetMethod(nameof(GetGlobalSetting), Type.EmptyTypes );
+    private readonly MethodInfo getGlobalSettingMethod = typeof(SettingsService).GetMethod(nameof(GetGlobalSetting), Type.EmptyTypes)!;
     private readonly Dictionary<Type, MethodInfo> getGlobalSettingGenericMethods = new Dictionary<Type, MethodInfo>();
-    
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="SettingsService" /> class.
     /// </summary>
@@ -181,13 +181,13 @@ public class SettingsService : ISettingsService
     ///     Gets or sets the global settings root.
     /// </summary>
     /// <value>The global settings root.</value>
-    public ContentReference GlobalSettingsRoot { get; set; }
+    public ContentReference? GlobalSettingsRoot { get; set; }
 
     /// <summary>
     ///     Gets or sets the settings root.
     /// </summary>
     /// <value>The settings root.</value>
-    public ContentReference SettingsRoot { get; set; }
+    public ContentReference? SettingsRoot { get; set; }
 
     /// <summary>
     ///     Gets the settings roots. In case site-specific assets are enabled this will contain
@@ -198,7 +198,13 @@ public class SettingsService : ISettingsService
     {
         get
         {
+            if (SettingsRoot is null)
+            {
+                return Enumerable.Empty<ContentReference>();
+            }
+
             var settings = new List<ContentReference> { SettingsRoot };
+
             if (!SiteDefinition.Current.GlobalAssetsRoot.CompareToIgnoreWorkID(SiteDefinition.Current.SiteAssetsRoot))
             {
                 if (siteSettingsRoots.TryGetValue(SiteDefinition.Current.Id, out var settingsRef))
@@ -216,16 +222,16 @@ public class SettingsService : ISettingsService
     /// </summary>
     /// <typeparam name="T">The settings type</typeparam>
     /// <returns>An instance of <typeparamref name="T" /> </returns>
-    public T GetGlobalSetting<T>() where T : SettingsBase
+    public T? GetGlobalSetting<T>() where T : SettingsBase
     {
         try
         {
             var type = typeof(T);
             var globalSettings = GetGlobalSettings();
 
-            if (globalSettings.ContainsKey(type))
+            if (globalSettings.TryGetValue(type, out var globalSetting))
             {
-                return contentRepository.Get<T>(globalSettings[type]);
+                return contentRepository.Get<T>(globalSetting);
             }
         }
         catch (KeyNotFoundException keyNotFoundException)
@@ -239,16 +245,16 @@ public class SettingsService : ISettingsService
 
         return default;
     }
-    
+
     /// <summary>
     ///     Gets the setting implementing the specified type from the global settings repository.
     /// </summary>
     /// <param name="settingsType">The settings type</param>
     /// <returns>An instance of <typeparamref name="SettingsBase" /> </returns>
     /// <exception cref="ArgumentException">It type does not inherit from <typeparamref name="SettingsBase" /></exception>
-    public SettingsBase GetGlobalSetting(Type settingsType)
+    public SettingsBase? GetGlobalSetting(Type settingsType)
     {
-        if (!settingsType.IsSubclassOf(typeof(SettingsBase)) )
+        if (!settingsType.IsSubclassOf(typeof(SettingsBase)))
         {
             throw new ArgumentException("Type must inherit from SettingsBase");
         }
@@ -256,7 +262,7 @@ public class SettingsService : ISettingsService
         var method = getGlobalSettingGenericMethods[settingsType] ??= getGlobalSettingMethod.MakeGenericMethod(settingsType);
 
         return method
-            .Invoke(this, Array.Empty<object>() ) as SettingsBase;
+            .Invoke(this, Array.Empty<object>()) as SettingsBase;
     }
 
     /// <summary>
@@ -281,13 +287,13 @@ public class SettingsService : ISettingsService
     ///     The <see cref="T:System.Threading.ReaderWriterLockSlim" /> object
     ///     has been disposed.
     /// </exception>
-    public T GetSetting<T>() where T : SettingsBase
+    public T? GetSetting<T>() where T : SettingsBase
     {
         if (contentRouteHelper.Content is null)
         {
             return default;
         }
-        
+
         return GetSetting<T>(contentRouteHelper.Content);
     }
 
@@ -313,7 +319,7 @@ public class SettingsService : ISettingsService
     ///     The <see cref="T:System.Threading.ReaderWriterLockSlim" /> object
     ///     has been disposed.
     /// </exception>
-    public SettingsBase GetSetting(Type settingsType)
+    public SettingsBase? GetSetting(Type settingsType)
     {
         if (contentRouteHelper.Content is null)
         {
@@ -346,9 +352,9 @@ public class SettingsService : ISettingsService
     ///     The <see cref="T:System.Threading.ReaderWriterLockSlim" /> object
     ///     has been disposed.
     /// </exception>
-    public T GetSetting<T>(ContentReference contentLink) where T : SettingsBase
+    public T? GetSetting<T>(ContentReference? contentLink) where T : SettingsBase
     {
-        if (contentRepository.TryGet(contentLink, out IContent content))
+        if (contentRepository.TryGet(contentLink, out IContent? content))
         {
             return GetSetting<T>(content);
         }
@@ -362,25 +368,25 @@ public class SettingsService : ISettingsService
     /// <param name="settingsType">The settings type</param>
     /// <param name="contentLink">The content link</param>
     /// <returns>An instance of <see cref="SettingsBase" /></returns>
-    public SettingsBase GetSetting(Type settingsType, ContentReference contentLink)
+    public SettingsBase? GetSetting(Type settingsType, ContentReference? contentLink)
     {
-        if (contentRepository.TryGet(contentLink, out IContent content))
+        if (contentRepository.TryGet(contentLink, out IContent? content))
         {
             return GetSetting(settingsType, content);
         }
 
         return default;
     }
-    
+
     /// <summary>
     ///     Gets the first matching setting by traversing the content tree, starting the search from the provided content.
     /// </summary>
     /// <param name="settingsType">The settings type</param>
     /// <param name="content">The content</param>
     /// <returns>An instance of <typeparamref name="SettingsBase" /></returns>
-    public SettingsBase GetSetting(Type settingsType, IContent content)
+    public SettingsBase? GetSetting(Type settingsType, IContent? content)
     {
-        if (!settingsType.IsSubclassOf(typeof(SettingsBase)) )
+        if (!settingsType.IsSubclassOf(typeof(SettingsBase)))
         {
             throw new ArgumentException("Type must inherit from SettingsBase");
         }
@@ -389,9 +395,12 @@ public class SettingsService : ISettingsService
         {
             getSettingGenericMethods[settingsType] = getSettingMethod.MakeGenericMethod(settingsType);
         }
-        
-        return getSettingGenericMethods[settingsType]
-            .Invoke(this, new object[] { content }) as SettingsBase;
+
+        if (content != null)
+            return getSettingGenericMethods[settingsType]
+                .Invoke(this, new object[] { content }) as SettingsBase;
+
+        return null;
     }
 
     /// <summary>
@@ -417,7 +426,7 @@ public class SettingsService : ISettingsService
     ///     The <see cref="T:System.Threading.ReaderWriterLockSlim" /> object
     ///     has been disposed.
     /// </exception>
-    public T GetSetting<T>(IContent content) where T : SettingsBase
+    public T? GetSetting<T>(IContent? content) where T : SettingsBase
     {
         return GetSettingsRecursive<T>(content).FirstOrDefault();
     }
@@ -428,14 +437,14 @@ public class SettingsService : ISettingsService
     /// <typeparam name="T">The settings type</typeparam>
     /// <param name="contentLink">The content link</param>
     /// <returns>An instance of <typeparamref name="T" /> </returns>
-    public IEnumerable<T> GetSettingsRecursive<T>(ContentReference contentLink) where T : SettingsBase
+    public IEnumerable<T> GetSettingsRecursive<T>(ContentReference? contentLink) where T : SettingsBase
     {
-        if (contentRepository.TryGet(contentLink, out IContent content))
+        if (contentRepository.TryGet(contentLink, out IContent? content))
         {
             return GetSettingsRecursive<T>(content);
         }
 
-        return default;
+        return Enumerable.Empty<T>();
     }
 
     /// <summary>
@@ -444,7 +453,7 @@ public class SettingsService : ISettingsService
     /// <typeparam name="T">The settings type</typeparam>
     /// <param name="content">The content</param>
     /// <returns>An instance of <typeparamref name="T" /> </returns>
-    public IEnumerable<T> GetSettingsRecursive<T>(IContent content) where T : SettingsBase
+    public IEnumerable<T> GetSettingsRecursive<T>(IContent? content) where T : SettingsBase
     {
         if (content == null)
         {
@@ -465,12 +474,13 @@ public class SettingsService : ISettingsService
         if (!ancestors.Contains(ContentReference.StartPage, ContentReferenceComparer.IgnoreVersion))
         {
             var siteDefinition = siteDefinitionResolver.GetByContent(content.ContentLink, false);
-            if (!ContentReference.IsNullOrEmpty(siteDefinition?.StartPage))
+
+            if (siteDefinition is not null && !ContentReference.IsNullOrEmpty(siteDefinition.StartPage))
             {
                 ancestors.Add(siteDefinition.StartPage);
             }
         }
-        
+
         foreach (var parentReference in ancestors)
         {
             if (!contentRepository.TryGet(parentReference, out IContent parentContent))
@@ -486,7 +496,11 @@ public class SettingsService : ISettingsService
             }
         }
 
-        yield return GetGlobalSetting<T>();
+        var globalSetting = GetGlobalSetting<T>();
+        if (globalSetting != null)
+        {
+            yield return globalSetting;
+        }
     }
 
     /// <summary>
@@ -538,7 +552,7 @@ public class SettingsService : ISettingsService
         {
             log.Warning("[Settings]", ex);
         }
-        
+
     }
 
     /// <summary>
@@ -561,7 +575,7 @@ public class SettingsService : ISettingsService
     ///     The current thread has not entered the lock in write
     ///     mode.
     /// </exception>
-    public void UpdateSettings(IContent content)
+    public void UpdateSettings(IContent? content)
     {
         try
         {
@@ -655,7 +669,7 @@ public class SettingsService : ISettingsService
             }
 
             var attributeGuid = new Guid(attribute.SettingsInstanceGuid);
-            IContent existingItem = null;
+            IContent? existingItem = null;
 
             if (existingItems.Any())
             {
@@ -695,7 +709,7 @@ public class SettingsService : ISettingsService
     /// <typeparam name="T">The settings type</typeparam>
     /// <param name="content">The content.</param>
     /// <returns>An instance of <typeparamref name="T" /> </returns>
-    private T TryGetSettingsFromContent<T>(IContent content) where T : SettingsBase
+    private T? TryGetSettingsFromContent<T>(IContent? content) where T : SettingsBase
     {
         foreach (var settingsResolver in settingsResolvers)
         {
@@ -718,7 +732,7 @@ public class SettingsService : ISettingsService
 
         foreach (var itemRef in existingItemRefs)
         {
-            IContent item = null;
+            IContent? item = null;
 
             try
             {
@@ -762,9 +776,9 @@ public class SettingsService : ISettingsService
 
     private class ContentTypeComparer : IEqualityComparer<IContent>
     {
-        public bool Equals(IContent x, IContent y)
+        public bool Equals(IContent? x, IContent? y)
         {
-            return x.GetOriginalType() == y.GetOriginalType();
+            return x?.GetOriginalType() == y?.GetOriginalType();
         }
 
         public int GetHashCode(IContent obj)
