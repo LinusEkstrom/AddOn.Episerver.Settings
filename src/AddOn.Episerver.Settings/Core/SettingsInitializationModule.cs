@@ -29,16 +29,14 @@ using EPiServer.Framework.Localization;
 using EPiServer.ServiceLocation;
 using EPiServer.Shell.Configuration;
 using EPiServer.Shell.Modules;
-using EPiServer.Web;
 using System;
 using System.Linq;
 using InitializationModule = EPiServer.Web.InitializationModule;
+using Microsoft.Extensions.DependencyInjection;
+using EPiServer.Applications;
+using EPiServer.DependencyInjection;
 
 namespace AddOn.Episerver.Settings.Core;
-#if NET48
-#else
-    using Microsoft.Extensions.DependencyInjection;
-#endif
 
 /// <summary>
 ///     Class SettingsInit.
@@ -51,7 +49,7 @@ public class SettingsInitializationModule : IConfigurableModule
 {
     private static IContentEvents? contentEvents;
 
-    private static ISiteDefinitionEvents? siteDefinitionEvents;
+    private static IApplicationRepository? applicationRepository;
 
     private static bool initialized;
 
@@ -70,15 +68,21 @@ public class SettingsInitializationModule : IConfigurableModule
             return;
         }
 
-#if NET48
-        var services = context.Services;
-        services.AddSingleton<ISettingsService, SettingsService>();
-        services.AddSingleton<ISettingsResolver, PropertyNameSettingsResolver>();
-#else
         context.Services.AddSingleton<ISettingsService, SettingsService>();
         context.Services.AddSingleton<ISettingsResolver, PropertyNameSettingsResolver>();
-        context.Services.Configure<ProtectedModuleOptions>(pm => pm.Items.Add(new ModuleDetails() { Name = "AddOn.Episerver.Settings" }));
-#endif
+        context.Services.AddCmsEventSubscriber<ApplicationCreatedEvent, SettingsApplicationChangedSubscriber>();
+        context.Services.AddCmsEventSubscriber<ApplicationUpdatedEvent, SettingsApplicationChangedSubscriber>();
+
+        context.Services.Configure<ProtectedModuleOptions>(pm =>
+        {
+            if (!pm.Items.Any(x => x.Name.Equals("AddOn.Episerver.Settings", StringComparison.OrdinalIgnoreCase)))
+            {
+                pm.Items.Add(new ModuleDetails
+                {
+                    Name = "AddOn.Episerver.Settings"
+                });
+            }
+        });
     }
 
     /// <summary>
@@ -105,12 +109,12 @@ public class SettingsInitializationModule : IConfigurableModule
         {
             return;
         }
-        
-        settingsService = context.Locate.Advanced.GetInstance<ISettingsService>();
-        contentEvents = context.Locate.Advanced.GetInstance<IContentEvents>();
-        siteDefinitionEvents = context.Locate.Advanced.GetInstance<ISiteDefinitionEvents>();
-        localizationService = context.Locate.Advanced.GetInstance<LocalizationService>();
-        moduleTable = context.Locate.Advanced.GetInstance<ModuleTable>();
+
+        settingsService = context.Services.GetRequiredService<ISettingsService>();
+        contentEvents = context.Services.GetRequiredService<IContentEvents>();
+        applicationRepository = context.Services.GetRequiredService<IApplicationRepository>();
+        localizationService = context.Services.GetRequiredService<LocalizationService>();
+        moduleTable = context.Services.GetRequiredService<ModuleTable>();
 
         context.InitComplete += InitCompleteHandler;
 
@@ -153,17 +157,11 @@ public class SettingsInitializationModule : IConfigurableModule
             contentEvents.MovingContent -= MovingContent;
         }
 
-        if (siteDefinitionEvents is not null)
-        {
-            siteDefinitionEvents.SiteCreated -= SiteChanged;
-            siteDefinitionEvents.SiteUpdated -= SiteChanged;
-        }
-        
         context.InitComplete -= InitCompleteHandler;
 
         initialized = false;
     }
-    
+
     /// <summary>
     ///     Executed when the content is being created.
     /// </summary>
@@ -181,7 +179,7 @@ public class SettingsInitializationModule : IConfigurableModule
         {
             return;
         }
-        
+
         e.CancelAction = true;
         e.CancelReason = localizationService?.GetString("/edit/globalsettings/createnotsupported");
     }
@@ -198,7 +196,7 @@ public class SettingsInitializationModule : IConfigurableModule
         {
             return;
         }
-        
+
         // if trying to move something into the global settings folder
         if (e.TargetLink == settingsService?.GlobalSettingsRoot)
         {
@@ -207,9 +205,9 @@ public class SettingsInitializationModule : IConfigurableModule
 
             return;
         }
-        
+
         // if it's a global setting
-        if (e.Content is SettingsBase && e.Content.ParentLink == settingsService?.GlobalSettingsRoot )
+        if (e.Content is SettingsBase && e.Content.ParentLink == settingsService?.GlobalSettingsRoot)
         {
             // if the content item is an instance of SettingsBase, it has been instantiated with the fallback base class
             // since the ContentType class no longer exists and should be possible to move to the waste basket
@@ -242,21 +240,6 @@ public class SettingsInitializationModule : IConfigurableModule
     }
 
     /// <summary>
-    ///     Executed when a site configuration changes.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="SiteDefinitionEventArgs" /> instance containing the event data.</param>
-    private static void SiteChanged(object? sender, SiteDefinitionEventArgs? e)
-    {
-        if (e?.Site is null)
-        {
-            return;
-        }
-
-        settingsService?.ValidateOrCreateSiteSettingsRoot(e.Site);
-    }
-    
-    /// <summary>
     ///     Initializes the complete handler.
     /// </summary>
     /// <param name="sender"> The sender. </param>
@@ -276,9 +259,9 @@ public class SettingsInitializationModule : IConfigurableModule
         if (settings != null && commerce != null)
         {
             settings.Manifest.ClientModule.ModuleDependencies.Add(new ModuleDependency
-                { Dependency = "EPiServer.Commerce.Shell", DependencyType = ModuleDependencyTypes.Require | ModuleDependencyTypes.RunAfter });
+            { Dependency = "EPiServer.Commerce.Shell", DependencyType = ModuleDependencyTypes.Require | ModuleDependencyTypes.RunAfter });
         }
-        
+
         settingsService?.InitSettings();
 
         if (contentEvents is not null)
@@ -286,12 +269,6 @@ public class SettingsInitializationModule : IConfigurableModule
             contentEvents.CreatingContent += CreatingContent;
             contentEvents.PublishedContent += PublishedContent;
             contentEvents.MovingContent += MovingContent;
-        }
-
-        if (siteDefinitionEvents is not null)
-        {
-            siteDefinitionEvents.SiteCreated += SiteChanged;
-            siteDefinitionEvents.SiteUpdated += SiteChanged;
         }
 
     }

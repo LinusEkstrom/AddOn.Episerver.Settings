@@ -23,19 +23,18 @@
 
 using AddOn.Episerver.Settings.Core;
 using EPiServer;
+
 using EPiServer.Cms.Shell.Search;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.Framework.Localization;
-using EPiServer.Globalization;
-using EPiServer.ServiceLocation;
 using EPiServer.Shell;
 using EPiServer.Shell.Search;
-using EPiServer.Web;
 using EPiServer.Web.Routing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EPiServer.Applications;
 
 namespace AddOn.Episerver.Settings.UI;
 
@@ -57,42 +56,32 @@ public class SettingsSearchProvider : ContentSearchProviderBase<SettingsBase, Co
     ///     Initializes a new instance of the <see cref="SettingsSearchProvider" /> class.
     /// </summary>
     /// <param name="localizationService">The localization service.</param>
-    /// <param name="siteDefinitionResolver">The site definition resolver.</param>
+    /// <param name="applicationResolver">The application resolver.</param>
     /// <param name="contentTypeRepository">The content type repository.</param>
     /// <param name="editUrlResolver">The edit URL resolver.</param>
-    /// <param name="currentSiteDefinition">The current site definition.</param>
     /// <param name="languageResolver">The language resolver.</param>
     /// <param name="urlResolver">The URL resolver.</param>
-    /// <param name="templateResolver">The template resolver.</param>
     /// <param name="uiDescriptorRegistry">The UI descriptor registry.</param>
     /// <param name="contentLoader">The content loader.</param>
     /// <param name="settingsService">The settings service.</param>
     public SettingsSearchProvider(
         LocalizationService localizationService,
-        ISiteDefinitionResolver siteDefinitionResolver,
-        IContentTypeRepository<ContentType> contentTypeRepository,
+        IApplicationResolver applicationResolver,
+        IContentTypeRepository contentTypeRepository,
         EditUrlResolver editUrlResolver,
-        ServiceAccessor<SiteDefinition> currentSiteDefinition,
-#if NET48
-        LanguageResolver languageResolver,
-#else
-            IContentLanguageAccessor languageResolver,
-#endif
+        IContentLanguageAccessor languageResolver,
         UrlResolver urlResolver,
-        TemplateResolver templateResolver,
         UIDescriptorRegistry uiDescriptorRegistry,
         IContentLoader contentLoader,
         ISettingsService settingsService)
         : base(
-        localizationService,
-        siteDefinitionResolver,
-        contentTypeRepository,
-        editUrlResolver,
-        currentSiteDefinition,
-        languageResolver,
-        urlResolver,
-        templateResolver,
-        uiDescriptorRegistry)
+            localizationService,
+            applicationResolver,
+            contentTypeRepository,
+            editUrlResolver,
+            languageResolver,
+            urlResolver,
+            uiDescriptorRegistry)
     {
         this.contentLoader = contentLoader;
         this.settingsService = settingsService;

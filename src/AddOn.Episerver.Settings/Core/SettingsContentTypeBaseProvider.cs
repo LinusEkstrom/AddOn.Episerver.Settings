@@ -29,13 +29,24 @@ using System.Collections.Generic;
 
 namespace AddOn.Episerver.Settings.Core;
 
+/// <summary>
+///     Provides the content type base used by settings content.
+/// </summary>
 [ServiceConfiguration(typeof(IContentTypeBaseProvider), Lifecycle = ServiceInstanceScope.Singleton)]
 public class SettingsContentTypeBaseProvider : IContentTypeBaseProvider
 {
     private static readonly ContentTypeBase SettingContentType = new("Setting");
 
+    /// <summary>
+    ///     Gets the content type bases handled by this provider.
+    /// </summary>
     public IEnumerable<ContentTypeBase> ContentTypeBases => new[] { SettingContentType };
 
+    /// <summary>
+    ///     Resolves the CLR type for a content type base.
+    /// </summary>
+    /// <param name="contentTypeBase">The content type base.</param>
+    /// <returns>The CLR type for the content type base.</returns>
     public Type Resolve(ContentTypeBase contentTypeBase)
     {
         return typeof(SettingsBase);

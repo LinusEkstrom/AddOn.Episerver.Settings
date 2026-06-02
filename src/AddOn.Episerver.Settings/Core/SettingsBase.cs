@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SettingsBase.cs" company="none">
 //      Copyright © 2020 Linus Ekström, Jeroen Stemerdink.
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,8 +22,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using EPiServer;
 using EPiServer.Core;
+using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.Security;
 using EPiServer.ServiceLocation;
@@ -40,8 +40,8 @@ namespace AddOn.Episerver.Settings.Core;
 [ContentType(GUID = "484DAD32-3E16-4943-B7BF-A542C7BDC379", AvailableInEditMode = false)]
 public class SettingsBase : BasicContent, IVersionable, IContentSecurable
 {
-    private readonly Injected<IContentLoader> _contentLoader;
-    
+    private readonly Injected<IContentSecurityRepository> _contentSecurityRepository;
+
     /// <summary>
     ///     Gets or sets a value indicating whether this item is in pending publish state.
     /// </summary>
@@ -67,6 +67,12 @@ public class SettingsBase : BasicContent, IVersionable, IContentSecurable
     public DateTime? StopPublish { get; set; }
 
     /// <summary>
+    ///     Gets or sets the content variation.
+    /// </summary>
+    /// <value>The content variation.</value>
+    public string Variation { get; set; } = string.Empty;
+
+    /// <summary>
     ///     Gets the security descriptor for this item.
     /// </summary>
     /// <returns>The security descriptor.</returns>
@@ -74,22 +80,33 @@ public class SettingsBase : BasicContent, IVersionable, IContentSecurable
     {
         return GetContentSecurityDescriptor();
     }
-    
+
     /// <summary>
     ///     Gets the content security descriptor for this item.
     /// </summary>
     /// <returns>The content security descriptor.</returns>
     public IContentSecurityDescriptor? GetContentSecurityDescriptor()
     {
-        // return any list of valid ACL, for example from Root or StartPage which those settings belong to
-        // Fallback to the root page if the wildcard isn't set for the site hostname
-        var aclReference = ContentReference.IsNullOrEmpty(ContentReference.StartPage) ? ContentReference.RootPage : ContentReference.StartPage;
-        var accessControlList = (_contentLoader.Service.Get<IContent>(aclReference) as PageData)?.ACL;
-        if (accessControlList is not null && accessControlList.IsInherited)
+        ContentReference aclReference;
+        try
         {
-            accessControlList = (_contentLoader.Service.Get<IContent>(ContentReference.RootPage) as PageData)?.ACL;
+            aclReference = ContentReference.StartPage;
         }
-        return accessControlList?.CreateWritableClone() as IContentSecurityDescriptor;
+        catch (InvalidOperationException)
+        {
+            // Workaround for a suspected CMS 13 issue where accessing ContentReference.StartPage while publishing content can cause a deadlock.
+            aclReference = ContentReference.RootPage;
+        }
+
+        var securityDescriptor = ContentReference.IsNullOrEmpty(aclReference)
+            ? null
+            : _contentSecurityRepository.Service.Get(aclReference);
+
+        if (securityDescriptor is null || securityDescriptor.IsInherited)
+        {
+            securityDescriptor = _contentSecurityRepository.Service.Get(ContentReference.RootPage);
+        }
+
+        return securityDescriptor?.CreateWritableClone() as IContentSecurityDescriptor;
     }
 }
-

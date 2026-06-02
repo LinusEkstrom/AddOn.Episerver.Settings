@@ -26,7 +26,6 @@ using EPiServer.Framework.Localization;
 using EPiServer.Shell;
 using EPiServer.Shell.ViewComposition;
 using EPiServer.Shell.ViewComposition.Containers;
-using EPiServer.Shell.Web;
 using EPiServer.Web.Routing;
 using System.Collections.Generic;
 
@@ -36,7 +35,6 @@ namespace AddOn.Episerver.Settings.UI;
 ///     Class SettingsView.
 ///     Implements the <see cref="ICompositeView" />
 ///     Implements the <see cref="IRoutable" />
-///     Implements the <see cref="ICustomGlobalNavigationMenuBehavior" />
 ///     Implements the <see cref="IRestrictedComponentCategoryDefinition" />
 /// </summary>
 /// <seealso cref="ICompositeView" />

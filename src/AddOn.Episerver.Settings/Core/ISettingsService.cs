@@ -22,7 +22,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using EPiServer.Core;
-using EPiServer.Web;
+using EPiServer.Applications;
 using System;
 using System.Collections.Generic;
 
@@ -63,7 +63,7 @@ public interface ISettingsService
     /// <typeparam name="T">The settings type</typeparam>
     /// <returns>An instance of <typeparamref name="T" /></returns>
     T? GetSetting<T>() where T : SettingsBase;
-    
+
     /// <summary>
     ///     Gets the first matching setting by traversing the content tree, starting the search for it from the current content context.
     /// </summary>
@@ -85,7 +85,7 @@ public interface ISettingsService
     /// <param name="contentLink">The content link.</param>
     /// <returns>An instance of <see cref="SettingsBase" /></returns>
     SettingsBase? GetSetting(Type settingsType, ContentReference? contentLink);
-    
+
     /// <summary>
     ///     Gets the first matching setting by traversing the content tree, starting the search from the provided content.
     /// </summary>
@@ -93,7 +93,7 @@ public interface ISettingsService
     /// <param name="content">The content.</param>
     /// <returns>An instance of <typeparamref name="T" /></returns>
     T? GetSetting<T>(IContent? content) where T : SettingsBase;
-    
+
     /// <summary>
     ///     Gets the first matching setting by traversing the content tree, starting the search from the provided content.
     /// </summary>
@@ -101,20 +101,20 @@ public interface ISettingsService
     /// <param name="content">The content where to start the search.</param>
     /// <returns><see cref="SettingsBase" /></returns>
     SettingsBase? GetSetting(Type settingsType, IContent? content);
-    
+
     /// <summary>
     ///     Gets the setting implementing the specified type from the global settings repository.
     /// </summary>
     /// <typeparam name="T">The settings type</typeparam>
     /// <returns>An instance of <typeparamref name="T" /></returns>
     T? GetGlobalSetting<T>() where T : SettingsBase;
-    
+
     /// <summary>
     ///     Gets the setting implementing the specified type from the global settings repository.
     /// </summary>
     /// <param name="settingsType">The settings type</param>
     /// <returns>An instance of <see cref="SettingsBase" /></returns>
-    /// <exception cref="ArgumentException">It type does not inherit from <typeparamref name="SettingsBase" /></exception>
+    /// <exception cref="ArgumentException">The type does not inherit from <see cref="SettingsBase" />.</exception>
     SettingsBase? GetGlobalSetting(Type settingsType);
 
     /// <summary>
@@ -123,7 +123,7 @@ public interface ISettingsService
     /// <typeparam name="T">The settings type</typeparam>
     /// <returns>An instance of <typeparamref name="T" /></returns>
     IEnumerable<T> GetSettingsRecursive<T>(ContentReference? contentLink) where T : SettingsBase;
-    
+
     /// <summary>
     ///     Gets all settings found traversing the content tree starting from the provided content.
     /// </summary>
@@ -144,8 +144,8 @@ public interface ISettingsService
     void UpdateSettings(IContent? content);
 
     /// <summary>
-    ///     Updates the settings root folder for a site.
+    ///     Updates the settings root folder for an application.
     /// </summary>
-    /// <param name="siteDefinition">The site definition.</param>
-    ContentReference ValidateOrCreateSiteSettingsRoot(SiteDefinition siteDefinition);
+    /// <param name="application">The application.</param>
+    ContentReference ValidateOrCreateSiteSettingsRoot(Application application);
 }

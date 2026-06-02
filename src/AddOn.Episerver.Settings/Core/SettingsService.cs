@@ -36,6 +36,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using EPiServer.Applications;
 
 namespace AddOn.Episerver.Settings.Core;
 
@@ -92,11 +93,6 @@ public class SettingsService : ISettingsService
     private readonly IContentTypeRepository contentTypeRepository;
 
     /// <summary>
-    ///     The site definition resolver
-    /// </summary>
-    private readonly ISiteDefinitionResolver siteDefinitionResolver;
-
-    /// <summary>
     ///     The key used for storing global settings in the synchronized cache
     /// </summary>
     private readonly string globalSettingsCacheKey = "addon.episerver.settings.globalsettings";
@@ -107,51 +103,57 @@ public class SettingsService : ISettingsService
     private readonly ILogger log = LogManager.GetLogger();
 
     /// <summary>
-    ///     The site definition repository
+    ///     The application repository
     /// </summary>
-    private readonly ISiteDefinitionRepository siteDefinitionRepository;
+    private readonly IApplicationRepository applicationRepository;
 
     /// <summary>
     ///     The type scanner lookup
     /// </summary>
     private readonly ITypeScannerLookup typeScannerLookup;
 
-    private readonly ConcurrentDictionary<Guid, ContentReference> siteSettingsRoots = new ConcurrentDictionary<Guid, ContentReference>();
+    private readonly ConcurrentDictionary<string, ContentReference> siteSettingsRoots = new ConcurrentDictionary<string, ContentReference>();
+
+    private readonly IApplicationResolver applicationResolver;
     private readonly ISettingsResolver[] settingsResolvers;
 
     private readonly MethodInfo getSettingMethod = typeof(SettingsService).GetMethod(nameof(GetSetting), new[] { typeof(IContent) })!;
+
     private readonly Dictionary<Type, MethodInfo> getSettingGenericMethods = new Dictionary<Type, MethodInfo>();
+
     private readonly MethodInfo getGlobalSettingMethod = typeof(SettingsService).GetMethod(nameof(GetGlobalSetting), Type.EmptyTypes)!;
+
     private readonly Dictionary<Type, MethodInfo> getGlobalSettingGenericMethods = new Dictionary<Type, MethodInfo>();
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SettingsService" /> class.
     /// </summary>
     /// <param name="contentRepository">The content repository.</param>
-    /// <param name="siteDefinitionRepository">The site definition repository</param>
+    /// <param name="applicationResolver">The application resolver.</param>
+    /// <param name="applicationRepository">The application repository.</param>
     /// <param name="contentRootService">The content root service.</param>
     /// <param name="typeScannerLookup">The type scanner lookup.</param>
     /// <param name="contentTypeRepository">The content type repository.</param>
     /// <param name="ancestorReferencesLoader">The ancestor references loader.</param>
-    /// <param name="synchronizedObjectInstanceCache"></param>
-    /// <param name="settingsResolvers"></param>
-    /// <param name="contentRouteHelper"></param>
+    /// <param name="synchronizedObjectInstanceCache">The synchronized object instance cache.</param>
+    /// <param name="settingsResolvers">The settings resolvers.</param>
+    /// <param name="contentRouteHelper">The content route helper.</param>
     public SettingsService(
         IContentRepository contentRepository,
-        ISiteDefinitionRepository siteDefinitionRepository,
+        IApplicationResolver applicationResolver,
+        IApplicationRepository applicationRepository,
         ContentRootService contentRootService,
         ITypeScannerLookup typeScannerLookup,
         IContentTypeRepository contentTypeRepository,
         AncestorReferencesLoader ancestorReferencesLoader,
         ISynchronizedObjectInstanceCache synchronizedObjectInstanceCache,
         IEnumerable<ISettingsResolver> settingsResolvers,
-        IContentRouteHelper contentRouteHelper,
-        ISiteDefinitionResolver siteDefinitionResolver
+        IContentRouteHelper contentRouteHelper
     )
     {
         this.contentRepository = contentRepository;
-        this.siteDefinitionRepository = siteDefinitionRepository;
-        this.siteDefinitionResolver = siteDefinitionResolver;
+        this.applicationResolver = applicationResolver;
+        this.applicationRepository = applicationRepository;
         this.contentRootService = contentRootService;
         this.typeScannerLookup = typeScannerLookup;
         this.contentTypeRepository = contentTypeRepository;
@@ -204,12 +206,18 @@ public class SettingsService : ISettingsService
             }
 
             var settings = new List<ContentReference> { SettingsRoot };
+            var application = applicationResolver.GetByContext();
 
-            if (!SiteDefinition.Current.GlobalAssetsRoot.CompareToIgnoreWorkID(SiteDefinition.Current.SiteAssetsRoot))
+            if (application is IResourceableApplication resourceableApplication)
             {
-                if (siteSettingsRoots.TryGetValue(SiteDefinition.Current.Id, out var settingsRef))
+                var assetsRoot = resourceableApplication.AssetsRoot;
+
+                if (!SystemDefinition.Current.GlobalAssetsRoot.CompareToIgnoreWorkID(assetsRoot))
                 {
-                    settings.Add(settingsRef);
+                    if (siteSettingsRoots.TryGetValue(application.Name, out var settingsRef))
+                    {
+                        settings.Add(settingsRef);
+                    }
                 }
             }
 
@@ -250,8 +258,8 @@ public class SettingsService : ISettingsService
     ///     Gets the setting implementing the specified type from the global settings repository.
     /// </summary>
     /// <param name="settingsType">The settings type</param>
-    /// <returns>An instance of <typeparamref name="SettingsBase" /> </returns>
-    /// <exception cref="ArgumentException">It type does not inherit from <typeparamref name="SettingsBase" /></exception>
+    /// <returns>An instance of <see cref="SettingsBase" />.</returns>
+    /// <exception cref="ArgumentException">The type does not inherit from <see cref="SettingsBase" />.</exception>
     public SettingsBase? GetGlobalSetting(Type settingsType)
     {
         if (!settingsType.IsSubclassOf(typeof(SettingsBase)))
@@ -383,7 +391,7 @@ public class SettingsService : ISettingsService
     /// </summary>
     /// <param name="settingsType">The settings type</param>
     /// <param name="content">The content</param>
-    /// <returns>An instance of <typeparamref name="SettingsBase" /></returns>
+    /// <returns>An instance of <see cref="SettingsBase" />.</returns>
     public SettingsBase? GetSetting(Type settingsType, IContent? content)
     {
         if (!settingsType.IsSubclassOf(typeof(SettingsBase)))
@@ -471,14 +479,13 @@ public class SettingsService : ISettingsService
             .Where(x => !x.CompareToIgnoreWorkID(ContentReference.RootPage))
             .ToList();
 
-        if (!ancestors.Contains(ContentReference.StartPage, ContentReferenceComparer.IgnoreVersion))
-        {
-            var siteDefinition = siteDefinitionResolver.GetByContent(content.ContentLink, false);
+        var application = applicationResolver.GetByContent(content.ContentLink, false);
 
-            if (siteDefinition is not null && !ContentReference.IsNullOrEmpty(siteDefinition.StartPage))
-            {
-                ancestors.Add(siteDefinition.StartPage);
-            }
+        if (application is IRoutableApplication routableApplication &&
+            !ContentReference.IsNullOrEmpty(routableApplication.EntryPoint) &&
+            !ancestors.Contains(routableApplication.EntryPoint, ContentReferenceComparer.IgnoreVersion))
+        {
+            ancestors.Add(routableApplication.EntryPoint);
         }
 
         foreach (var parentReference in ancestors)
@@ -514,7 +521,7 @@ public class SettingsService : ISettingsService
             contentRootService.Register<ContentFolder>(
             GlobalSettingsRootName,
             GlobalSettingsRootGuid,
-            SiteDefinition.Current.GlobalAssetsRoot);
+            GlobalAssetsRoot());
 
             GlobalSettingsRoot = contentRootService.Get(GlobalSettingsRootName);
         }
@@ -526,10 +533,13 @@ public class SettingsService : ISettingsService
 
         try
         {
+            var application = applicationResolver.GetByContext();
+            var assetsRoot = ((IResourceableApplication?)application)?.AssetsRoot ?? GlobalAssetsRoot();
+
             contentRootService.Register<ContentFolder>(
-            SettingsRootName,
-            SettingsRootGuid,
-            SiteDefinition.Current.SiteAssetsRoot);
+                SettingsRootName,
+                SettingsRootGuid,
+                assetsRoot);
 
             SettingsRoot = contentRootService.Get(SettingsRootName);
         }
@@ -538,10 +548,9 @@ public class SettingsService : ISettingsService
             log.Error($"[Settings] {notSupportedException.Message}", notSupportedException);
             throw;
         }
-
-        foreach (var siteDefinition in siteDefinitionRepository.List())
+        foreach (var application in applicationRepository.List())
         {
-            ValidateOrCreateSiteSettingsRoot(siteDefinition);
+            ValidateOrCreateSiteSettingsRoot(application);
         }
 
         try
@@ -552,7 +561,6 @@ public class SettingsService : ISettingsService
         {
             log.Warning("[Settings]", ex);
         }
-
     }
 
     /// <summary>
@@ -591,23 +599,36 @@ public class SettingsService : ISettingsService
     }
 
     /// <summary>
-    ///     Creates a settings folder for a site and adds it to the settings lookup
+    /// Creates a settings folder for an application and adds it to the settings lookup
     /// </summary>
-    public ContentReference ValidateOrCreateSiteSettingsRoot(EPiServer.Web.SiteDefinition siteDefinition)
+    public ContentReference ValidateOrCreateSiteSettingsRoot(Application application)
     {
-        if (siteDefinition.SiteAssetsRoot.CompareToIgnoreWorkID(siteDefinition.GlobalAssetsRoot))
+        ArgumentNullException.ThrowIfNull(application);
+        
+        if (application is not IResourceableApplication resourceableApplication)
+        {
+            return ContentReference.EmptyReference;
+        }
+
+        var assetsRoot = resourceableApplication.AssetsRoot;
+
+        if (ContentReference.IsNullOrEmpty(assetsRoot))
         {
             return ContentReference.EmptyReference;
         }
 
         try
         {
-            return siteSettingsRoots.GetOrAdd(siteDefinition.Id, id =>
+            return siteSettingsRoots.GetOrAdd(application.Name, _ =>
             {
-                var contentRootId = DeterministicGuid.Create(siteDefinition.Id, SettingsRootName);
+                var namespaceGuid = DeterministicGuid.Create(
+                    Guid.Empty,
+                    application.Name);
+
+                var contentRootId = DeterministicGuid.Create(namespaceGuid, SettingsRootName);
                 if (!contentRepository.TryGet<ContentFolder>(contentRootId, out var root))
                 {
-                    root = contentRepository.GetDefault<ContentFolder>(siteDefinition.SiteAssetsRoot);
+                    root = contentRepository.GetDefault<ContentFolder>(assetsRoot);
                     root.ContentGuid = contentRootId;
                     root.Name = SiteSettingsRootName;
 
@@ -634,6 +655,12 @@ public class SettingsService : ISettingsService
     /// </exception>
     private void InitializeContentInstances()
     {
+        if (ContentReference.IsNullOrEmpty(GlobalSettingsRoot))
+        {
+            log.Warning("[Settings] Global settings root is not available; skipping content instance initialization.");
+            return;
+        }
+
         var existingItems = new List<IContent>();
         var type = typeof(SettingsContentTypeAttribute);
         var settingsModelTypes = typeScannerLookup.AllTypes.Where(
@@ -728,6 +755,11 @@ public class SettingsService : ISettingsService
     /// </returns>
     private IEnumerable<IContent> LoadGlobalSettings()
     {
+        if (ContentReference.IsNullOrEmpty(GlobalSettingsRoot))
+        {
+            yield break;
+        }
+
         var existingItemRefs = contentRepository.GetDescendents(GlobalSettingsRoot);
 
         foreach (var itemRef in existingItemRefs)
@@ -774,6 +806,12 @@ public class SettingsService : ISettingsService
         cache.Remove(globalSettingsCacheKey);
     }
 
+    private ContentReference GlobalAssetsRoot()
+    {
+        return SystemDefinition.Current.GlobalAssetsRoot;
+    }
+
+
     private class ContentTypeComparer : IEqualityComparer<IContent>
     {
         public bool Equals(IContent? x, IContent? y)
@@ -786,4 +824,5 @@ public class SettingsService : ISettingsService
             return obj.GetOriginalType().GetHashCode();
         }
     }
+
 }
