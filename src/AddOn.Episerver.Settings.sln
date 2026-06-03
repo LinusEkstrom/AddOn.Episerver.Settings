@@ -1,14 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29102.190
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11819.183 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AddOn.Episerver.Settings", "AddOn.Episerver.Settings\AddOn.Episerver.Settings.csproj", "{D999E2CF-F01E-48E6-85ED-98AEEE83B6FB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{5F200133-B3A3-475F-A1D3-751EE1B0A50C}"
 	ProjectSection(SolutionItems) = preProject
-		..\README.md = ..\README.md
+		..\azure-pipelines.yml = ..\azure-pipelines.yml
 		..\.github\workflows\dotnet.yml = ..\.github\workflows\dotnet.yml
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Addon.Episerver.Settings.Test", "Addon.Episerver.Settings.Test\Addon.Episerver.Settings.Test.csproj", "{D6000721-07E2-4FAE-BE0A-610304EBD463}"
