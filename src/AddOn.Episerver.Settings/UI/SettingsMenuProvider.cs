@@ -24,15 +24,9 @@
 using EPiServer.Shell.Navigation;
 using System.Collections.Generic;
 using EPiServer.Shell;
+using EPiServer.Authorization;
 
 namespace AddOn.Episerver.Settings.UI;
-
-#if NET48
-using EPiServer.Security;
-
-#else
-    using EPiServer.Authorization;
-#endif
 
 /// <summary>
 ///     Provides menu items for the settings component.
@@ -52,13 +46,9 @@ public class SettingsMenuProvider : IMenuProvider
         var cmsGlobalSettings = new UrlMenuItem(
         "Global settings",
         MenuPaths.Global+"/cms/settings",
-         url )
+        url )
         {
-#if NET48
-            IsAvailable = request => PrincipalInfo.HasAdminAccess
-#else
-                IsAvailable = request => request.User.IsInRole(Roles.CmsAdmins)
-#endif
+            IsAvailable = request => request.User.IsInRole(Roles.CmsAdmins)
         };
 
         return new MenuItem[] { cmsGlobalSettings };

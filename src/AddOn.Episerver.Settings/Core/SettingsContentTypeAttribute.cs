@@ -38,11 +38,11 @@ public sealed class SettingsContentTypeAttribute : ContentTypeAttribute
     ///     Gets or sets the settings instance unique identifier.
     /// </summary>
     /// <value>The settings instance unique identifier.</value>
-    public string SettingsInstanceGuid { get; set; }
+    public string? SettingsInstanceGuid { get; set; }
 
     /// <summary>
     ///     Gets or sets the name of the settings.
     /// </summary>
     /// <value>The name of the settings.</value>
-    public string SettingsName { get; set; }
+    public string? SettingsName { get; set; }
 }

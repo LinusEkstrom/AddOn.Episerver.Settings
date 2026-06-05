@@ -26,7 +26,6 @@ using EPiServer.Framework.Localization;
 using EPiServer.Shell;
 using EPiServer.Shell.ViewComposition;
 using EPiServer.Shell.ViewComposition.Containers;
-using EPiServer.Shell.Web;
 using EPiServer.Web.Routing;
 using System.Collections.Generic;
 
@@ -36,7 +35,6 @@ namespace AddOn.Episerver.Settings.UI;
 ///     Class SettingsView.
 ///     Implements the <see cref="ICompositeView" />
 ///     Implements the <see cref="IRoutable" />
-///     Implements the <see cref="ICustomGlobalNavigationMenuBehavior" />
 ///     Implements the <see cref="IRestrictedComponentCategoryDefinition" />
 /// </summary>
 /// <seealso cref="ICompositeView" />
@@ -65,12 +63,12 @@ public class SettingsView : ICompositeView,
     /// <summary>
     ///     The root container
     /// </summary>
-    private IContainer rootContainer;
+    private IContainer? rootContainer;
 
     /// <summary>
     ///     The route segment
     /// </summary>
-    private string routeSegment;
+    private string? routeSegment;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SettingsView" /> class.
@@ -194,7 +192,7 @@ public class SettingsView : ICompositeView,
     /// <value>The Route segment.</value>
     public string RouteSegment
     {
-        get => routeSegment ?? (routeSegment = "settings");
+        get => routeSegment ??= "settings";
 
         set => routeSegment = value;
     }

@@ -1,0 +1,30 @@
+variables:
+  system.debug: false
+  major: 6
+  minor: 0
+
+name: $(major).$(minor).$(rev:r) #Build.BuildNumber
+
+trigger: 
+  batch: "true"
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+resources:
+  repositories:
+  - repository: pipelines
+    type: git
+    name: Epinova - Modules/Epinova.Pipelines
+    ref: refs/heads/main
+
+steps:
+- template: nuget.3.yml@pipelines
+  parameters:
+    packageProjectUrl: https://github.com/LinusEkstrom/AddOn.Episerver.Settings
+    workingDirectory: "$(System.DefaultWorkingDirectory)/src"
+    dotnetVersions:
+      - 10.0.x

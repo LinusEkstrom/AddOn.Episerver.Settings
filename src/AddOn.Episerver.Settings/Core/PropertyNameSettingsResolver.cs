@@ -31,24 +31,22 @@ public class PropertyNameSettingsResolver : ISettingsResolver
     /// <param name="setting"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns>A boolean indicating if a setting was found</returns>
-    public bool TryResolveSettingFromContent<T>(IContent content, out T setting) where T : SettingsBase
+    public bool TryResolveSettingFromContent<T>(IContent? content, out T? setting) where T : SettingsBase
     {
         setting = null;
-        PropertyData property = content.Property[name: typeof(T).Name];
+        var property = content?.Property[name: typeof(T).Name];
 
-        if (property == null || property.IsNull)
+        if (property is null || property.IsNull)
         {
             return false;
         }
 
-        ContentReference reference = property.Value as ContentReference;
-
-        if (reference == null)
+        if (property.Value is not ContentReference value)
         {
             return false;
         }
             
-        contentRepository.TryGet(contentLink: reference, content: out setting);
+        contentRepository.TryGet(contentLink: value, content: out setting);
 
         return setting != null;
     }

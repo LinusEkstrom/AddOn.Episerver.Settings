@@ -124,6 +124,10 @@ public class SettingsRepositoryDescriptor : ContentRepositoryDescriptorBase
     /// <value>The sort order.</value>
     public override int SortOrder => 1100;
 
+    /// <summary>
+    ///     Gets a value indicating whether contextual content is enabled.
+    /// </summary>
+    /// <value><c>true</c> if contextual content is enabled; otherwise, <c>false</c>.</value>
     public bool EnableContextualContent => true;
 
     private Injected<ISettingsService> Settings { get; set; }

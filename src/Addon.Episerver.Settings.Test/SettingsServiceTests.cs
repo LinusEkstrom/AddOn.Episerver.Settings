@@ -4,6 +4,8 @@ using EPiServer.Core;
 using EPiServer.Framework.Cache;
 using EPiServer.Web.Routing;
 using Moq;
+using EPiServer.Applications;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Addon.Episerver.Settings.Test;
 
@@ -13,81 +15,122 @@ public class SettingsServiceTests
     public void GetSettingFromLinkShouldResolveAnExistingSetting()
     {
         var page1 = new Mock<TestPage>();
-        var pageLink = new PageReference(100);
+        var pageLink = new ContentReference(100);
         var settingsLink = new ContentReference(200);
         page1.Setup(page => page.ContentLink).Returns(pageLink);
         page1.Setup(page => page.TestSetting).Returns(settingsLink);
         var setting1 = new Mock<TestSetting>();
         setting1.Setup(setting => setting.ContentLink).Returns(settingsLink);
 
-        var settingsService = SetupSettingsService( new PageData[] { page1.Object }, setting1.Object);
+        var settingsService = SetupSettingsService(new PageData[] { page1.Object }, setting1.Object);
 
         var result = settingsService.GetSetting(typeof(TestSetting), pageLink);
-        
+
         Assert.Equal(setting1.Object, result);
     }
-    
+
     [Fact]
     public void GetSettingFromContentShouldResolveAnExistingSetting()
     {
         var page1 = new Mock<TestPage>();
-        var pageLink = new PageReference(100);
+        var pageLink = new ContentReference(100);
         var settingsLink = new ContentReference(200);
         page1.Setup(page => page.ContentLink).Returns(pageLink);
         page1.Setup(page => page.TestSetting).Returns(settingsLink);
         var setting1 = new Mock<TestSetting>();
         setting1.Setup(setting => setting.ContentLink).Returns(settingsLink);
 
-        var settingsService = SetupSettingsService( new PageData[] { page1.Object }, setting1.Object);
+        var settingsService = SetupSettingsService(new PageData[] { page1.Object }, setting1.Object);
 
         var result = settingsService.GetSetting(typeof(TestSetting), page1.Object);
-        
+
         Assert.Equal(setting1.Object, result);
     }
-    
+
     [Fact]
     public void GetSettingShouldReturnNullIfNoSettingExists()
     {
         var page1 = new Mock<TestPage>();
-        var pageLink = new PageReference(100);
+        var pageLink = new ContentReference(100);
         page1.Setup(page => page.ContentLink).Returns(pageLink);
-        
-        var settingsService = SetupSettingsService( new PageData[] { page1.Object }, null);
+
+        var settingsService = SetupSettingsService(new PageData[] { page1.Object }, null);
 
         var result = settingsService.GetSetting(typeof(TestSetting), page1.Object);
-        
+
         Assert.Null(result);
     }
-    
+
     [Fact]
     public void GetSettingShouldTraverseThePageTreeToResolveTheSetting()
     {
         var settingsLink = new ContentReference(200);
         var setting1 = new Mock<TestSetting>();
         setting1.Setup(setting => setting.ContentLink).Returns(settingsLink);
-        
+
         var page1 = new Mock<TestPage>();
-        var pageLink1 = new PageReference(100);
+        var pageLink1 = new ContentReference(100);
         var page2 = new Mock<TestPage>();
-        var pageLink2 = new PageReference(101);
+        var pageLink2 = new ContentReference(101);
         page1.Setup(page => page.ContentLink).Returns(pageLink1);
         page1.Setup(page => page.ParentLink).Returns(pageLink2);
         page2.Setup(page => page.ContentLink).Returns(pageLink2);
         page2.Setup(page => page.TestSetting).Returns(settingsLink);
-        
-        var settingsService = SetupSettingsService( new PageData[] { page1.Object, page2.Object }, setting1.Object);
+
+        var settingsService = SetupSettingsService(new PageData[] { page1.Object, page2.Object }, setting1.Object);
 
         var result = settingsService.GetSetting(typeof(TestSetting), page1.Object);
-        
+
         Assert.Equal(setting1.Object, result);
     }
 
-    private SettingsService SetupSettingsService(PageData[] pages, SettingsBase? result)
+    [Fact]
+    public void GetSettingShouldUseApplicationEntryPointWhenAncestorsDoNotContainIt()
+    {
+        var settingsLink = new ContentReference(200);
+        var setting1 = new Mock<TestSetting>();
+        setting1.Setup(setting => setting.ContentLink).Returns(settingsLink);
+
+        var page = new Mock<TestPage>();
+        var pageLink = new ContentReference(100);
+        var entryPoint = new Mock<TestPage>();
+        var entryPointLink = new ContentReference(101);
+        page.Setup(x => x.ContentLink).Returns(pageLink);
+        entryPoint.Setup(x => x.ContentLink).Returns(entryPointLink);
+        entryPoint.Setup(x => x.TestSetting).Returns(settingsLink);
+
+        var settingsService = SetupSettingsService(
+            new PageData[] { page.Object, entryPoint.Object },
+            setting1.Object,
+            entryPointLink,
+            Array.Empty<ContentReference>());
+
+        var result = settingsService.GetSetting(typeof(TestSetting), page.Object);
+
+        Assert.Equal(setting1.Object, result);
+    }
+
+    private SettingsService SetupSettingsService(
+        PageData[] pages,
+        SettingsBase? result,
+        ContentReference? applicationEntryPoint = null,
+        IReadOnlyList<ContentReference>? ancestors = null)
     {
         var contentRepository = new Mock<IContentRepository>();
+        var applicationRepository = new Mock<IApplicationRepository>();
+        var applicationResolver = new Mock<IApplicationResolver>();
+
+        if (!ContentReference.IsNullOrEmpty(applicationEntryPoint))
+        {
+            applicationResolver
+                .Setup(resolver => resolver.GetByContent(It.IsAny<ContentReference>(), false))
+                .Returns(new Website("test", applicationEntryPoint));
+        }
+
         var ancestorReferencesLoader = new Mock<AncestorReferencesLoader>();
         var settingsResolver = new Mock<ISettingsResolver>();
         var globalSettingsCache = new Mock<ISynchronizedObjectInstanceCache>();
+        globalSettingsCache.SetupGet(cache => cache.Logger).Returns(NullLogger<IObjectInstanceCache>.Instance);
 
         IContent? content = null;
         contentRepository.Setup(repository => repository.TryGet(It.IsAny<ContentReference>(), out content))
@@ -96,33 +139,50 @@ public class SettingsServiceTests
                 c = pages.FirstOrDefault(x => link.CompareToIgnoreWorkID(x.ContentLink));
                 return c != null;
             });
-        
-        SettingsBase? setting = null;
+
+        TestSetting? setting = null;
         settingsResolver.Setup(resolver => resolver.TryResolveSettingFromContent(It.IsAny<IContent>(), out setting))
-            .Returns((IContent c, out SettingsBase? s) =>
+            .Returns((IContent c, out TestSetting? s) =>
             {
-                s = result;
-                return s != null;
+                if (result is TestSetting resolvedSetting && c is TestPage page)
+                {
+                    var settingsLink = page.TestSetting;
+                    if (!ContentReference.IsNullOrEmpty(settingsLink) &&
+                        settingsLink.CompareToIgnoreWorkID(resolvedSetting.ContentLink))
+                    {
+                        s = resolvedSetting;
+                        return true;
+                    }
+                }
+
+                s = null;
+                return false;
             });
 
         ancestorReferencesLoader.Setup(loader => loader.GetAncestors(It.IsAny<ContentReference>()))
             .Returns((ContentReference link) =>
             {
+                if (ancestors is not null)
+                {
+                    return ancestors;
+                }
+
                 return pages.SkipWhile(p => !p.ContentLink.CompareToIgnoreWorkID(link)).Skip(1)
                     .Select(p => p.ContentLink).ToList();
             });
 
-        
+
         var settingsService = new SettingsService(
             contentRepository.Object,
-            null,
-            null,
-            null,
-            null,
+            applicationResolver.Object,
+            applicationRepository.Object,
+            null!,
+            null!,
+            null!,
             ancestorReferencesLoader.Object,
             globalSettingsCache.Object,
             new[] { settingsResolver.Object },
-            null
+            null!
         );
 
         return settingsService;

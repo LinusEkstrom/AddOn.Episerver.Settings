@@ -127,7 +127,12 @@ public class GlobalSettingsRepositoryDescriptor : ContentRepositoryDescriptorBas
     /// <value>The roots.</value>
     public override IEnumerable<ContentReference> Roots
     {
-        get { return new[] { Settings.Service.GlobalSettingsRoot }; }
+        get
+        {
+            var globalSettingsRoot = Settings.Service.GlobalSettingsRoot;
+
+            return globalSettingsRoot is null ? Enumerable.Empty<ContentReference>() : new[] { globalSettingsRoot };
+        }
     }
 
     /// <summary>
