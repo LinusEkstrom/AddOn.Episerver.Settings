@@ -4,7 +4,8 @@
 		<OutputType>Library</OutputType>
 		<RootNamespace>AddOn.Episerver.Settings</RootNamespace>
 		<AssemblyName>AddOn.Episerver.Settings</AssemblyName>
-		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageVersion>6.0.0</PackageVersion>
 		<LangVersion>10</LangVersion>
 		<TargetFramework>net10.0</TargetFramework>
 		<IsPackable>true</IsPackable>
@@ -17,7 +18,6 @@
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<WarningsNotAsErrors>true</WarningsNotAsErrors>
 	</PropertyGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\*.xml" />
