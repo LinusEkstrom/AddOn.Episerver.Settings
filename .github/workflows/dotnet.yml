@@ -2,13 +2,13 @@ name: .NET
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, release/5.1 ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, release/5.1 ]
     
 env:
   BUILD_CONFIGURATION: 'Release'
-  DOTNET_VERSION: '8.0.x'
+  DOTNET_VERSION: '10.0.x'
   CWD: './src'
 
 jobs:
